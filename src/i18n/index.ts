@@ -1,6 +1,5 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import * as Localization from 'expo-localization';
 
 import en from './en.json';
 import tr from './tr.json';
@@ -10,9 +9,12 @@ const resources = {
   tr: { translation: tr },
 };
 
-// Detect device language: if Turkish, default to TR; otherwise EN.
-const deviceLang = Localization.getLocales()?.[0]?.languageCode ?? 'en';
-const defaultLang = deviceLang === 'tr' ? 'tr' : 'en';
+function getDeviceLanguage(): 'tr' | 'en' {
+  const locale = Intl.DateTimeFormat().resolvedOptions().locale ?? 'en';
+  return locale.toLowerCase().startsWith('tr') ? 'tr' : 'en';
+}
+
+const defaultLang = getDeviceLanguage();
 
 i18n.use(initReactI18next).init({
   resources,
