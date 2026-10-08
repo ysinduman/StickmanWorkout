@@ -54,13 +54,13 @@ export default function ActiveWorkoutScreen() {
     } else if (exerciseTimeLeft === 0 && exerciseTimerRunning) {
       setExerciseTimerRunning(false);
       Vibration.vibrate([0, 500, 110, 500]);
-      Alert.alert('Time Up! ⏱️', 'Your static hold is complete!');
+      Alert.alert(t('workout.holdTimeUp'), t('workout.holdComplete'));
     }
 
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [exerciseTimerRunning, exerciseTimeLeft]);
+  }, [exerciseTimerRunning, exerciseTimeLeft, t]);
 
   // Rest Timer effect
   useEffect(() => {
@@ -72,7 +72,7 @@ export default function ActiveWorkoutScreen() {
     } else if (restTimeLeft === 0 && restTimerRunning) {
       setRestTimerRunning(false);
       Vibration.vibrate([0, 500, 150, 500]);
-      Alert.alert('Rest Completed! 💪', t('workout.restDone'));
+      Alert.alert(t('workout.restCompletedTitle'), t('workout.restDone'));
     }
 
     return () => {
@@ -83,7 +83,7 @@ export default function ActiveWorkoutScreen() {
   if (!activeWorkout) {
     return (
       <View style={styles.emptyContainer}>
-        <Typography variant="body">No active workout found.</Typography>
+        <Typography variant="body">{t('workout.noActive')}</Typography>
         <Button
           title={t('common.back')}
           onPress={() => navigation.replace('Tabs')}
@@ -145,10 +145,10 @@ export default function ActiveWorkoutScreen() {
   };
 
   const handleCancelWorkout = () => {
-    Alert.alert(t('common.cancel'), 'Are you sure you want to discard your current workout progress?', [
+    Alert.alert(t('common.cancel'), t('workout.discardConfirm'), [
       { text: t('common.cancel'), style: 'cancel' },
       {
-        text: 'Discard',
+        text: t('workout.discard'),
         style: 'destructive',
         onPress: () => {
           cancelWorkout();
@@ -209,7 +209,7 @@ export default function ActiveWorkoutScreen() {
                   {t('workout.restTimer')}
                 </Typography>
                 <Typography variant="caption" color={theme.colors.text.secondary}>
-                  Select duration to begin rest countdown
+                  {t('workout.restPickDuration')}
                 </Typography>
               </View>
               <View style={styles.restPresetRow}>
@@ -257,14 +257,14 @@ export default function ActiveWorkoutScreen() {
             <View style={styles.restControlsRow}>
               {restTimerRunning ? (
                 <Button
-                  title="Pause"
+                  title={t('workout.pause')}
                   variant="outline"
                   style={styles.restControlBtn}
                   onPress={() => setRestTimerRunning(false)}
                 />
               ) : (
                 <Button
-                  title={restTimeLeft === 0 ? 'Restart' : 'Resume'}
+                  title={restTimeLeft === 0 ? t('workout.restart') : t('workout.resume')}
                   style={styles.restControlBtn}
                   onPress={() => {
                     if (restTimeLeft === 0) setRestTimeLeft(restDuration);
@@ -281,7 +281,7 @@ export default function ActiveWorkoutScreen() {
               />
 
               <Button
-                title="Skip"
+                title={t('workout.skip')}
                 variant="secondary"
                 style={styles.restControlBtn}
                 onPress={() => {
@@ -306,10 +306,10 @@ export default function ActiveWorkoutScreen() {
             </Typography>
             <View style={styles.btnRow}>
               {exerciseTimerRunning ? (
-                <Button title="Pause" variant="outline" style={styles.flexBtn} onPress={handleStopExerciseTimer} />
+                <Button title={t('workout.pause')} variant="outline" style={styles.flexBtn} onPress={handleStopExerciseTimer} />
               ) : (
                 <Button
-                  title={exerciseTimeLeft === 0 ? 'Restart' : 'Resume'}
+                  title={exerciseTimeLeft === 0 ? t('workout.restart') : t('workout.resume')}
                   style={styles.flexBtn}
                   onPress={() => {
                     if (exerciseTimeLeft === 0) {
@@ -321,7 +321,7 @@ export default function ActiveWorkoutScreen() {
                 />
               )}
               <Button
-                title="Close"
+                title={t('workout.close')}
                 variant="secondary"
                 style={styles.flexBtn}
                 onPress={() => {
