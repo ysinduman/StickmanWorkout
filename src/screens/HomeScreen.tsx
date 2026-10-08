@@ -15,10 +15,11 @@ import { Stickman } from '../components/Stickman/Stickman';
 import { Calendar } from '../components/Calendar/Calendar';
 import theme from '../constants/theme';
 import { calculateCalendarDays, calculateCurrentStreak } from '../utils/streakCalculator';
-import { MUSCLE_ZONES } from '../constants/zones';
+import { bodyPartsForZone, MUSCLE_ZONES, MuscleZone } from '../constants/zones';
 import { EMBER_SHELF } from '../constants/emberShelf';
 import { xpForLevel } from '../constants/gamification';
 import { countDatesWithinLastDays, formatCountdown, formatDateString, getTodayDateString, msUntilLocalMidnight } from '../utils/dateUtils';
+import { planDayForZone, trainedOn } from '../utils/todayPlan';
 import type { HomeNavigationProp } from '../navigation/types';
 import { useSessionStore } from '../stores/useSessionStore';
 import { FlameEffect } from '../components/Calendar/FlameEffect';
@@ -56,7 +57,12 @@ export default function HomeScreen() {
   }, []);
 
   const plan = storedPlan?.plan ?? null;
-  const todayPlanDay = getTodayPlanDay();
+  const todayPlanDay = plan ? getTodayPlanDay(history.map((workout) => workout.date), now) : null;
+  const trainedToday = trainedOn(
+    history.map((workout) => workout.date),
+    progression?.last_completed_on,
+    now,
+  );
   const streak = calculateCurrentStreak(plan, history);
 
   const nextLevelXp = xpForLevel(level + 1);
@@ -97,9 +103,8 @@ export default function HomeScreen() {
     const missed = calculateCalendarDays(pastDays, plan, history).some(
       (day) => day.status === 'missed',
     );
-    if (missed && pinnedZone) clearPin();
     if (missed && streak < 3) clearStamp();
-  }, [pinnedZone, plan, history, clearPin, streak, clearStamp]);
+  }, [plan, history, streak, clearStamp]);
 
   useEffect(() => {
     if (streak >= 3) recordStamp(streak);
@@ -121,13 +126,35 @@ export default function HomeScreen() {
       startWorkout(todayPlanDay);
       navigation.navigate('ActiveWorkout');
     } else if (plan) {
-      // It's a rest day, but let them start a custom/any day from their plan if they want
-      // For simplicity, grab first plan day
+      const preferred = pinnedZone ? planDayForZone(plan, pinnedZone) : null;
       const fallbackDay = plan.type === 'split' ? plan.workoutDays[0] : plan.workoutDay;
-      startWorkout(fallbackDay);
+      startWorkout(preferred ?? fallbackDay);
       navigation.navigate('ActiveWorkout');
     }
   };
+
+  const cyclePin = () => {
+    const index = pinnedZone ? MUSCLE_ZONES.indexOf(pinnedZone) : -1;
+    pinZone(MUSCLE_ZONES[(index + 1) % MUSCLE_ZONES.length]);
+  };
+
+  const selectZone = (zone: MuscleZone) => {
+    if (zone === pinnedZone) {
+      clearPin();
+      return;
+    }
+    pinZone(zone);
+  };
+
+  const speech = !plan
+    ? t('onboarding.noPlan')
+    : activeWorkout
+      ? t('home.workoutInProgress')
+      : trainedToday
+        ? t('home.workoutDoneToday')
+        : todayPlanDay
+          ? t('home.workoutToday')
+          : t('home.noWorkoutToday');
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -212,13 +239,20 @@ export default function HomeScreen() {
             <FlameEffect intensity={Math.min(1, 0.45 + (progression.current_streak % 100) / 140)} size={150} />
           </View>
         ) : null}
-        <Stickman muscleMass={partLevels ? 8 : muscleMass} partLevels={partLevels} />
+        <Stickman
+          muscleMass={partLevels ? 8 : muscleMass}
+          partLevels={partLevels}
+          priorityZone={pinnedZone}
+        />
       </View>
 
       {progression && username ? (
         <Card style={styles.serverCard}>
           <Typography variant="title2">@{username}</Typography>
-          <LevelBars parts={progression.body_parts} />
+          <LevelBars
+            parts={progression.body_parts}
+            highlightIds={pinnedZone ? bodyPartsForZone(pinnedZone) : []}
+          />
         </Card>
       ) : null}
 
@@ -260,19 +294,28 @@ export default function HomeScreen() {
         {/* Speech Bubble */}
         <View style={styles.speechBubble}>
           <Typography variant="body" align="center" style={styles.speechText}>
-            {!plan
-              ? t('onboarding.noPlan')
-              : todayPlanDay
-              ? `Let's crush today's ${todayPlanDay.name}! 💪`
-              : t('home.noWorkoutToday')}
+            {speech}
           </Typography>
         </View>
       </View>
 
       <View style={styles.pinSection}>
-        <Typography variant="caption" align="center">
-          {t('home.pinPrompt')}
-        </Typography>
+        <TouchableOpacity
+          onPress={cyclePin}
+          accessibilityRole="button"
+          hitSlop={{ top: 10, bottom: 10, left: 16, right: 16 }}
+        >
+          <Typography
+            variant="caption"
+            align="center"
+            bold={pinnedZone != null}
+            color={pinnedZone ? theme.colors.accent.primary : theme.colors.text.secondary}
+          >
+            {pinnedZone
+              ? t('home.pinnedZone', { zone: t(`zones.${pinnedZone}`) })
+              : t('home.pinPrompt')}
+          </Typography>
+        </TouchableOpacity>
         <View style={styles.pinRow}>
           {MUSCLE_ZONES.map((zone) => {
             const selected = zone === pinnedZone;
@@ -280,7 +323,9 @@ export default function HomeScreen() {
               <TouchableOpacity
                 key={zone}
                 style={[styles.pinChip, selected && styles.pinChipSelected]}
-                onPress={() => pinZone(zone)}
+                onPress={() => selectZone(zone)}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
               >
                 <Typography
                   variant="caption"
@@ -340,7 +385,7 @@ export default function HomeScreen() {
           />
         ) : (
           <Button
-            title={activeWorkout ? 'Resume Workout' : t('home.startWorkout')}
+            title={activeWorkout ? t('home.resumeWorkout') : t('home.startWorkout')}
             style={styles.actionBtn}
             onPress={handleStartWorkout}
           />

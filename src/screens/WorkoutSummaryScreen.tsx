@@ -14,9 +14,12 @@ import { getRepository } from '../data/repositories';
 import { LevelUpModal } from '../components/LevelUpModal';
 import { useCosmeticStore } from '../stores/useCosmeticStore';
 import { useEmberStore } from '../stores/useEmberStore';
+import { useZoneStore } from '../stores/useZoneStore';
 import type { WorkoutNavigationProp } from '../navigation/types';
 import { useSessionStore } from '../stores/useSessionStore';
+import { usePriorityStore } from '../stores/usePriorityStore';
 import { buildCompletionExercises, completionErrorKey, createIdempotencyKey } from '../utils/completionPayload';
+import { sessionStartedAtForSave } from '../utils/sessionClock';
 
 export default function WorkoutSummaryScreen() {
   const { t } = useTranslation();
@@ -97,9 +100,11 @@ export default function WorkoutSummaryScreen() {
       return;
     }
 
+    const startedAt = sessionStartedAtForSave(activeWorkout.startedAt);
+    useWorkoutStore.getState().alignSessionStart(startedAt);
     const { result, error } = await useSessionStore.getState().completeWorkout(
       idempotencyKey.current,
-      activeWorkout.startedAt,
+      startedAt,
       lines,
     );
     if (error || !result) {
@@ -133,6 +138,11 @@ export default function WorkoutSummaryScreen() {
     const firstKeptDay = !history.some((workout) => workout.date === completedWorkout.date);
     const keptDayBonus = firstKeptDay && useEmberStore.getState().rollKeptDayBonus();
     const keptDayLine = keptDayBonus ? t('workout.keptDayBonus') : '';
+    const pinned = usePriorityStore.getState().pinnedZone;
+    const zoneGain = pinned ? useZoneStore.getState().addPinnedWorkoutXp(pinned) : null;
+    const zoneLine = pinned && zoneGain
+      ? t('workout.zoneXp', { zone: t(`zones.${pinned}`), xp: zoneGain.xpGained })
+      : '';
     const levelLine = leveled
       .map(part => t('auth.partLevel', { part: t(`body.${part.body_part_id}`), level: part.level }))
       .join('\n');
@@ -156,7 +166,7 @@ export default function WorkoutSummaryScreen() {
     } else {
       Alert.alert(
         t('workout.greatJob'),
-        [t('workout.xpEarned', { xp: xpEarned }), t('auth.streakNow', { count: result.progression.current_streak }), levelLine, dropLine, emberLine, keptDayLine]
+        [t('workout.xpEarned', { xp: xpEarned }), t('auth.streakNow', { count: result.progression.current_streak }), levelLine, zoneLine, dropLine, emberLine, keptDayLine]
           .filter(Boolean)
           .join('\n'),
         [{ text: t('common.ok'), onPress: () => navigation.replace('Tabs') }]

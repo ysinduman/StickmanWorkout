@@ -5,7 +5,13 @@ import { Typography } from './ui';
 import theme from '../constants/theme';
 import type { BodyPartProgress } from '../stores/useSessionStore';
 
-export function LevelBars({ parts }: { parts: BodyPartProgress[] }) {
+export function LevelBars({
+  parts,
+  highlightIds = [],
+}: {
+  parts: BodyPartProgress[];
+  highlightIds?: string[];
+}) {
   const { t } = useTranslation();
 
   return (
@@ -13,8 +19,9 @@ export function LevelBars({ parts }: { parts: BodyPartProgress[] }) {
       {parts.map(part => {
         const ratio = part.xp_for_next > 0 ? part.xp_into_level / part.xp_for_next : 0;
         const width = `${Math.max(0, Math.min(1, ratio)) * 100}%`;
+        const priority = highlightIds.includes(part.body_part_id);
         return (
-          <View key={part.body_part_id} style={styles.box}>
+          <View key={part.body_part_id} style={[styles.box, priority && styles.priorityBox]}>
             <View style={styles.labelRow}>
               <Typography variant="body" bold>
                 {t(`body.${part.body_part_id}`)}
@@ -47,6 +54,10 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
     padding: theme.spacing.md,
     gap: 6,
+  },
+  priorityBox: {
+    borderColor: theme.colors.accent.primary,
+    borderWidth: 2,
   },
   labelRow: {
     flexDirection: 'row',

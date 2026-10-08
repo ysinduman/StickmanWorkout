@@ -1,5 +1,29 @@
-export function getTodayDateString(): string {
-  return new Date().toISOString().split('T')[0];
+export function formatDateString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+/** Calendar day on the phone, not the UTC date. */
+export function getTodayDateString(now: Date = new Date()): string {
+  return formatDateString(now);
+}
+
+/** YYYY-MM-DD at local noon so weekday math does not shift across UTC. */
+export function parseLocalDateString(dateStr: string): Date {
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(dateStr);
+  if (!match) {
+    const parsed = new Date(dateStr);
+    return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+  }
+  return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12, 0, 0, 0);
+}
+
+export function wholeDaysBetween(earlierDate: string, later: Date): number {
+  const start = parseLocalDateString(earlierDate);
+  const end = parseLocalDateString(formatDateString(later));
+  return Math.round((end.getTime() - start.getTime()) / 86_400_000);
 }
 
 export function getDaysInMonth(year: number, month: number): Date[] {
@@ -12,15 +36,8 @@ export function getDaysInMonth(year: number, month: number): Date[] {
   return days;
 }
 
-export function formatDateString(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
-}
-
 export function getDayNameOfWeek(dateStr: string): string {
-  const date = new Date(dateStr);
+  const date = parseLocalDateString(dateStr);
   const dayIndex = date.getDay();
   const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
   return days[dayIndex];

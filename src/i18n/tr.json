@@ -32,8 +32,12 @@
   },
   "home": {
     "startWorkout": "Antrenmana Başla",
+    "resumeWorkout": "Antrenmana devam et",
     "levelUpPlan": "Planı Güçlendir",
-    "noWorkoutToday": "Bugün dinlenme günü. İyi bir toparlanma geçir!",
+    "noWorkoutToday": "Bugün dinlenme günü. Kasların toparlansın.",
+    "workoutToday": "Bugün antrenman günü. Hazırsan başlayalım.",
+    "workoutInProgress": "Açık bir antrenmanın var. Kaldığın yerden devam et.",
+    "workoutDoneToday": "Bugünkü antrenmanı bitirdin. İyi iş.",
     "streakDays": "{{count}} günlük seri 🔥",
     "keptWeek": "Son 7 günün {{count}} günü tutuldu",
     "doubleStepsKept": "Tutulan çift adım: {{count}}",

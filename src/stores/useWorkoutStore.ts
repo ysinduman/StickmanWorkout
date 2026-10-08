@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActiveWorkout, CompletedWorkout, CompletedExercise, CompletedSet } from '../types';
 import { PlanDay } from '../types';
+import { formatDateString } from '../utils/dateUtils';
 
 interface WorkoutState {
   activeWorkout: ActiveWorkout | null;
@@ -13,6 +14,7 @@ interface WorkoutState {
   updateExerciseProgress: (exerciseId: string, sets: CompletedSet[]) => void;
   finishWorkout: (exercises: CompletedExercise[], xpEarned: number) => CompletedWorkout;
   cancelWorkout: () => void;
+  alignSessionStart: (startedAt: string) => void;
   addCompletedWorkout: (workout: CompletedWorkout) => void;
   getWorkoutsByMonth: (year: number, month: number) => CompletedWorkout[];
   getWorkoutByDate: (date: string) => CompletedWorkout | undefined;
@@ -23,7 +25,7 @@ function generateId(): string {
 }
 
 function getTodayDate(): string {
-  return new Date().toISOString().split('T')[0];
+  return formatDateString(new Date());
 }
 
 export const useWorkoutStore = create<WorkoutState>()(
@@ -97,6 +99,12 @@ export const useWorkoutStore = create<WorkoutState>()(
 
       cancelWorkout: () => {
         set({ activeWorkout: null });
+      },
+
+      alignSessionStart: (startedAt: string) => {
+        const active = get().activeWorkout;
+        if (!active || active.startedAt === startedAt) return;
+        set({ activeWorkout: { ...active, startedAt } });
       },
 
       addCompletedWorkout: (workout: CompletedWorkout) => {

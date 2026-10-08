@@ -1,5 +1,5 @@
 import { WorkoutPlan, CompletedWorkout, DayStatus, CalendarDay, DayOfWeek } from '../types';
-import { getDayNameOfWeek, formatDateString, getTodayDateString } from './dateUtils';
+import { getDayNameOfWeek, formatDateString, getTodayDateString, wholeDaysBetween } from './dateUtils';
 
 /**
  * Calculates the status and flame intensity for a given list of dates
@@ -52,14 +52,12 @@ export function calculateCalendarDays(
     // Find days since the last completed workout prior to this date
     const lastWorkoutPrior = sortedHistory.find((w) => w.date < dateStr);
     if (lastWorkoutPrior) {
-      const priorDate = new Date(lastWorkoutPrior.date);
-      const diffTime = Math.abs(date.getTime() - priorDate.getTime());
-      daysSinceLastWorkout = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      daysSinceLastWorkout = wholeDaysBetween(lastWorkoutPrior.date, date);
     }
 
     if (plan.type === 'split') {
       const dayName = getDayNameOfWeek(dateStr) as DayOfWeek;
-      isScheduledWorkoutDay = plan.schedule[dayName] !== null;
+      isScheduledWorkoutDay = Boolean(plan.schedule[dayName]);
     } else {
       // Full Body plan
       // If there was a workout prior, check if this day is a workout day or rest day based on restDaysBetween
@@ -155,14 +153,12 @@ export function calculateCurrentStreak(
       let isRestDay = true;
       if (plan.type === 'split') {
         const dayName = getDayNameOfWeek(checkDateStr) as DayOfWeek;
-        isRestDay = plan.schedule[dayName] === null;
+        isRestDay = !plan.schedule[dayName];
       } else {
         // Full Body: find the most recent workout before this checkDate
         const lastWorkoutBefore = sortedHistory.filter((w) => w.date < checkDateStr).pop();
         if (lastWorkoutBefore) {
-          const priorDate = new Date(lastWorkoutBefore.date);
-          const diffTime = Math.abs(checkDate.getTime() - priorDate.getTime());
-          const daysSince = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          const daysSince = wholeDaysBetween(lastWorkoutBefore.date, checkDate);
           const cycle = plan.restDaysBetween + 1;
           isRestDay = daysSince % cycle !== 0;
         } else {

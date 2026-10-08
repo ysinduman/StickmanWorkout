@@ -5,7 +5,7 @@ import { Typography } from '../ui';
 import { FlameEffect } from './FlameEffect';
 import theme from '../../constants/theme';
 import { WorkoutPlan, CompletedWorkout, CalendarDay } from '../../types';
-import { getDaysInMonth, formatDateString, getTodayDateString } from '../../utils/dateUtils';
+import { getDaysInMonth, getTodayDateString, parseLocalDateString } from '../../utils/dateUtils';
 import { calculateCalendarDays } from '../../utils/streakCalculator';
 
 interface CalendarProps {
@@ -46,7 +46,7 @@ export const Calendar: React.FC<CalendarProps> = ({ plan, history }) => {
   // Helper to align first day of the month with the correct column
   const paddingDays = useMemo(() => {
     if (calendarDaysList.length === 0) return 0;
-    const firstDate = new Date(calendarDaysList[0].date);
+    const firstDate = parseLocalDateString(calendarDaysList[0].date);
     // getDay() is 0 (Sunday) to 6 (Saturday). We want Monday (0) to Sunday (6).
     const day = firstDate.getDay();
     return day === 0 ? 6 : day - 1;
@@ -76,7 +76,7 @@ export const Calendar: React.FC<CalendarProps> = ({ plan, history }) => {
 
         {/* Render actual days */}
         {calendarDaysList.map((day) => {
-          const dateObj = new Date(day.date);
+          const dateObj = parseLocalDateString(day.date);
           const isToday = day.date === getTodayDateString();
 
           return (

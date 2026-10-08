@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { WorkoutPlan, StoredPlan, PlanDay, DayOfWeek } from '../types';
+import { WorkoutPlan, StoredPlan, PlanDay } from '../types';
 import { LEVEL_UP_WEIGHT_PERCENTAGE } from '../constants/gamification';
+import { planDayScheduledOn } from '../utils/todayPlan';
 
 interface PlanState {
   storedPlan: StoredPlan | null;
@@ -14,14 +15,9 @@ interface PlanState {
   deletePlan: () => void;
   setIsCreating: (creating: boolean) => void;
   levelUpPlan: (percentage?: number) => void;
-  getTodayPlanDay: () => PlanDay | null;
+  getTodayPlanDay: (historyDates?: string[], now?: Date) => PlanDay | null;
   hasPlan: () => boolean;
 }
-
-const getDayOfWeek = (): DayOfWeek => {
-  const days: DayOfWeek[] = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-  return days[new Date().getDay()];
-};
 
 export const usePlanStore = create<PlanState>()(
   persist(
@@ -95,21 +91,10 @@ export const usePlanStore = create<PlanState>()(
         });
       },
 
-      getTodayPlanDay: (): PlanDay | null => {
+      getTodayPlanDay: (historyDates: string[] = [], now: Date = new Date()): PlanDay | null => {
         const { storedPlan } = get();
         if (!storedPlan) return null;
-
-        const plan = storedPlan.plan;
-        if (plan.type === 'split') {
-          const today = getDayOfWeek();
-          const dayId = plan.schedule[today];
-          if (!dayId) return null;
-          return plan.workoutDays.find((d) => d.id === dayId) ?? null;
-        }
-
-        // Full body: determine if today is a workout day based on rest pattern
-        // This is simplified — real logic will check workout history
-        return plan.workoutDay;
+        return planDayScheduledOn(storedPlan.plan, now, historyDates);
       },
 
       hasPlan: (): boolean => {

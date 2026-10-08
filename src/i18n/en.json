@@ -32,8 +32,12 @@
   },
   "home": {
     "startWorkout": "Start Workout",
+    "resumeWorkout": "Resume workout",
     "levelUpPlan": "Level Up Plan",
-    "noWorkoutToday": "Rest day today. Enjoy your recovery!",
+    "noWorkoutToday": "Rest day today. Let your muscles recover.",
+    "workoutToday": "Training day. Start when you're ready.",
+    "workoutInProgress": "You have a workout in progress. Pick up where you left off.",
+    "workoutDoneToday": "You already trained today. Nice work.",
     "streakDays": "{{count}} day streak 🔥",
     "keptWeek": "Kept {{count}} of the last 7 days",
     "doubleStepsKept": "Double steps kept: {{count}}",

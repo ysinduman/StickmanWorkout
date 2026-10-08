@@ -12,6 +12,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { usePlanStore } from '../stores/usePlanStore';
+import { usePriorityStore } from '../stores/usePriorityStore';
+import { muscleGroupForZone } from '../constants/zones';
 import { EXERCISE_LIBRARY } from '../constants/exercises';
 import { Typography, Card, Button } from '../components/ui';
 import theme from '../constants/theme';
@@ -29,6 +31,8 @@ type FormStep = 'type_select' | 'split_days' | 'full_body_rest' | 'exercise_sele
 export default function PlannerScreen() {
   const { t } = useTranslation();
   const { storedPlan, setPlan, updatePlan, deletePlan, levelUpPlan } = usePlanStore();
+  const pinnedZone = usePriorityStore((state) => state.pinnedZone);
+  const priorityGroup = pinnedZone ? muscleGroupForZone(pinnedZone) : null;
 
   // Mode & step state
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -699,6 +703,12 @@ export default function PlannerScreen() {
             </View>
           </View>
 
+          {pinnedZone ? (
+            <Typography variant="caption" color={theme.colors.accent.primary} style={{ marginTop: theme.spacing.sm }}>
+              {t('home.pinnedZone', { zone: t(`zones.${pinnedZone}`) })}
+            </Typography>
+          ) : null}
+
           <Typography variant="bodyMuted" style={{ marginTop: theme.spacing.sm }}>
             {plan.type === 'split'
               ? 'Program: ' +
@@ -719,7 +729,19 @@ export default function PlannerScreen() {
                     {wd.name}
                   </Typography>
                   <Typography variant="caption" color={theme.colors.text.secondary}>
-                    ({wd.muscleGroups.map((g) => t(`muscleGroups.${g}`)).join(', ')})
+                    (
+                    {wd.muscleGroups.map((group, index) => (
+                      <Typography
+                        key={group}
+                        variant="caption"
+                        color={group === priorityGroup ? theme.colors.accent.primary : theme.colors.text.secondary}
+                        bold={group === priorityGroup}
+                      >
+                        {index > 0 ? ', ' : ''}
+                        {t(`muscleGroups.${group}`)}
+                      </Typography>
+                    ))}
+                    )
                   </Typography>
                 </View>
 
@@ -882,6 +904,11 @@ export default function PlannerScreen() {
             <Typography variant="bodyMuted" style={{ marginBottom: theme.spacing.md }}>
               Choose muscle groups for days you want to work out. Keep rest days empty.
             </Typography>
+            {pinnedZone ? (
+              <Typography variant="caption" color={theme.colors.accent.primary} style={{ marginBottom: theme.spacing.md }}>
+                {t('home.pinnedZone', { zone: t(`zones.${pinnedZone}`) })}
+              </Typography>
+            ) : null}
 
             {days.map((day) => {
               const activeGroups = splitDays[day];
@@ -911,6 +938,7 @@ export default function PlannerScreen() {
                           key={group}
                           style={[
                             styles.musclePill,
+                            !isSelected && group === priorityGroup && styles.musclePillPriority,
                             isSelected && styles.musclePillActive,
                           ]}
                           onPress={() => {
@@ -1387,6 +1415,9 @@ const styles = StyleSheet.create({
   },
   musclePillActive: {
     backgroundColor: theme.colors.accent.primary,
+    borderColor: theme.colors.accent.primary,
+  },
+  musclePillPriority: {
     borderColor: theme.colors.accent.primary,
   },
   restOptionsRow: {

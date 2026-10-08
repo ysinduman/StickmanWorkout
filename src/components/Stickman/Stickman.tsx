@@ -4,6 +4,7 @@ import Svg, { Circle, Line, Path } from 'react-native-svg';
 import theme from '../../constants/theme';
 import { useCosmeticStore } from '../../stores/useCosmeticStore';
 import { useZoneStore } from '../../stores/useZoneStore';
+import type { MuscleZone } from '../../constants/zones';
 
 interface StickmanProps {
   muscleMass: number; // 0 to 100
@@ -11,6 +12,7 @@ interface StickmanProps {
   height?: number;
   isWorkingOut?: boolean;
   partLevels?: Record<string, number>;
+  priorityZone?: MuscleZone | null;
 }
 
 function partGrowth(level: number): number {
@@ -23,6 +25,7 @@ export const Stickman: React.FC<StickmanProps> = ({
   height = 250,
   isWorkingOut = false,
   partLevels,
+  priorityZone = null,
 }) => {
   const equipped = useCosmeticStore((state) => state.equipped);
   const bars = useZoneStore((state) => state.bars);
@@ -46,6 +49,8 @@ export const Stickman: React.FC<StickmanProps> = ({
   // Base scales based on muscleMass (0-100)
   // Skinny: limbWidth = 2, TorsoWidth = 3
   // Buff: limbWidth = 12, TorsoWidth = 18
+  const strokeFor = (zone: MuscleZone) =>
+    priorityZone === zone ? theme.colors.accent.primary : theme.colors.text.primary;
   const limbWidth = 2 + (muscleMass / 100) * 10;
   const torsoWidth = 3 + (muscleMass / 100) * 15;
   const chestScale = partLevels ? growth('chest') * 0.7 : (muscleMass / 100) * 8;
@@ -124,8 +129,8 @@ export const Stickman: React.FC<StickmanProps> = ({
           y1={shoulderY}
           x2={rightShoulderX}
           y2={shoulderY}
-          stroke={theme.colors.text.primary}
-          strokeWidth={torsoWidth * 0.8 + zoneStep('shoulders')}
+          stroke={strokeFor('shoulders')}
+          strokeWidth={torsoWidth * 0.8 + zoneStep('shoulders') + (priorityZone === 'shoulders' ? 2 : 0)}
           strokeLinecap="round"
         />
 
@@ -135,19 +140,19 @@ export const Stickman: React.FC<StickmanProps> = ({
           y1={shoulderY}
           x2="50"
           y2={hipsY}
-          stroke={theme.colors.text.primary}
-          strokeWidth={torsoWidth + zoneStep('back')}
+          stroke={strokeFor('back')}
+          strokeWidth={torsoWidth + zoneStep('back') + (priorityZone === 'back' ? 2 : 0)}
           strokeLinecap="round"
         />
 
-        {(bars.abs?.level ?? 0) > 0 && (
+        {((bars.abs?.level ?? 0) > 0 || priorityZone === 'abs') && (
           <Line
             x1="42"
             y1={(shoulderY + hipsY) / 2}
             x2="58"
             y2={(shoulderY + hipsY) / 2}
-            stroke={theme.colors.text.primary}
-            strokeWidth={2 + zoneStep('abs')}
+            stroke={strokeFor('abs')}
+            strokeWidth={2 + zoneStep('abs') + (priorityZone === 'abs' ? 2 : 0)}
             strokeLinecap="round"
           />
         )}
@@ -190,8 +195,8 @@ export const Stickman: React.FC<StickmanProps> = ({
         <Path
           d={`M ${leftShoulderX} ${shoulderY} L ${leftElbowX} ${leftElbowY} L ${leftHandX} ${leftHandY}`}
           fill="none"
-          stroke={theme.colors.text.primary}
-          strokeWidth={limbWidth + zoneStep('leftArm')}
+          stroke={strokeFor('leftArm')}
+          strokeWidth={limbWidth + zoneStep('leftArm') + (priorityZone === 'leftArm' ? 2 : 0)}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -200,8 +205,8 @@ export const Stickman: React.FC<StickmanProps> = ({
         <Path
           d={`M ${rightShoulderX} ${shoulderY} L ${rightElbowX} ${rightElbowY} L ${rightHandX} ${rightHandY}`}
           fill="none"
-          stroke={theme.colors.text.primary}
-          strokeWidth={limbWidth + zoneStep('rightArm')}
+          stroke={strokeFor('rightArm')}
+          strokeWidth={limbWidth + zoneStep('rightArm') + (priorityZone === 'rightArm' ? 2 : 0)}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -212,8 +217,8 @@ export const Stickman: React.FC<StickmanProps> = ({
           y1={hipsY}
           x2={rightHipX}
           y2={hipsY}
-          stroke={theme.colors.text.primary}
-          strokeWidth={torsoWidth * 0.7 + zoneStep('glutes')}
+          stroke={strokeFor('glutes')}
+          strokeWidth={torsoWidth * 0.7 + zoneStep('glutes') + (priorityZone === 'glutes' ? 2 : 0)}
           strokeLinecap="round"
         />
 
@@ -221,8 +226,8 @@ export const Stickman: React.FC<StickmanProps> = ({
         <Path
           d={`M ${leftHipX} ${hipsY} L ${leftKneeX} ${leftKneeY} L ${leftFootX} ${leftFootY}`}
           fill="none"
-          stroke={theme.colors.text.primary}
-          strokeWidth={limbWidth * 1.1 + zoneStep('legs')}
+          stroke={strokeFor('legs')}
+          strokeWidth={limbWidth * 1.1 + zoneStep('legs') + (priorityZone === 'legs' ? 2 : 0)}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -231,8 +236,8 @@ export const Stickman: React.FC<StickmanProps> = ({
         <Path
           d={`M ${rightHipX} ${hipsY} L ${rightKneeX} ${rightKneeY} L ${rightFootX} ${rightFootY}`}
           fill="none"
-          stroke={theme.colors.text.primary}
-          strokeWidth={limbWidth * 1.1 + zoneStep('legs')}
+          stroke={strokeFor('legs')}
+          strokeWidth={limbWidth * 1.1 + zoneStep('legs') + (priorityZone === 'legs' ? 2 : 0)}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
