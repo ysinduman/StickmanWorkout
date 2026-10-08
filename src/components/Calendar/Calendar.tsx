@@ -14,15 +14,14 @@ interface CalendarProps {
 }
 
 export const Calendar: React.FC<CalendarProps> = ({ plan, history }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   // Get current month and year
   const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth() + 1; // 1-indexed
 
-  // Month name resolution
-  const monthName = today.toLocaleString(t('settings.language') === 'tr' ? 'tr-TR' : 'en-US', {
+  const monthName = today.toLocaleString(i18n.language.startsWith('tr') ? 'tr-TR' : 'en-US', {
     month: 'long',
   });
 

@@ -94,6 +94,8 @@
     "cancelEdit": "Cancel",
     "editingPlan": "Edit Workout Plan",
     "saveChanges": "Save Changes",
+    "dayMuscleGroups": "Muscle groups: {{groups}}",
+    "targetHint": "Directly edit weight, reps or hold times. Use + / - or tap number to type.",
     "steps": {
       "type": "Type",
       "days": "Days",

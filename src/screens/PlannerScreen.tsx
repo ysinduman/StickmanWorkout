@@ -1071,7 +1071,9 @@ export default function PlannerScreen() {
                     {t(`days.${currentSplitDayForConfig}`)} {t('planner.selectExercises')}
                   </Typography>
                   <Typography variant="bodyMuted" style={{ marginTop: theme.spacing.xs }}>
-                    Muscle groups: {(splitDays[currentSplitDayForConfig] ?? []).map((g) => t(`muscleGroups.${g}`)).join(', ')}
+                    {t('planner.dayMuscleGroups', {
+                      groups: (splitDays[currentSplitDayForConfig] ?? []).map((g) => t(`muscleGroups.${g}`)).join(', '),
+                    })}
                   </Typography>
                 </View>
 
@@ -1221,7 +1223,7 @@ export default function PlannerScreen() {
                 {t('planner.setTargets')}
               </Typography>
               <Typography variant="caption" color={theme.colors.text.secondary}>
-                Directly edit weight, reps or hold times. Use + / - or tap number to type.
+                {t('planner.targetHint')}
               </Typography>
             </View>
 

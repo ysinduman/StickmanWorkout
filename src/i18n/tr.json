@@ -94,6 +94,8 @@
     "cancelEdit": "Vazgeç",
     "editingPlan": "Antrenman Planını Düzenle",
     "saveChanges": "Değişiklikleri Kaydet",
+    "dayMuscleGroups": "Kas grupları: {{groups}}",
+    "targetHint": "Ağırlığı, tekrarı veya tutuş süresini doğrudan düzenle. + / - kullan veya sayıya dokunup yaz.",
     "steps": {
       "type": "Tür",
       "days": "Günler",
