@@ -33,16 +33,21 @@ export const useWorkoutStore = create<WorkoutState>()(
       history: [],
 
       startWorkout: (planDay: PlanDay) => {
-        const exercises: CompletedExercise[] = planDay.exercises.map((ex) => ({
-          exerciseId: ex.exerciseId,
-          sets: ex.sets.map((s) => ({
-            setNumber: s.setNumber,
-            actualReps: s.targetReps,
-            actualWeightKg: s.targetWeightKg,
-            actualTimeSeconds: s.targetTimeSeconds,
-            completed: false,
-          })),
-        }));
+        const exercises: CompletedExercise[] = planDay.exercises.map((ex) => {
+          const sourceSets = ex.sets?.length
+            ? ex.sets
+            : [{ setNumber: 1, targetReps: 10, targetWeightKg: 0, targetTimeSeconds: 60 }];
+          return {
+            exerciseId: ex.exerciseId,
+            sets: sourceSets.map((s) => ({
+              setNumber: s.setNumber,
+              actualReps: s.targetReps,
+              actualWeightKg: s.targetWeightKg,
+              actualTimeSeconds: s.targetTimeSeconds,
+              completed: false,
+            })),
+          };
+        });
 
         set({
           activeWorkout: {

@@ -94,7 +94,7 @@ export default function ActiveWorkoutScreen() {
   }
 
   // Calculate overall workout completion progress
-  const allSets = activeWorkout.exercises.flatMap((e) => e.sets);
+  const allSets = activeWorkout.exercises.flatMap((e) => e.sets ?? []);
   const completedSetsCount = allSets.filter((s) => s.completed).length;
   const totalSetsCount = allSets.length;
   const progressRatio = totalSetsCount > 0 ? completedSetsCount / totalSetsCount : 0;
@@ -116,7 +116,7 @@ export default function ActiveWorkoutScreen() {
     const exProgress = activeWorkout.exercises.find((ex) => ex.exerciseId === exerciseId);
     if (!exProgress) return;
 
-    const nextSets = [...exProgress.sets];
+    const nextSets = [...(exProgress.sets ?? [])];
     const isNowCompleted = !nextSets[setIdx].completed;
     nextSets[setIdx] = {
       ...nextSets[setIdx],
@@ -339,7 +339,8 @@ export default function ActiveWorkoutScreen() {
         const ex = EXERCISE_LIBRARY.find((e) => e.id === exProgress.exerciseId);
         if (!ex) return null;
 
-        const isExFullyCompleted = exProgress.sets.every((s) => s.completed);
+        const exerciseSets = exProgress.sets ?? [];
+        const isExFullyCompleted = exerciseSets.every((s) => s.completed);
 
         return (
           <Animated.View key={ex.id} entering={FadeInUp.delay(index * 150).springify()}>
@@ -367,9 +368,9 @@ export default function ActiveWorkoutScreen() {
               </View>
 
               {/* Set Lines */}
-              {exProgress.sets.map((set, setIdx) => {
+              {exerciseSets.map((set, setIdx) => {
                 const planEx = activeWorkout.planDay.exercises.find((p) => p.exerciseId === ex.id);
-                const planSet = planEx?.sets[setIdx];
+                const planSet = planEx?.sets?.[setIdx];
 
                 return (
                   <View

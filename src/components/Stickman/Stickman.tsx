@@ -2,12 +2,19 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Svg, { Circle, Line, Path } from 'react-native-svg';
 import theme from '../../constants/theme';
+import { useCosmeticStore } from '../../stores/useCosmeticStore';
+import { useZoneStore } from '../../stores/useZoneStore';
 
 interface StickmanProps {
   muscleMass: number; // 0 to 100
   width?: number;
   height?: number;
   isWorkingOut?: boolean;
+  partLevels?: Record<string, number>;
+}
+
+function partGrowth(level: number): number {
+  return Math.min(12, Math.max(0, level - 1) * 1.1);
 }
 
 export const Stickman: React.FC<StickmanProps> = ({
@@ -15,14 +22,34 @@ export const Stickman: React.FC<StickmanProps> = ({
   width = 200,
   height = 250,
   isWorkingOut = false,
+  partLevels,
 }) => {
+  const equipped = useCosmeticStore((state) => state.equipped);
+  const bars = useZoneStore((state) => state.bars);
+  const growth = (id: string) => partGrowth(partLevels?.[id] ?? 1);
+  const zoneStep = (zone: keyof typeof bars) => {
+    if (!partLevels) {
+      return Math.min(bars[zone]?.level ?? 0, 12) * 1.1;
+    }
+    if (zone === 'shoulders') return growth('shoulders');
+    if (zone === 'back') return growth('back');
+    if (zone === 'abs') return growth('abs');
+    if (zone === 'glutes') return growth('glutes');
+    if (zone === 'leftArm' || zone === 'rightArm') {
+      return Math.max(growth('biceps'), growth('triceps'), growth('forearms'));
+    }
+    if (zone === 'legs') {
+      return Math.max(growth('quadriceps'), growth('hamstrings'), growth('calves'));
+    }
+    return 0;
+  };
   // Base scales based on muscleMass (0-100)
   // Skinny: limbWidth = 2, TorsoWidth = 3
   // Buff: limbWidth = 12, TorsoWidth = 18
   const limbWidth = 2 + (muscleMass / 100) * 10;
   const torsoWidth = 3 + (muscleMass / 100) * 15;
-  const chestScale = (muscleMass / 100) * 8;
-  const bicepScale = (muscleMass / 100) * 6;
+  const chestScale = partLevels ? growth('chest') * 0.7 : (muscleMass / 100) * 8;
+  const bicepScale = partLevels ? 2 + growth('biceps') * 0.55 : (muscleMass / 100) * 6;
 
   // Stickman dimensions & coordinates (centered in SVG viewBox="0 0 100 120")
   const headX = 50;
@@ -98,7 +125,7 @@ export const Stickman: React.FC<StickmanProps> = ({
           x2={rightShoulderX}
           y2={shoulderY}
           stroke={theme.colors.text.primary}
-          strokeWidth={torsoWidth * 0.8}
+          strokeWidth={torsoWidth * 0.8 + zoneStep('shoulders')}
           strokeLinecap="round"
         />
 
@@ -109,9 +136,21 @@ export const Stickman: React.FC<StickmanProps> = ({
           x2="50"
           y2={hipsY}
           stroke={theme.colors.text.primary}
-          strokeWidth={torsoWidth}
+          strokeWidth={torsoWidth + zoneStep('back')}
           strokeLinecap="round"
         />
+
+        {(bars.abs?.level ?? 0) > 0 && (
+          <Line
+            x1="42"
+            y1={(shoulderY + hipsY) / 2}
+            x2="58"
+            y2={(shoulderY + hipsY) / 2}
+            stroke={theme.colors.text.primary}
+            strokeWidth={2 + zoneStep('abs')}
+            strokeLinecap="round"
+          />
+        )}
 
         {/* Chest details (biceps/pectorals overlay) for muscular levels */}
         {muscleMass > 20 && (
@@ -152,7 +191,7 @@ export const Stickman: React.FC<StickmanProps> = ({
           d={`M ${leftShoulderX} ${shoulderY} L ${leftElbowX} ${leftElbowY} L ${leftHandX} ${leftHandY}`}
           fill="none"
           stroke={theme.colors.text.primary}
-          strokeWidth={limbWidth}
+          strokeWidth={limbWidth + zoneStep('leftArm')}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -162,7 +201,7 @@ export const Stickman: React.FC<StickmanProps> = ({
           d={`M ${rightShoulderX} ${shoulderY} L ${rightElbowX} ${rightElbowY} L ${rightHandX} ${rightHandY}`}
           fill="none"
           stroke={theme.colors.text.primary}
-          strokeWidth={limbWidth}
+          strokeWidth={limbWidth + zoneStep('rightArm')}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -174,7 +213,7 @@ export const Stickman: React.FC<StickmanProps> = ({
           x2={rightHipX}
           y2={hipsY}
           stroke={theme.colors.text.primary}
-          strokeWidth={torsoWidth * 0.7}
+          strokeWidth={torsoWidth * 0.7 + zoneStep('glutes')}
           strokeLinecap="round"
         />
 
@@ -183,7 +222,7 @@ export const Stickman: React.FC<StickmanProps> = ({
           d={`M ${leftHipX} ${hipsY} L ${leftKneeX} ${leftKneeY} L ${leftFootX} ${leftFootY}`}
           fill="none"
           stroke={theme.colors.text.primary}
-          strokeWidth={limbWidth * 1.1}
+          strokeWidth={limbWidth * 1.1 + zoneStep('legs')}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -193,10 +232,50 @@ export const Stickman: React.FC<StickmanProps> = ({
           d={`M ${rightHipX} ${hipsY} L ${rightKneeX} ${rightKneeY} L ${rightFootX} ${rightFootY}`}
           fill="none"
           stroke={theme.colors.text.primary}
-          strokeWidth={limbWidth * 1.1}
+          strokeWidth={limbWidth * 1.1 + zoneStep('legs')}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
+
+        {equipped === 'chalk_dust' && (
+          <>
+            <Circle cx={leftHandX - 4} cy={leftHandY - 3} r="1.2" fill="#E8E4DC" opacity="0.85" />
+            <Circle cx={leftHandX + 3} cy={leftHandY + 2} r="0.9" fill="#E8E4DC" opacity="0.6" />
+            <Circle cx={rightHandX + 4} cy={rightHandY - 2} r="1.2" fill="#E8E4DC" opacity="0.85" />
+            <Circle cx={rightHandX - 3} cy={rightHandY + 3} r="0.9" fill="#E8E4DC" opacity="0.6" />
+          </>
+        )}
+
+        {equipped === 'wrist_wrap' && (
+          <>
+            <Line
+              x1={leftElbowX + (leftHandX - leftElbowX) * 0.78 - 3}
+              y1={leftElbowY + (leftHandY - leftElbowY) * 0.78}
+              x2={leftElbowX + (leftHandX - leftElbowX) * 0.78 + 3}
+              y2={leftElbowY + (leftHandY - leftElbowY) * 0.78}
+              stroke={theme.colors.accent.secondary}
+              strokeWidth="3.5"
+              strokeLinecap="round"
+            />
+            <Line
+              x1={rightElbowX + (rightHandX - rightElbowX) * 0.78 - 3}
+              y1={rightElbowY + (rightHandY - rightElbowY) * 0.78}
+              x2={rightElbowX + (rightHandX - rightElbowX) * 0.78 + 3}
+              y2={rightElbowY + (rightHandY - rightElbowY) * 0.78}
+              stroke={theme.colors.accent.secondary}
+              strokeWidth="3.5"
+              strokeLinecap="round"
+            />
+          </>
+        )}
+
+        {equipped === 'ember_crown' && (
+          <>
+            <Circle cx={headX - 4} cy={headY - headRadius - 3} r="2.2" fill={theme.colors.flame.warm} />
+            <Circle cx={headX} cy={headY - headRadius - 6} r="2.8" fill={theme.colors.flame.hot} />
+            <Circle cx={headX + 4} cy={headY - headRadius - 3} r="2.2" fill={theme.colors.gradient.flameEnd} />
+          </>
+        )}
 
         {/* Working out details (dumbbells) */}
         {isWorkingOut && (

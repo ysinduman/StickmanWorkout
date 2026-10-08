@@ -34,6 +34,41 @@ export function isSameDay(d1: Date, d2: Date): boolean {
   );
 }
 
+export function msUntilLocalMidnight(now: Date = new Date()): number {
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  return Math.max(0, midnight.getTime() - now.getTime());
+}
+
+export function countDatesWithinLastDays(
+  dates: string[],
+  days: number,
+  now: Date = new Date(),
+): number {
+  const accepted = new Set<string>();
+  for (let offset = 0; offset < days; offset++) {
+    const day = new Date(now);
+    day.setHours(12, 0, 0, 0);
+    day.setDate(day.getDate() - offset);
+    accepted.add(formatDateString(day));
+    accepted.add(day.toISOString().split('T')[0]);
+  }
+  const kept = new Set<string>();
+  for (const date of dates) {
+    if (accepted.has(date)) kept.add(date);
+  }
+  return kept.size;
+}
+
+export function formatCountdown(ms: number): string {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
+
 export function isYesterday(dateStr: string): boolean {
   const today = new Date();
   const yesterday = new Date(today);

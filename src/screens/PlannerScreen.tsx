@@ -731,8 +731,8 @@ export default function PlannerScreen() {
                         • {exDetails ? t(exDetails.name) : ex.exerciseId}
                       </Typography>
                       <Typography variant="caption" color={theme.colors.text.secondary}>
-                        {ex.sets.length} {t('common.sets')} (
-                        {ex.sets
+                        {(ex.sets ?? []).length} {t('common.sets')} (
+                        {(ex.sets ?? [])
                           .map((s) => (exDetails?.type === 'weight' ? `${s.targetWeightKg}kg` : `${s.targetTimeSeconds}s`))
                           .join(', ')}
                         )
@@ -755,8 +755,8 @@ export default function PlannerScreen() {
                       • {exDetails ? t(exDetails.name) : ex.exerciseId}
                     </Typography>
                     <Typography variant="caption" color={theme.colors.text.secondary}>
-                      {ex.sets.length} {t('common.sets')} (
-                      {ex.sets
+                      {(ex.sets ?? []).length} {t('common.sets')} (
+                      {(ex.sets ?? [])
                         .map((s) => (exDetails?.type === 'weight' ? `${s.targetWeightKg}kg` : `${s.targetTimeSeconds}s`))
                         .join(', ')}
                       )
@@ -1043,13 +1043,13 @@ export default function PlannerScreen() {
                     {t(`days.${currentSplitDayForConfig}`)} {t('planner.selectExercises')}
                   </Typography>
                   <Typography variant="bodyMuted" style={{ marginTop: theme.spacing.xs }}>
-                    Muscle groups: {splitDays[currentSplitDayForConfig].map((g) => t(`muscleGroups.${g}`)).join(', ')}
+                    Muscle groups: {(splitDays[currentSplitDayForConfig] ?? []).map((g) => t(`muscleGroups.${g}`)).join(', ')}
                   </Typography>
                 </View>
 
                 {/* Available Exercises for Selected Muscle Groups */}
                 {EXERCISE_LIBRARY.filter((ex) =>
-                  splitDays[currentSplitDayForConfig].includes(ex.muscleGroup)
+                  (splitDays[currentSplitDayForConfig] ?? []).includes(ex.muscleGroup)
                 ).map((ex) => {
                   const isSelected = selectedSplitExercises[currentSplitDayForConfig]?.includes(ex.id);
 

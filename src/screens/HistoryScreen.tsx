@@ -2,7 +2,8 @@ import React from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useWorkoutStore } from '../stores/useWorkoutStore';
-import { useUserStore } from '../stores/useUserStore';
+import { useSessionStore } from '../stores/useSessionStore';
+import i18n from '../i18n';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { EXERCISE_LIBRARY } from '../constants/exercises';
 import { Typography, Card } from '../components/ui';
@@ -11,7 +12,7 @@ import theme from '../constants/theme';
 export default function HistoryScreen() {
   const { t } = useTranslation();
   const { history } = useWorkoutStore();
-  const { currentStreak, longestStreak } = useUserStore();
+  const progression = useSessionStore(state => state.progression);
 
   // Sort history descending by date/time
   const sortedHistory = [...history].sort((a, b) => b.startedAt.localeCompare(a.startedAt));
@@ -31,37 +32,37 @@ export default function HistoryScreen() {
       </Typography>
 
       {/* Aggregate Stats */}
-      {history.length > 0 && (
+      {progression ? (
         <Card style={styles.statsCard}>
           <View style={styles.statBox}>
             <Typography variant="title2" bold color={theme.colors.accent.primary}>
-              {history.length}
+              {progression.current_streak}
             </Typography>
-            <Typography variant="caption">{t('history.totalWorkouts')}</Typography>
+            <Typography variant="caption">{t('history.currentStreak')}</Typography>
           </View>
           <View style={styles.statBox}>
             <Typography variant="title2" bold color={theme.colors.accent.primary}>
-              {currentStreak}
+              {progression.longest_streak}
             </Typography>
-            <Typography variant="caption">{t('history.currentStreak', 'Streak')}</Typography>
+            <Typography variant="caption">{t('history.longestStreak')}</Typography>
           </View>
           <View style={styles.statBox}>
             <Typography variant="title2" bold color={theme.colors.accent.primary}>
-              {longestStreak}
+              {progression.total_xp}
             </Typography>
-            <Typography variant="caption">{t('history.longestStreak', 'Best Streak')}</Typography>
+            <Typography variant="caption">XP</Typography>
           </View>
         </Card>
-      )}
+      ) : null}
 
       {/* WORKOUT LIST */}
       {sortedHistory.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Typography variant="body" align="center" style={{ marginBottom: theme.spacing.sm }}>
-            {t('history.noHistory')}
+            {progression && progression.total_xp > 0 ? t('history.noHistoryDevice') : t('history.noHistory')}
           </Typography>
           <Typography variant="bodyMuted" align="center">
-            {t('history.startFirst')}
+            {progression && progression.total_xp > 0 ? t('history.progressKept') : t('history.startFirst')}
           </Typography>
         </View>
       ) : (
@@ -69,7 +70,7 @@ export default function HistoryScreen() {
           const duration = calculateDuration(workout.startedAt, workout.completedAt);
           const dateObj = new Date(workout.date);
           const localizedDate = dateObj.toLocaleDateString(
-            t('settings.language') === 'tr' ? 'tr-TR' : 'en-US',
+            i18n.language.startsWith('tr') ? 'tr-TR' : 'en-US',
             { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
           );
 

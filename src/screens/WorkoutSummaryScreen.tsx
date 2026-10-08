@@ -1,27 +1,28 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { StyleSheet, View, ScrollView, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { useWorkoutStore } from '../stores/useWorkoutStore';
 import { useUserStore } from '../stores/useUserStore';
-import { usePlanStore } from '../stores/usePlanStore';
 import { EXERCISE_LIBRARY } from '../constants/exercises';
 import { Typography, Card, Button } from '../components/ui';
 import theme from '../constants/theme';
 import { CompletedExercise, CompletedSet, CompletedWorkout } from '../types';
-import { calculateWorkoutXP, calculateLevel } from '../constants/gamification';
+import { calculateLevel } from '../constants/gamification';
 import { getTodayDateString } from '../utils/dateUtils';
-import { calculateCurrentStreak } from '../utils/streakCalculator';
 import { getRepository } from '../data/repositories';
 import { LevelUpModal } from '../components/LevelUpModal';
+import { useCosmeticStore } from '../stores/useCosmeticStore';
+import { useEmberStore } from '../stores/useEmberStore';
 import type { WorkoutNavigationProp } from '../navigation/types';
+import { useSessionStore } from '../stores/useSessionStore';
+import { buildCompletionExercises, completionErrorKey, createIdempotencyKey } from '../utils/completionPayload';
 
 export default function WorkoutSummaryScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<WorkoutNavigationProp>();
   const { activeWorkout, finishWorkout, history } = useWorkoutStore();
   const userStore = useUserStore();
-  const planStore = usePlanStore();
 
   // Keep local copies of the active workout exercises so users can adjust them before saving
   const [exercises, setExercises] = useState<CompletedExercise[]>(() => {
@@ -31,6 +32,7 @@ export default function WorkoutSummaryScreen() {
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [levelUpData, setLevelUpData] = useState({ prev: 1, new: 1 });
   const [isSaving, setIsSaving] = useState(false);
+  const idempotencyKey = useRef(createIdempotencyKey());
 
   if (!activeWorkout) {
     return (
@@ -87,18 +89,53 @@ export default function WorkoutSummaryScreen() {
 
     const previousLevel = userStore.level;
     const todayStr = getTodayDateString();
+    const beforeParts = useSessionStore.getState().progression?.body_parts ?? [];
+    const lines = buildCompletionExercises(exercises);
+    if (lines.length === 0) {
+      Alert.alert(t('common.error'), t('auth.errors.workout_too_small'));
+      setIsSaving(false);
+      return;
+    }
 
-    // 2. Add XP (uses the current streak before it is potentially reset by this workout)
-    const xpEarned = userStore.addXP(completedSetsCount);
+    const { result, error } = await useSessionStore.getState().completeWorkout(
+      idempotencyKey.current,
+      activeWorkout.startedAt,
+      lines,
+    );
+    if (error || !result) {
+      Alert.alert(t('common.error'), t(`auth.errors.${completionErrorKey(error ?? 'request_failed')}`));
+      setIsSaving(false);
+      return;
+    }
+
+    const xpEarned = result.awarded.reduce((sum, award) => sum + award.xp, 0);
+    const leveled = result.progression.body_parts.filter(part => {
+      const previous = beforeParts.find(item => item.body_part_id === part.body_part_id);
+      return previous != null && part.level > previous.level;
+    });
     
-    // 3. Save completed workout record to store and DB
+    userStore.setStreak(result.progression.current_streak);
+    userStore.updateLastWorkoutDate(result.progression.last_completed_on ?? todayStr);
+
+    if (result.duplicate) {
+      Alert.alert(t('auth.alreadySaved'), t('auth.errors.request_failed'), [
+        { text: t('common.ok'), onPress: () => navigation.replace('Tabs') },
+      ]);
+      return;
+    }
+
     const completedWorkout = finishWorkout(exercises, xpEarned);
 
-    // 4. Update streak logic properly considering rest days
-    const newHistory = [...history, completedWorkout];
-    const newStreak = calculateCurrentStreak(planStore.storedPlan?.plan ?? null, newHistory);
-    userStore.setStreak(newStreak);
-    userStore.updateLastWorkoutDate(todayStr);
+    const drop = useCosmeticStore.getState().grantDrop();
+    const dropLine = t('workout.cosmeticDrop', { name: t(`cosmetic.${drop}`) });
+    const embersEarned = useEmberStore.getState().earnFromWorkout();
+    const emberLine = t('workout.embersEarned', { count: embersEarned });
+    const firstKeptDay = !history.some((workout) => workout.date === completedWorkout.date);
+    const keptDayBonus = firstKeptDay && useEmberStore.getState().rollKeptDayBonus();
+    const keptDayLine = keptDayBonus ? t('workout.keptDayBonus') : '';
+    const levelLine = leveled
+      .map(part => t('auth.partLevel', { part: t(`body.${part.body_part_id}`), level: part.level }))
+      .join('\n');
 
     try {
       const repo = getRepository();
@@ -119,7 +156,9 @@ export default function WorkoutSummaryScreen() {
     } else {
       Alert.alert(
         t('workout.greatJob'),
-        t('workout.xpEarned', { xp: xpEarned }),
+        [t('workout.xpEarned', { xp: xpEarned }), t('auth.streakNow', { count: result.progression.current_streak }), levelLine, dropLine, emberLine, keptDayLine]
+          .filter(Boolean)
+          .join('\n'),
         [{ text: t('common.ok'), onPress: () => navigation.replace('Tabs') }]
       );
       // Don't reset isSaving because we are navigating away, to prevent extra clicks during navigation

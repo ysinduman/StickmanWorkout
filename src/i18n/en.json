@@ -25,7 +25,9 @@
   },
   "tabs": {
     "home": "Home",
+    "search": "Search",
     "planner": "Planner",
+    "profile": "Profile",
     "history": "History"
   },
   "home": {
@@ -33,6 +35,24 @@
     "levelUpPlan": "Level Up Plan",
     "noWorkoutToday": "Rest day today. Enjoy your recovery!",
     "streakDays": "{{count}} day streak 🔥",
+    "keptWeek": "Kept {{count}} of the last 7 days",
+    "doubleStepsKept": "Double steps kept: {{count}}",
+    "flameStamp": "Flame kept {{count}} days",
+    "flameRisk": "{{count}}-day streak goes out at midnight. {{time}} left.",
+    "unfinishedBar": "{{zone}} is {{percent}}% full and waiting.",
+    "pinnedZone": "Priority: {{zone}}",
+    "zoneBar": "{{zone}} bar {{percent}}%",
+    "zoneStep": "Step {{level}}",
+    "stepOnTheLine": "Step {{level}} is on the line tonight",
+    "hotStart": "Hot start +{{bonus}} XP",
+    "pinPrompt": "Pin a muscle",
+    "emberShelf": "Ember shelf",
+    "emberBalance": "{{count}} Embers",
+    "emberPrice": "{{price}} Embers",
+    "emberBuy": "Unlock",
+    "emberOwned": "Owned",
+    "emberClosest": "Closest",
+    "beltTally": "3 double steps",
     "level": "Level {{level}}",
     "xp": "{{current}} / {{next}} XP"
   },
@@ -98,14 +118,43 @@
     "actual": "Actual",
     "saveWorkout": "Save Workout",
     "xpEarned": "+{{xp}} XP earned!",
+    "cosmeticDrop": "Drop: {{name}}",
+    "embersEarned": "+{{count}} Embers",
+    "zoneXp": "{{zone}} +{{xp}} XP",
+    "hotStart": "Hot start +{{bonus}} XP",
+    "keptDayBonus": "Kept day bonus +1 Ember",
+    "doubleStep": "Double step",
     "greatJob": "Great job! 💪",
     "streakContinues": "Streak continues: {{count}} days 🔥"
+  },
+  "shelf": {
+    "kneeSleeve": "Knee sleeve",
+    "headband": "Headband",
+    "goldBelt": "Gold belt"
+  },
+  "zones": {
+    "leftArm": "Left Arm",
+    "rightArm": "Right Arm",
+    "shoulders": "Shoulders",
+    "back": "Back",
+    "abs": "Abs",
+    "glutes": "Glutes",
+    "legs": "Legs"
+  },
+  "cosmetic": {
+    "chalk_dust": "Chalk dust",
+    "wrist_wrap": "Wrist wrap",
+    "ember_crown": "Ember crown"
   },
   "history": {
     "title": "Workout History",
     "noHistory": "No workouts completed yet.",
     "startFirst": "Complete your first workout to see it here!",
+    "noHistoryDevice": "No workout list is saved on this phone.",
+    "progressKept": "Your progress stays on the account. A workout you finish will show up here.",
     "totalWorkouts": "Total Workouts",
+    "currentStreak": "Streak",
+    "longestStreak": "Best streak",
     "thisMonth": "This Month",
     "date": "Date",
     "duration": "Duration",
@@ -151,5 +200,68 @@
     "language": "Language",
     "english": "English",
     "turkish": "Türkçe"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signUp": "Create account",
+    "chooseName": "Choose a username",
+    "username": "username",
+    "bio": "Bio",
+    "createProfile": "Save profile",
+    "signOut": "Sign out",
+    "subtitle": "Keep the streak. Grow the stickman.",
+    "or": "or",
+    "google": "Continue with Google",
+    "usernameHint": "3–20 characters. Letters, numbers, and underscore.",
+    "bioPlaceholder": "A short line",
+    "alreadySaved": "This workout was already saved",
+    "streakNow": "{{count}} day streak",
+    "partLevel": "{{part}} level {{level}}",
+    "totalXp": "{{xp}} total XP",
+    "dailyXp": "{{xp}} / {{cap}} XP today",
+    "search": "Search username",
+    "errors": {
+      "hourly_limit": "Too many workouts this hour.",
+      "daily_limit": "Daily workout limit reached.",
+      "invalid_reps": "That rep count is not allowed.",
+      "invalid_duration": "That duration is not allowed.",
+      "workout_too_short": "Stay at least 45 seconds.",
+      "workout_too_long": "This workout is too long.",
+      "workout_too_small": "Complete a little more before saving.",
+      "unknown_exercise": "That exercise is not in the catalog.",
+      "invalid_payload": "The workout could not be checked.",
+      "not_authenticated": "Sign in again.",
+      "profile_missing": "Create a username first.",
+      "username_taken": "That username is taken.",
+      "username_format": "Username must be 3–20 characters: a-z, 0-9, and _.",
+      "invalid_credentials": "Email or password is wrong.",
+      "request_failed": "The server did not accept this."
+    }
+  },
+  "profile": {
+    "levels": "Levels",
+    "levelShort": "Lv {{level}}",
+    "empty": "No levels yet."
+  },
+  "search": {
+    "title": "Find people",
+    "hint": "Type the start of a username. Tap a result to open their profile.",
+    "empty": "No one found.",
+    "notFound": "That profile is not public."
+  },
+  "body": {
+    "chest": "Chest",
+    "back": "Back",
+    "shoulders": "Shoulders",
+    "biceps": "Biceps",
+    "triceps": "Triceps",
+    "forearms": "Forearms",
+    "abs": "Abs",
+    "quadriceps": "Quadriceps",
+    "hamstrings": "Hamstrings",
+    "glutes": "Glutes",
+    "calves": "Calves"
   }
 }

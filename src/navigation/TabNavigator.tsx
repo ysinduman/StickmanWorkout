@@ -4,8 +4,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useTranslation } from 'react-i18next';
 import theme from '../constants/theme';
 import HomeScreen from '../screens/HomeScreen';
+import SearchScreen from '../screens/SearchScreen';
 import PlannerScreen from '../screens/PlannerScreen';
-import HistoryScreen from '../screens/HistoryScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 import type { TabParamList } from './types';
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -47,6 +48,16 @@ export default function TabNavigator() {
         }}
       />
       <Tab.Screen
+        name="Search"
+        component={SearchScreen}
+        options={{
+          title: t('tabs.search'),
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="account-search" size={size || 24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
         name="Planner"
         component={PlannerScreen}
         options={{
@@ -57,12 +68,12 @@ export default function TabNavigator() {
         }}
       />
       <Tab.Screen
-        name="History"
-        component={HistoryScreen}
+        name="Profile"
+        component={ProfileScreen}
         options={{
-          title: t('tabs.history'),
+          title: t('tabs.profile'),
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="history" size={size || 24} color={color} />
+            <MaterialCommunityIcons name="account" size={size || 24} color={color} />
           ),
         }}
       />

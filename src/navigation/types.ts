@@ -4,8 +4,9 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export type TabParamList = {
   Home: undefined;
+  Search: undefined;
   Planner: undefined;
-  History: undefined;
+  Profile: undefined;
 };
 
 export type RootStackParamList = {

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Modal, Dimensions } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import Animated, { FadeIn, FadeOut, ZoomIn, ZoomOut } from 'react-native-reanimated';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import { Typography, Button } from './ui';
 import { Stickman } from './Stickman/Stickman';
 import theme from '../constants/theme';
+import { useCosmeticStore } from '../stores/useCosmeticStore';
 
 interface LevelUpModalProps {
   visible: boolean;
@@ -21,6 +23,8 @@ export const LevelUpModal: React.FC<LevelUpModalProps> = ({
   newLevel,
   onClose,
 }) => {
+  const { t } = useTranslation();
+  const equipped = useCosmeticStore((state) => state.equipped);
   const [displayedMass, setDisplayedMass] = useState(previousLevel);
 
   useEffect(() => {
@@ -86,6 +90,11 @@ export const LevelUpModal: React.FC<LevelUpModalProps> = ({
           <Typography variant="body" align="center" style={styles.message}>
             Your stickman is getting stronger! Keep up the great work and maintain your streak.
           </Typography>
+          {equipped ? (
+            <Typography variant="body" align="center" style={styles.message}>
+              {t('workout.cosmeticDrop', { name: t(`cosmetic.${equipped}`) })}
+            </Typography>
+          ) : null}
 
           <Animated.View entering={FadeIn.delay(2000).duration(500)} style={styles.buttonContainer}>
             <Button title="Awesome!" onPress={onClose} style={styles.button} />

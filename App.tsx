@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StatusBar } from 'react-native';
+import { ActivityIndicator, StatusBar, View } from 'react-native';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -11,6 +11,8 @@ import TabNavigator from './src/navigation/TabNavigator';
 import ActiveWorkoutScreen from './src/screens/ActiveWorkoutScreen';
 import WorkoutSummaryScreen from './src/screens/WorkoutSummaryScreen';
 import type { RootStackParamList } from './src/navigation/types';
+import AuthScreen from './src/screens/AuthScreen';
+import { useSessionStore } from './src/stores/useSessionStore';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -42,6 +44,8 @@ function withTopSafeArea<P extends object>(Screen: React.ComponentType<P>) {
 
 export default function App() {
   const language = useSettingsStore(state => state.language);
+  const status = useSessionStore(state => state.status);
+  const initSession = useSessionStore(state => state.init);
 
   useEffect(() => {
     if (language) {
@@ -49,10 +53,21 @@ export default function App() {
     }
   }, [language]);
 
-  return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-    <SafeAreaProvider>
-      <StatusBar barStyle="light-content" />
+  useEffect(() => {
+    initSession();
+  }, [initSession]);
+
+  let body: React.ReactNode;
+  if (status === 'loading') {
+    body = (
+      <View style={{ flex: 1, justifyContent: 'center', backgroundColor: theme.colors.background.primary }}>
+        <ActivityIndicator color={theme.colors.accent.primary} />
+      </View>
+    );
+  } else if (status !== 'ready') {
+    body = <AuthScreen />;
+  } else {
+    body = (
       <NavigationContainer theme={navTheme}>
         <Stack.Navigator
           screenOptions={{
@@ -76,7 +91,15 @@ export default function App() {
           />
         </Stack.Navigator>
       </NavigationContainer>
-    </SafeAreaProvider>
+    );
+  }
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <StatusBar barStyle="light-content" />
+        {body}
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }

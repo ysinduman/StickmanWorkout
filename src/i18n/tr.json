@@ -25,7 +25,9 @@
   },
   "tabs": {
     "home": "Ana Sayfa",
+    "search": "Ara",
     "planner": "Planlayıcı",
+    "profile": "Profil",
     "history": "Geçmiş"
   },
   "home": {
@@ -33,6 +35,24 @@
     "levelUpPlan": "Planı Güçlendir",
     "noWorkoutToday": "Bugün dinlenme günü. İyi bir toparlanma geçir!",
     "streakDays": "{{count}} günlük seri 🔥",
+    "keptWeek": "Son 7 günün {{count}} günü tutuldu",
+    "doubleStepsKept": "Tutulan çift adım: {{count}}",
+    "flameStamp": "Alev {{count}} gün tutuldu",
+    "flameRisk": "{{count}} günlük seri gece yarısı söner. {{time}} kaldı.",
+    "unfinishedBar": "{{zone}} %{{percent}} dolu ve bekliyor.",
+    "pinnedZone": "Öncelik: {{zone}}",
+    "zoneBar": "{{zone}} çubuğu %{{percent}}",
+    "zoneStep": "Adım {{level}}",
+    "stepOnTheLine": "Adım {{level}} bu gece riskte",
+    "hotStart": "Sıcak başlangıç +{{bonus}} XP",
+    "pinPrompt": "Bir kas seç",
+    "emberShelf": "Kor rafı",
+    "emberBalance": "{{count}} Kor",
+    "emberPrice": "{{price}} Kor",
+    "emberBuy": "Aç",
+    "emberOwned": "Sende var",
+    "emberClosest": "En yakın",
+    "beltTally": "3 çift adım",
     "level": "Seviye {{level}}",
     "xp": "{{current}} / {{next}} XP"
   },
@@ -98,14 +118,43 @@
     "actual": "Gerçekleşen",
     "saveWorkout": "Antrenmanı Kaydet",
     "xpEarned": "+{{xp}} XP kazanıldı!",
+    "cosmeticDrop": "Düşen: {{name}}",
+    "embersEarned": "+{{count}} Kor",
+    "zoneXp": "{{zone}} +{{xp}} XP",
+    "hotStart": "Sıcak başlangıç +{{bonus}} XP",
+    "keptDayBonus": "Tutulan gün bonusu +1 Kor",
+    "doubleStep": "Çift adım",
     "greatJob": "Harika iş! 💪",
     "streakContinues": "Seri devam ediyor: {{count}} gün 🔥"
+  },
+  "shelf": {
+    "kneeSleeve": "Dizlik",
+    "headband": "Saç bandı",
+    "goldBelt": "Altın kemer"
+  },
+  "zones": {
+    "leftArm": "Sol Kol",
+    "rightArm": "Sağ Kol",
+    "shoulders": "Omuz",
+    "back": "Sırt",
+    "abs": "Karın",
+    "glutes": "Kalça",
+    "legs": "Bacak"
+  },
+  "cosmetic": {
+    "chalk_dust": "Tebeşir tozu",
+    "wrist_wrap": "Bilek bandı",
+    "ember_crown": "Kor taç"
   },
   "history": {
     "title": "Antrenman Geçmişi",
     "noHistory": "Henüz tamamlanmış antrenman yok.",
     "startFirst": "İlk antrenmanını tamamlayarak burada görmeye başla!",
+    "noHistoryDevice": "Bu telefonda kayıtlı antrenman listesi yok.",
+    "progressKept": "İlerlemen hesabında duruyor. Yeni bir antrenmanı bitirince burada görünür.",
     "totalWorkouts": "Toplam Antrenman",
+    "currentStreak": "Seri",
+    "longestStreak": "En uzun seri",
     "thisMonth": "Bu Ay",
     "date": "Tarih",
     "duration": "Süre",
@@ -151,5 +200,68 @@
     "language": "Dil",
     "english": "English",
     "turkish": "Türkçe"
+  },
+  "auth": {
+    "email": "E-posta",
+    "password": "Şifre",
+    "signIn": "Giriş yap",
+    "signUp": "Hesap aç",
+    "chooseName": "Kullanıcı adı seç",
+    "username": "kullanıcı adı",
+    "bio": "Bio",
+    "createProfile": "Profili kaydet",
+    "signOut": "Çıkış",
+    "subtitle": "Serini yak, kasını büyüt.",
+    "or": "veya",
+    "google": "Google ile devam et",
+    "usernameHint": "3–20 karakter. Harf, rakam ve alt çizgi.",
+    "bioPlaceholder": "Kısa bir cümle",
+    "alreadySaved": "Bu antrenman zaten kaydedildi",
+    "streakNow": "{{count}} günlük seri",
+    "partLevel": "{{part}} seviye {{level}}",
+    "totalXp": "{{xp}} toplam XP",
+    "dailyXp": "Bugün {{xp}} / {{cap}} XP",
+    "search": "Kullanıcı adı ara",
+    "errors": {
+      "hourly_limit": "Bu saatte çok fazla antrenman.",
+      "daily_limit": "Günlük antrenman sınırına ulaşıldı.",
+      "invalid_reps": "Bu tekrar sayısı kabul edilmiyor.",
+      "invalid_duration": "Bu süre kabul edilmiyor.",
+      "workout_too_short": "En az 45 saniye kal.",
+      "workout_too_long": "Bu antrenman çok uzun.",
+      "workout_too_small": "Kaydetmeden önce biraz daha tamamla.",
+      "unknown_exercise": "Bu egzersiz katalogda yok.",
+      "invalid_payload": "Antrenman kontrol edilemedi.",
+      "not_authenticated": "Tekrar giriş yap.",
+      "profile_missing": "Önce kullanıcı adı oluştur.",
+      "username_taken": "Bu kullanıcı adı alınmış.",
+      "username_format": "Kullanıcı adı 3–20 karakter olmalı. Yalnızca a-z, 0-9 ve _.",
+      "invalid_credentials": "E-posta veya şifre yanlış.",
+      "request_failed": "Sunucu bunu kabul etmedi."
+    }
+  },
+  "profile": {
+    "levels": "Seviyeler",
+    "levelShort": "Sv {{level}}",
+    "empty": "Henüz seviye yok."
+  },
+  "search": {
+    "title": "Profil ara",
+    "hint": "Kullanıcı adının başını yaz. Sonuca dokununca profili açılır.",
+    "empty": "Kimse bulunamadı.",
+    "notFound": "Bu profil açık değil."
+  },
+  "body": {
+    "chest": "Göğüs",
+    "back": "Sırt",
+    "shoulders": "Omuz",
+    "biceps": "Biceps",
+    "triceps": "Triceps",
+    "forearms": "Ön kol",
+    "abs": "Karın",
+    "quadriceps": "Ön bacak",
+    "hamstrings": "Arka bacak",
+    "glutes": "Kalça",
+    "calves": "Baldır"
   }
 }

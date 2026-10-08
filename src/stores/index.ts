@@ -2,3 +2,8 @@ export { usePlanStore } from './usePlanStore';
 export { useWorkoutStore } from './useWorkoutStore';
 export { useUserStore } from './useUserStore';
 export { useSettingsStore } from './useSettingsStore';
+export { useCosmeticStore } from './useCosmeticStore';
+export { usePriorityStore } from './usePriorityStore';
+export { useEmberStore } from './useEmberStore';
+export { useStampStore } from './useStampStore';
+export { useZoneStore } from './useZoneStore';
