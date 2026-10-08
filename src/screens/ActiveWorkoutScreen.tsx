@@ -80,6 +80,25 @@ export default function ActiveWorkoutScreen() {
     };
   }, [restTimerRunning, restTimeLeft, t]);
 
+  // Hooks must run on every render. The empty state used to return above these
+  // and red-screened with "Rendered fewer hooks than expected".
+  const allSets = activeWorkout?.exercises.flatMap((e) => e.sets ?? []) ?? [];
+  const completedSetsCount = allSets.filter((s) => s.completed).length;
+  const totalSetsCount = allSets.length;
+  const progressRatio = totalSetsCount > 0 ? completedSetsCount / totalSetsCount : 0;
+
+  const animatedProgress = useSharedValue(progressRatio);
+
+  useEffect(() => {
+    animatedProgress.value = withSpring(progressRatio, { damping: 20, stiffness: 90 });
+  }, [animatedProgress, progressRatio]);
+
+  const progressStyle = useAnimatedStyle(() => {
+    return {
+      width: `${animatedProgress.value * 100}%`,
+    };
+  });
+
   if (!activeWorkout) {
     return (
       <View style={styles.emptyContainer}>
@@ -92,25 +111,6 @@ export default function ActiveWorkoutScreen() {
       </View>
     );
   }
-
-  // Calculate overall workout completion progress
-  const allSets = activeWorkout.exercises.flatMap((e) => e.sets ?? []);
-  const completedSetsCount = allSets.filter((s) => s.completed).length;
-  const totalSetsCount = allSets.length;
-  const progressRatio = totalSetsCount > 0 ? completedSetsCount / totalSetsCount : 0;
-
-  // Animated Progress Bar
-  const animatedProgress = useSharedValue(progressRatio);
-
-  useEffect(() => {
-    animatedProgress.value = withSpring(progressRatio, { damping: 20, stiffness: 90 });
-  }, [progressRatio]);
-
-  const progressStyle = useAnimatedStyle(() => {
-    return {
-      width: `${animatedProgress.value * 100}%`,
-    };
-  });
 
   const handleToggleSet = (exerciseId: string, setIdx: number) => {
     const exProgress = activeWorkout.exercises.find((ex) => ex.exerciseId === exerciseId);
