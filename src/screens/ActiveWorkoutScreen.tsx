@@ -220,7 +220,7 @@ export default function ActiveWorkoutScreen() {
                     onPress={() => handleStartRestTimer(sec)}
                   >
                     <Typography variant="caption" bold color={theme.colors.accent.primary}>
-                      {sec}s
+                      {t('workout.secondsShort', { count: sec })}
                     </Typography>
                   </TouchableOpacity>
                 ))}

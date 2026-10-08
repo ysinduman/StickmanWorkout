@@ -127,6 +127,7 @@
     "close": "Kapat",
     "noActive": "Açık antrenman yok.",
     "add30s": "+30sn",
+    "secondsShort": "{{count}}sn",
     "markComplete": "Tamamla",
     "finishWorkout": "Antrenmanı Bitir",
     "summary": "Antrenman Özeti",

@@ -127,6 +127,7 @@
     "close": "Close",
     "noActive": "No active workout found.",
     "add30s": "+30s",
+    "secondsShort": "{{count}}s",
     "markComplete": "Mark Complete",
     "finishWorkout": "Finish Workout",
     "summary": "Workout Summary",
