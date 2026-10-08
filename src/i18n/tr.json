@@ -270,7 +270,14 @@
     "title": "Profil ara",
     "hint": "Kullanıcı adının başını yaz. Sonuca dokununca profili açılır.",
     "empty": "Kimse bulunamadı.",
-    "notFound": "Bu profil açık değil."
+    "notFound": "Bu profil açık değil.",
+    "top100": "Top 100",
+    "top100Hint": "En çok antrenman yapan 100 kişi, toplam XP'ye göre.",
+    "top100Empty": "Henüz XP kazanmış kimse yok.",
+    "top100Missing": "Top 100 henüz açılmadı.",
+    "top100Error": "Sıralama yüklenemedi.",
+    "xpValue": "{{xp}} XP",
+    "you": "Sen"
   },
   "body": {
     "chest": "Göğüs",

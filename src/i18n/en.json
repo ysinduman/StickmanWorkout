@@ -270,7 +270,14 @@
     "title": "Find people",
     "hint": "Type the start of a username. Tap a result to open their profile.",
     "empty": "No one found.",
-    "notFound": "That profile is not public."
+    "notFound": "That profile is not public.",
+    "top100": "Top 100",
+    "top100Hint": "The 100 people who trained the most, ranked by total XP.",
+    "top100Empty": "No one has earned XP yet.",
+    "top100Missing": "Top 100 is not ready yet.",
+    "top100Error": "Could not load the ranking.",
+    "xpValue": "{{xp}} XP",
+    "you": "You"
   },
   "body": {
     "chest": "Chest",
