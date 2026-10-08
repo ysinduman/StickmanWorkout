@@ -55,6 +55,8 @@
     "emberPrice": "{{price}} Kor",
     "emberBuy": "Aç",
     "emberOwned": "Sende var",
+    "emberShortTitle": "Kor yetmiyor",
+    "emberShortBody": "{{name}} için {{price}} Kor gerekir. Sende {{count}} Kor var.",
     "emberClosest": "En yakın",
     "beltTally": "3 çift adım",
     "level": "Seviye {{level}}",

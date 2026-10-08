@@ -55,6 +55,8 @@
     "emberPrice": "{{price}} Embers",
     "emberBuy": "Unlock",
     "emberOwned": "Owned",
+    "emberShortTitle": "Not enough embers",
+    "emberShortBody": "{{name}} needs {{price}} embers. You have {{count}}.",
     "emberClosest": "Closest",
     "beltTally": "3 double steps",
     "level": "Level {{level}}",

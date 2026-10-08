@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { usePlanStore } from '../stores/usePlanStore';
@@ -362,9 +362,24 @@ export default function HomeScreen() {
                 {item.id === 'goldBelt' && doubleStepsKept < 3 ? ` · ${t('home.beltTally')}` : ''}
               </Typography>
               <TouchableOpacity
-                disabled={!canBuy}
+                disabled={owned}
+                accessibilityRole="button"
                 style={[styles.shelfButton, !canBuy && styles.shelfButtonDisabled]}
-                onPress={() => buyShelfItem(item.id)}
+                onPress={() => {
+                  if (embers < item.price) {
+                    Alert.alert(
+                      t('home.emberShortTitle'),
+                      t('home.emberShortBody', {
+                        name: t(`shelf.${item.id}`),
+                        price: item.price,
+                        count: embers,
+                      }),
+                      [{ text: t('common.ok') }],
+                    );
+                    return;
+                  }
+                  buyShelfItem(item.id);
+                }}
               >
                 <Typography variant="caption" bold color={theme.colors.text.inverse}>
                   {owned ? t('home.emberOwned') : t('home.emberBuy')}
