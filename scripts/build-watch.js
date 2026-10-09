@@ -7,6 +7,7 @@
 const { execFileSync, spawn } = require('child_process');
 const fs = require('fs');
 const net = require('net');
+const os = require('os');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -15,6 +16,10 @@ const PID_PATH = path.join(__dirname, 'build-watch.pid');
 const INTERVAL_MS = 5 * 60 * 1000;
 const PREFERRED_PORT = '8082';
 const OUTPUT_TAIL = 16000;
+// The Cursor sandbox sets GRADLE_USER_HOME under Temp\cursor-sandbox-cache.
+// That prefix pushes Hermes prefab paths past Windows' 260-character limit
+// and ninja fails with "Filename longer than 260 characters".
+const GRADLE_USER_HOME = path.join(os.homedir(), '.gradle');
 
 let busy = false;
 let child = null;
@@ -30,18 +35,10 @@ function log(message) {
 }
 
 function isBuildRunning() {
-  const script = [
-    "$hit = Get-CimInstance Win32_Process | Where-Object {",
-    '  $c = $_.CommandLine',
-    '  if (-not $c) { return $false }',
-    "  return ($c -match 'gradlew(\\.bat)?' -or $c -match 'GradleWrapperMain' -or $c -match 'installDebug' -or $c -match 'run-android')",
-    '}',
-    "if ($hit) { 'YES' } else { 'NO' }",
-  ].join('; ');
-
+  const detector = path.join(__dirname, 'detect-android-build.ps1');
   const out = execFileSync(
     'powershell.exe',
-    ['-NoProfile', '-Command', script],
+    ['-NoProfile', '-File', detector],
     { encoding: 'utf8', timeout: 40000, windowsHide: true },
   );
   return out.includes('YES');
@@ -84,30 +81,46 @@ function runBuild(useNoPackager) {
   }
 
   log(
-    `starting build: node ${args.join(' ')} (8081 busy -> prefer port ${PREFERRED_PORT})`,
+    `starting build: node ${args.join(' ')} (8081 busy -> prefer port ${PREFERRED_PORT}; GRADLE_USER_HOME=${GRADLE_USER_HOME})`,
   );
 
   return new Promise((resolve) => {
     const chunks = [];
     child = spawn(process.execPath, args, {
       cwd: ROOT,
-      env: { ...process.env, CI: 'true' },
+      env: { ...process.env, CI: 'true', GRADLE_USER_HOME },
       windowsHide: true,
     });
 
+    let settleTimer = null;
     const capture = (buf) => {
       const text = buf.toString('utf8');
       chunks.push(text);
       process.stdout.write(text);
+      const output = chunks.join('');
+      if (
+        !settleTimer &&
+        /BUILD SUCCESSFUL/.test(output) &&
+        /Starting: Intent/.test(output)
+      ) {
+        settleTimer = setTimeout(() => {
+          if (child) {
+            log('build process stayed open after install; stopping it');
+            child.kill();
+          }
+        }, 15000);
+      }
     };
     child.stdout.on('data', capture);
     child.stderr.on('data', capture);
     child.on('error', (err) => {
+      if (settleTimer) clearTimeout(settleTimer);
       chunks.push(`\nspawn error: ${err.stack || err.message}\n`);
       child = null;
       resolve({ code: 1, output: chunks.join('') });
     });
     child.on('close', (code) => {
+      if (settleTimer) clearTimeout(settleTimer);
       child = null;
       resolve({ code: code == null ? 1 : code, output: chunks.join('') });
     });

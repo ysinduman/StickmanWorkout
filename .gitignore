@@ -26,6 +26,16 @@ yarn-error.log
 
 # testing
 /coverage
+test-reports/
+
+# logs and pids
+*.log
+*.pid
+scripts/*.pid
+
+# dev notes untracked
+gelistirici_detaylari/engagement_ideas.md
+engagement_ideas.md
 
 # typescript
 *.tsbuildinfo

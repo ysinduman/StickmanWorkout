@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Stickman Workout — 1-100 Evrim Önizleme</title>
+  <style>
+    :root {
+      --bg: #121217;
+      --card: #1C1C24;
+      --accent: #FF6B35;
+      --text: #F0F0F5;
+      --muted: #8E8E9F;
+    }
+    body {
+      margin: 0;
+      padding: 24px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      margin-bottom: 6px;
+      color: #FFF;
+    }
+    p.sub {
+      color: var(--muted);
+      margin-top: 0;
+      margin-bottom: 24px;
+    }
+    .main-layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      justify-content: center;
+      max-width: 1000px;
+      width: 100%;
+    }
+    .preview-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 320px;
+    }
+    .controls-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      flex: 1;
+      min-width: 340px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .badge {
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      background: #2A2A38;
+      color: #AAA;
+    }
+    .badge.prestige {
+      background: #FFD700;
+      color: #000;
+      font-weight: bold;
+    }
+    input[type=range] {
+      accent-color: var(--accent);
+      width: 100%;
+    }
+    .quick-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #2D2D3D;
+      color: #FFF;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: var(--accent);
+    }
+    .stage-note {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Stickman 1-100 Kas Evrim Önizleme</h1>
+  <p class="sub">1-50 Seviye: Hacim & Büyüme | 51-99 Seviye: Damarlanma (Vascularity) | 100+ Seviye: Altın Prestij Rengi</p>
+
+  <div class="main-layout">
+    <div class="preview-card">
+      <div id="svgContainer"></div>
+      <div class="stage-note" id="statusDescription">Seviye 1: Başlangıç cılız çöp adam</div>
+    </div>
+
+    <div class="controls-card">
+      <div class="quick-buttons">
+        <button onclick="setAll(1)">Lvl 1 (Cılız)</button>
+        <button onclick="setAll(25)">Lvl 25 (Orta)</button>
+        <button onclick="setAll(50)">Lvl 50 (Devasa)</button>
+        <button onclick="setAll(75)">Lvl 75 (Damarlı)</button>
+        <button onclick="setAll(100)">Lvl 100 (Prestij)</button>
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-header">
+          <span>Biceps (Pazu)</span>
+          <span id="bicepsBadge" class="badge">Lvl 1</span>
+        </div>
+        <input type="range" id="bicepsSlider" min="1" max="100" value="1" oninput="render()">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-header">
+          <span>Chest (Göğüs)</span>
+          <span id="chestBadge" class="badge">Lvl 1</span>
+        </div>
+        <input type="range" id="chestSlider" min="1" max="100" value="1" oninput="render()">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-header">
+          <span>Abs (Karın / Six-Pack)</span>
+          <span id="absBadge" class="badge">Lvl 1</span>
+        </div>
+        <input type="range" id="absSlider" min="1" max="100" value="1" oninput="render()">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-header">
+          <span>Shoulders (Omuzlar)</span>
+          <span id="shouldersBadge" class="badge">Lvl 1</span>
+        </div>
+        <input type="range" id="shouldersSlider" min="1" max="100" value="1" oninput="render()">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-header">
+          <span>Back (Kanatlar - Lats)</span>
+          <span id="backBadge" class="badge">Lvl 1</span>
+        </div>
+        <input type="range" id="backSlider" min="1" max="100" value="1" oninput="render()">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-header">
+          <span>Quadriceps & Bacak</span>
+          <span id="legsBadge" class="badge">Lvl 1</span>
+        </div>
+        <input type="range" id="legsSlider" min="1" max="100" value="1" oninput="render()">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getEvolution(level) {
+      const safeLevel = Math.max(1, Math.floor(level));
+      let growth = safeLevel <= 50 ? (safeLevel - 1) / 49 : 1.0 + Math.min(0.2, (safeLevel - 50) * 0.004);
+      let vascularity = safeLevel > 50 ? Math.min(1.0, (safeLevel - 50) / 50) : 0;
+      let veinCount = safeLevel > 50 ? Math.min(4, Math.floor((safeLevel - 50) / 12) + 1) : 0;
+      let isPrestige = safeLevel >= 100;
+      let strokeColor = isPrestige ? '#FFD700' : '#F0F0F5';
+      let fillColor = isPrestige ? '#FFE866' : '#F0F0F5';
+      let veinColor = isPrestige ? '#FFF8D0' : '#38BDF8';
+      let glowColor = isPrestige ? '#FF8800' : null;
+
+      return { level: safeLevel, growth, vascularity, veinCount, isPrestige, strokeColor, fillColor, veinColor, glowColor };
+    }
+
+    function setAll(val) {
+      document.getElementById('bicepsSlider').value = val;
+      document.getElementById('chestSlider').value = val;
+      document.getElementById('absSlider').value = val;
+      document.getElementById('shouldersSlider').value = val;
+      document.getElementById('backSlider').value = val;
+      document.getElementById('legsSlider').value = val;
+      render();
+    }
+
+    function updateBadge(id, evo) {
+      const el = document.getElementById(id);
+      el.textContent = `Lvl ${evo.level}` + (evo.isPrestige ? ' ★ PRESTİJ' : (evo.vascularity > 0 ? ' (Damarlı)' : ''));
+      el.className = 'badge ' + (evo.isPrestige ? 'prestige' : '');
+    }
+
+    function render() {
+      const bLvl = Number(document.getElementById('bicepsSlider').value);
+      const cLvl = Number(document.getElementById('chestSlider').value);
+      const aLvl = Number(document.getElementById('absSlider').value);
+      const sLvl = Number(document.getElementById('shouldersSlider').value);
+      const bkLvl = Number(document.getElementById('backSlider').value);
+      const lLvl = Number(document.getElementById('legsSlider').value);
+
+      const bEvo = getEvolution(bLvl);
+      const cEvo = getEvolution(cLvl);
+      const aEvo = getEvolution(aLvl);
+      const sEvo = getEvolution(sLvl);
+      const bkEvo = getEvolution(bkLvl);
+      const lEvo = getEvolution(lLvl);
+
+      updateBadge('bicepsBadge', bEvo);
+      updateBadge('chestBadge', cEvo);
+      updateBadge('absBadge', aEvo);
+      updateBadge('shouldersBadge', sEvo);
+      updateBadge('backBadge', bkEvo);
+      updateBadge('legsBadge', lEvo);
+
+      // Coordinates
+      const headX = 50, headY = 25, headRadius = 10;
+      const shoulderY = 39, hipsY = 71;
+      const chestSpread = 12 + cEvo.growth * 10;
+      const leftShoulderX = 50 - chestSpread;
+      const rightShoulderX = 50 + chestSpread;
+
+      // Flex arms
+      const leftElbowX = 28 - cEvo.growth * 4;
+      const leftElbowY = shoulderY - 5;
+      const leftHandX = 37 - cEvo.growth * 2;
+      const leftHandY = shoulderY - 18;
+
+      const rightElbowX = 72 + cEvo.growth * 4;
+      const rightElbowY = shoulderY - 5;
+      const rightHandX = 63 + cEvo.growth * 2;
+      const rightHandY = shoulderY - 18;
+
+      const leftBicepX = (leftShoulderX + leftElbowX) / 2;
+      const leftBicepY = (shoulderY + leftElbowY) / 2 - 3;
+      const rightBicepX = (rightShoulderX + rightElbowX) / 2;
+      const rightBicepY = (shoulderY + rightElbowY) / 2 - 3;
+      const bicepRadius = 2.5 + bEvo.growth * 7.5;
+
+      const latSpread = 4 + bkEvo.growth * 11;
+      const deltRadius = 3.5 + sEvo.growth * 7.0;
+
+      const hipWidth = 8 + lEvo.growth * 4;
+      const leftHipX = 50 - hipWidth, rightHipX = 50 + hipWidth;
+      const quadSpread = 3 + lEvo.growth * 6;
+      const leftKneeX = leftHipX - 5 - quadSpread, leftKneeY = hipsY + 22;
+      const leftFootX = leftKneeX - 2, leftFootY = leftKneeY + 22;
+      const rightKneeX = rightHipX + 5 + quadSpread, rightKneeY = hipsY + 22;
+      const rightFootX = rightKneeX + 2, rightFootY = rightKneeY + 22;
+
+      let svg = `<svg width="280" height="340" viewBox="-20 -15 140 155" style="filter: drop-shadow(0 0 10px rgba(0,0,0,0.4))">`;
+      
+      // Ambient glow
+      const hasPrestige = bEvo.isPrestige || cEvo.isPrestige || aEvo.isPrestige || sEvo.isPrestige || bkEvo.isPrestige || lEvo.isPrestige;
+      svg += `<circle cx="50" cy="60" r="48" fill="${hasPrestige ? '#FFD700' : '#FF6B35'}" opacity="${hasPrestige ? 0.15 : 0.05}"/>`;
+
+      // Back / Lats
+      if (bkEvo.growth > 0.05) {
+        if (bkEvo.isPrestige) {
+          svg += `<path d="M 50 ${shoulderY} Q ${50 - latSpread * 1.3} ${(shoulderY + hipsY) / 2} ${leftHipX} ${hipsY} L ${rightHipX} ${hipsY} Q ${50 + latSpread * 1.3} ${(shoulderY + hipsY) / 2} 50 ${shoulderY} Z" fill="#FF8800" opacity="0.25"/>`;
+        }
+        svg += `<path d="M 50 ${shoulderY + 2} Q ${50 - latSpread} ${(shoulderY + hipsY) / 2} ${leftHipX} ${hipsY} L ${rightHipX} ${hipsY} Q ${50 + latSpread} ${(shoulderY + hipsY) / 2} 50 ${shoulderY + 2} Z" fill="${bkEvo.strokeColor}" opacity="${0.35 + bkEvo.growth * 0.4}"/>`;
+      }
+
+      // Head
+      svg += `<circle cx="${headX}" cy="${headY}" r="${headRadius}" stroke="#F0F0F5" stroke-width="3.5" fill="#121217"/>`;
+
+      // Chest
+      svg += `<line x1="${leftShoulderX}" y1="${shoulderY}" x2="${rightShoulderX}" y2="${shoulderY}" stroke="${sEvo.strokeColor}" stroke-width="${4 + sEvo.growth * 4}" stroke-linecap="round"/>`;
+      if (cEvo.growth > 0.05) {
+        svg += `<path d="M 50 ${shoulderY + 3} Q ${leftShoulderX + 4} ${shoulderY + 4} ${leftShoulderX + 6} ${shoulderY + 8 + cEvo.growth * 8} Q 50 ${shoulderY + 12 + cEvo.growth * 8} 50 ${shoulderY + 3} Z" fill="${cEvo.strokeColor}" opacity="0.85"/>`;
+        svg += `<path d="M 50 ${shoulderY + 3} Q ${rightShoulderX - 4} ${shoulderY + 4} ${rightShoulderX - 6} ${shoulderY + 8 + cEvo.growth * 8} Q 50 ${shoulderY + 12 + cEvo.growth * 8} 50 ${shoulderY + 3} Z" fill="${cEvo.strokeColor}" opacity="0.85"/>`;
+        if (cEvo.vascularity > 0) {
+          svg += `<path d="M ${leftShoulderX + 8} ${shoulderY + 4} Q 46 ${shoulderY + 7} 48 ${shoulderY + 10 + cEvo.growth * 4}" stroke="${cEvo.veinColor}" stroke-width="${0.8 + cEvo.vascularity * 0.9}" fill="none" stroke-linecap="round"/>`;
+          svg += `<path d="M ${rightShoulderX - 8} ${shoulderY + 4} Q 54 ${shoulderY + 7} 52 ${shoulderY + 10 + cEvo.growth * 4}" stroke="${cEvo.veinColor}" stroke-width="${0.8 + cEvo.vascularity * 0.9}" fill="none" stroke-linecap="round"/>`;
+        }
+      }
+
+      // Torso
+      svg += `<line x1="50" y1="${shoulderY}" x2="50" y2="${hipsY}" stroke="${bkEvo.strokeColor}" stroke-width="${3 + aEvo.growth * 4}" stroke-linecap="round"/>`;
+
+      // Abs
+      if (aEvo.growth > 0.08) {
+        svg += `<rect x="${44 - aEvo.growth * 2}" y="${shoulderY + 14}" width="${5 + aEvo.growth * 2}" height="3" rx="1.5" fill="${aEvo.strokeColor}"/>`;
+        svg += `<rect x="51" y="${shoulderY + 14}" width="${5 + aEvo.growth * 2}" height="3" rx="1.5" fill="${aEvo.strokeColor}"/>`;
+        if (aEvo.level >= 20) {
+          svg += `<rect x="${44 - aEvo.growth * 2}" y="${shoulderY + 19}" width="${5 + aEvo.growth * 2}" height="3" rx="1.5" fill="${aEvo.strokeColor}"/>`;
+          svg += `<rect x="51" y="${shoulderY + 19}" width="${5 + aEvo.growth * 2}" height="3" rx="1.5" fill="${aEvo.strokeColor}"/>`;
+        }
+        if (aEvo.level >= 40) {
+          svg += `<rect x="${45 - aEvo.growth * 1.5}" y="${shoulderY + 24}" width="4.5" height="3" rx="1.5" fill="${aEvo.strokeColor}"/>`;
+          svg += `<rect x="50.5" y="${shoulderY + 24}" width="4.5" height="3" rx="1.5" fill="${aEvo.strokeColor}"/>`;
+        }
+        if (aEvo.vascularity > 0) {
+          svg += `<path d="M 42 ${shoulderY + 21} Q 46 ${shoulderY + 25} 48 ${hipsY - 2}" stroke="${aEvo.veinColor}" stroke-width="${0.8 + aEvo.vascularity * 0.7}" fill="none" stroke-linecap="round"/>`;
+          svg += `<path d="M 58 ${shoulderY + 21} Q 54 ${shoulderY + 25} 52 ${hipsY - 2}" stroke="${aEvo.veinColor}" stroke-width="${0.8 + aEvo.vascularity * 0.7}" fill="none" stroke-linecap="round"/>`;
+        }
+      }
+
+      // Shoulders Delts
+      if (sEvo.isPrestige) {
+        svg += `<circle cx="${leftShoulderX}" cy="${shoulderY}" r="${deltRadius + 2.5}" fill="#FF8800" opacity="0.3"/>`;
+        svg += `<circle cx="${rightShoulderX}" cy="${shoulderY}" r="${deltRadius + 2.5}" fill="#FF8800" opacity="0.3"/>`;
+      }
+      svg += `<circle cx="${leftShoulderX}" cy="${shoulderY}" r="${deltRadius}" fill="${sEvo.fillColor}"/>`;
+      svg += `<circle cx="${rightShoulderX}" cy="${shoulderY}" r="${deltRadius}" fill="${sEvo.fillColor}"/>`;
+
+      // Biceps
+      if (bEvo.isPrestige) {
+        svg += `<circle cx="${leftBicepX}" cy="${leftBicepY}" r="${bicepRadius + 3}" fill="#FF8800" opacity="0.3"/>`;
+        svg += `<circle cx="${rightBicepX}" cy="${rightBicepY}" r="${bicepRadius + 3}" fill="#FF8800" opacity="0.3"/>`;
+      }
+      svg += `<circle cx="${leftBicepX}" cy="${leftBicepY}" r="${bicepRadius}" fill="${bEvo.fillColor}"/>`;
+      svg += `<circle cx="${rightBicepX}" cy="${rightBicepY}" r="${bicepRadius}" fill="${bEvo.fillColor}"/>`;
+
+      // Biceps Veins
+      if (bEvo.vascularity > 0) {
+        svg += `<path d="M ${leftBicepX - bicepRadius * 0.6} ${leftBicepY + bicepRadius * 0.4} Q ${leftBicepX} ${leftBicepY - bicepRadius * 0.5} ${leftBicepX + bicepRadius * 0.6} ${leftBicepY - bicepRadius * 0.1}" stroke="${bEvo.veinColor}" stroke-width="${1.0 + bEvo.vascularity * 1.2}" fill="none" stroke-linecap="round"/>`;
+        svg += `<path d="M ${rightBicepX + bicepRadius * 0.6} ${rightBicepY + bicepRadius * 0.4} Q ${rightBicepX} ${rightBicepY - bicepRadius * 0.5} ${rightBicepX - bicepRadius * 0.6} ${rightBicepY - bicepRadius * 0.1}" stroke="${bEvo.veinColor}" stroke-width="${1.0 + bEvo.vascularity * 1.2}" fill="none" stroke-linecap="round"/>`;
+        if (bEvo.veinCount >= 2) {
+          svg += `<path d="M ${leftBicepX - 1} ${leftBicepY - bicepRadius * 0.2} Q ${leftBicepX + bicepRadius * 0.3} ${leftBicepY + bicepRadius * 0.5} ${leftBicepX + bicepRadius * 0.7} ${leftBicepY + bicepRadius * 0.6}" stroke="${bEvo.veinColor}" stroke-width="${0.8 + bEvo.vascularity * 0.7}" fill="none" stroke-linecap="round"/>`;
+          svg += `<path d="M ${rightBicepX + 1} ${rightBicepY - bicepRadius * 0.2} Q ${rightBicepX - bicepRadius * 0.3} ${rightBicepY + bicepRadius * 0.5} ${rightBicepX - bicepRadius * 0.7} ${rightBicepY + bicepRadius * 0.6}" stroke="${bEvo.veinColor}" stroke-width="${0.8 + bEvo.vascularity * 0.7}" fill="none" stroke-linecap="round"/>`;
+        }
+      }
+
+      // Arms
+      svg += `<path d="M ${leftShoulderX} ${shoulderY} L ${leftElbowX} ${leftElbowY} L ${leftHandX} ${leftHandY}" fill="none" stroke="${bEvo.strokeColor}" stroke-width="${2.5 + bEvo.growth * 4.5}" stroke-linecap="round" stroke-linejoin="round"/>`;
+      svg += `<path d="M ${rightShoulderX} ${shoulderY} L ${rightElbowX} ${rightElbowY} L ${rightHandX} ${rightHandY}" fill="none" stroke="${bEvo.strokeColor}" stroke-width="${2.5 + bEvo.growth * 4.5}" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+      // Hips & Legs
+      svg += `<line x1="${leftHipX}" y1="${hipsY}" x2="${rightHipX}" y2="${hipsY}" stroke="${lEvo.strokeColor}" stroke-width="${4 + lEvo.growth * 4}" stroke-linecap="round"/>`;
+      svg += `<path d="M ${leftHipX} ${hipsY} L ${leftKneeX} ${leftKneeY} L ${leftFootX} ${leftFootY}" fill="none" stroke="${lEvo.strokeColor}" stroke-width="${3.5 + lEvo.growth * 5.5}" stroke-linecap="round" stroke-linejoin="round"/>`;
+      svg += `<path d="M ${rightHipX} ${hipsY} L ${rightKneeX} ${rightKneeY} L ${rightFootX} ${rightFootY}" fill="none" stroke="${lEvo.strokeColor}" stroke-width="${3.5 + lEvo.growth * 5.5}" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+      if (lEvo.growth > 0.08) {
+        svg += `<circle cx="${leftKneeX - 3 - lEvo.growth * 2}" cy="${leftKneeY - 4}" r="${2 + lEvo.growth * 4.5}" fill="${lEvo.fillColor}"/>`;
+        svg += `<circle cx="${rightKneeX + 3 + lEvo.growth * 2}" cy="${rightKneeY - 4}" r="${2 + lEvo.growth * 4.5}" fill="${lEvo.fillColor}"/>`;
+        if (lEvo.vascularity > 0) {
+          svg += `<path d="M ${leftHipX - 2} ${hipsY + 3} Q ${leftKneeX - 4} ${(hipsY + leftKneeY) / 2} ${leftKneeX} ${leftKneeY - 2}" stroke="${lEvo.veinColor}" stroke-width="${0.8 + lEvo.vascularity * 0.9}" fill="none" stroke-linecap="round"/>`;
+          svg += `<path d="M ${rightHipX + 2} ${hipsY + 3} Q ${rightKneeX + 4} ${(hipsY + rightKneeY) / 2} ${rightKneeX} ${rightKneeY - 2}" stroke="${lEvo.veinColor}" stroke-width="${0.8 + lEvo.vascularity * 0.9}" fill="none" stroke-linecap="round"/>`;
+        }
+      }
+
+      svg += `</svg>`;
+      document.getElementById('svgContainer').innerHTML = svg;
+
+      let statusMsg = '';
+      if (bLvl === 100) statusMsg = '✨ Seviye 100: ALTIN PRESTİJ! Vasküler damarlar ve altın parıltı aktif.';
+      else if (bLvl > 50) statusMsg = `⚡ Seviye ${bLvl}: Vasküler Aşama! Seviye arttıkça dallanan damarlar yoğunlaşıyor.`;
+      else if (bLvl === 50) statusMsg = '🔥 Seviye 50: Maksimum Hipertrofi / Devasa Kas Hacmi!';
+      else statusMsg = `💪 Seviye ${bLvl}: Hacim Büyüme Aşaması (${Math.round(bEvo.growth * 100)}% kas kütlesi).`;
+      document.getElementById('statusDescription').textContent = statusMsg;
+    }
+
+    render();
+  </script>
+</body>
+</html>
