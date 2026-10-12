@@ -7,6 +7,7 @@ import { FlameEffect } from '../components/Calendar/FlameEffect';
 import { LevelBars } from '../components/LevelBars';
 import theme from '../constants/theme';
 import { useSessionStore } from '../stores/useSessionStore';
+import { usePriorityStore } from '../stores/usePriorityStore';
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
@@ -14,6 +15,7 @@ export default function ProfileScreen() {
   const bio = useSessionStore(state => state.bio);
   const progression = useSessionStore(state => state.progression);
   const signOut = useSessionStore(state => state.signOut);
+  const pinnedZone = usePriorityStore(state => state.pinnedZone);
   const partLevels = progression
     ? Object.fromEntries(progression.body_parts.map(part => [part.body_part_id, part.level]))
     : undefined;
@@ -26,7 +28,13 @@ export default function ProfileScreen() {
             <FlameEffect intensity={1} size={160} />
           </View>
         ) : null}
-        <Stickman muscleMass={8} partLevels={partLevels} width={170} height={200} />
+        <Stickman
+          muscleMass={8}
+          partLevels={partLevels}
+          priorityZone={pinnedZone}
+          width={170}
+          height={200}
+        />
       </View>
       <Typography variant="title1" align="center">@{username}</Typography>
       {bio ? (

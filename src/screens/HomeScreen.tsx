@@ -30,7 +30,7 @@ export default function HomeScreen() {
   const navigation = useNavigation<HomeNavigationProp>();
   const { storedPlan, getTodayPlanDay } = usePlanStore();
   const { history, startWorkout, activeWorkout } = useWorkoutStore();
-  const { level, xp, muscleMass, totalWorkouts } = useUserStore();
+  const { level, xp, muscleMass } = useUserStore();
   const { language, setLanguage } = useSettingsStore();
   const [now, setNow] = useState(() => new Date());
   const pinnedZone = usePriorityStore((state) => state.pinnedZone);

@@ -25,13 +25,19 @@ import { EXERCISE_LIBRARY } from '../constants/exercises';
 import { Typography, Card, Button } from '../components/ui';
 import { Stickman } from '../components/Stickman/Stickman';
 import theme from '../constants/theme';
-import { CompletedSet } from '../types';
+import { useSessionStore } from '../stores/useSessionStore';
+import { usePriorityStore } from '../stores/usePriorityStore';
 
 export default function ActiveWorkoutScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<WorkoutNavigationProp>();
   const { activeWorkout, updateExerciseProgress, cancelWorkout } = useWorkoutStore();
   const { muscleMass } = useUserStore();
+  const progression = useSessionStore((state) => state.progression);
+  const pinnedZone = usePriorityStore((state) => state.pinnedZone);
+  const partLevels = progression
+    ? Object.fromEntries(progression.body_parts.map((part) => [part.body_part_id, part.level]))
+    : undefined;
 
   // Timer state for static exercises (e.g. plank)
   const [activeTimerExerciseId, setActiveTimerExerciseId] = useState<string | null>(null);
@@ -180,7 +186,14 @@ export default function ActiveWorkoutScreen() {
 
         {/* Live Stickman working out */}
         <View style={styles.stickmanAvatar}>
-          <Stickman muscleMass={muscleMass} isWorkingOut={true} width={80} height={95} />
+          <Stickman
+            muscleMass={partLevels ? 8 : muscleMass}
+            partLevels={partLevels}
+            priorityZone={pinnedZone}
+            isWorkingOut={true}
+            width={80}
+            height={95}
+          />
         </View>
       </View>
 
