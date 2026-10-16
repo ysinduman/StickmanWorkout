@@ -32,9 +32,12 @@ export default function PushUpTrackerScreen() {
   const navigation = useNavigation<WorkoutNavigationProp>();
   const route = useRoute<PushUpRouteProp>();
 
-  const targetReps = route.params?.targetReps ?? 15;
-  const exerciseId = route.params?.exerciseId;
+  const exerciseId = route.params?.exerciseId || 'push_up';
+  const targetReps = route.params?.targetReps ?? (exerciseId === 'crunches' ? 20 : 15);
+  const targetTimeSeconds = route.params?.targetTimeSeconds ?? 45;
   const setIndex = route.params?.setIndex;
+  const isTimeBased = exerciseId === 'plank';
+  const targetGoal = isTimeBased ? targetTimeSeconds : targetReps;
 
   const { language } = useSettingsStore();
   const { activeWorkout, updateExerciseProgress } = useWorkoutStore();
@@ -89,7 +92,7 @@ export default function PushUpTrackerScreen() {
         setCurrentReps(data.count);
         Vibration.vibrate(50);
 
-        if (data.count >= targetReps && !showCelebration) {
+        if ((data.count >= targetGoal || data.isComplete) && !showCelebration) {
           setShowCelebration(true);
           Vibration.vibrate([0, 100, 80, 200]);
           setTimeout(() => {
@@ -130,7 +133,8 @@ export default function PushUpTrackerScreen() {
         if (nextSets[setIndex]) {
           nextSets[setIndex] = {
             ...nextSets[setIndex],
-            actualReps: currentReps > 0 ? currentReps : targetReps,
+            actualReps: isTimeBased ? undefined : (currentReps > 0 ? currentReps : targetReps),
+            actualTimeSeconds: isTimeBased ? (currentReps > 0 ? currentReps : targetTimeSeconds) : undefined,
             completed: true,
           };
           updateExerciseProgress(exerciseId, nextSets);
@@ -138,7 +142,7 @@ export default function PushUpTrackerScreen() {
       }
     } else if (currentReps > 0) {
       // Standalone session XP
-      const earnedXP = Math.max(1, Math.round(currentReps / 5));
+      const earnedXP = Math.max(1, Math.round(currentReps / (isTimeBased ? 10 : 5)));
       addXP(earnedXP);
     }
 
@@ -148,11 +152,13 @@ export default function PushUpTrackerScreen() {
   const htmlContent = useMemo(
     () =>
       getPushUpVisionHtml({
+        exerciseId,
         targetReps,
+        targetTimeSeconds,
         initialSoundEnabled: soundEnabled,
         language: language || 'tr',
       }),
-    [targetReps, soundEnabled, language]
+    [exerciseId, targetReps, targetTimeSeconds, soundEnabled, language]
   );
 
   if (hasCameraPermission === false) {
@@ -205,12 +211,34 @@ export default function PushUpTrackerScreen() {
         </TouchableOpacity>
 
         <View style={styles.targetBadge}>
-          <MaterialCommunityIcons name="fire" size={18} color={theme.colors.accent.primary} />
+          <MaterialCommunityIcons
+            name={
+              exerciseId === 'squat'
+                ? 'human-male-height'
+                : exerciseId === 'crunches'
+                ? 'yoga'
+                : exerciseId === 'plank'
+                ? 'timer-outline'
+                : 'fire'
+            }
+            size={18}
+            color={theme.colors.accent.primary}
+          />
           <Typography variant="caption" bold color={theme.colors.text.primary} style={styles.targetBadgeText}>
-            {exerciseId ? t('exercises.pushUp') : t('pushUpTracker.title')}
+            {t(
+              `exercises.${
+                exerciseId === 'crunches'
+                  ? 'crunches'
+                  : exerciseId === 'squat'
+                  ? 'squat'
+                  : exerciseId === 'plank'
+                  ? 'plank'
+                  : 'pushUp'
+              }`
+            )}
           </Typography>
           <Typography variant="caption" bold color={theme.colors.accent.primary} style={styles.targetBadgeReps}>
-            ({currentReps}/{targetReps})
+            ({currentReps}/{isTimeBased ? `${targetGoal}s` : targetGoal})
           </Typography>
         </View>
 

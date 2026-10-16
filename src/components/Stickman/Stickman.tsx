@@ -33,7 +33,11 @@ export const Stickman: React.FC<StickmanProps> = ({
     if (partLevels && typeof partLevels[id] === 'number') {
       return partLevels[id];
     }
-    // Fallback: check zone store or map muscleMass (0-100)
+    if (id === 'chest') {
+      if ((bars as any).chest) return (bars as any).chest.level || 1;
+      if (bars.leftArm) return bars.leftArm.level || 1;
+      if (bars.shoulders) return bars.shoulders.level || 1;
+    }
     if (id === 'shoulders' && bars.shoulders) return bars.shoulders.level || 1;
     if (id === 'back' && bars.back) return bars.back.level || 1;
     if (id === 'abs' && bars.abs) return bars.abs.level || 1;

@@ -15,6 +15,7 @@ export type RootStackParamList = {
   WorkoutSummary: undefined;
   PushUpTracker: {
     targetReps?: number;
+    targetTimeSeconds?: number;
     exerciseId?: string;
     setIndex?: number;
   } | undefined;

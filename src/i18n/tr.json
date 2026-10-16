@@ -191,15 +191,9 @@
   },
   "exercises": {
     "pushUp": "Şınav",
-    "benchPress": "Bench Press",
-    "pullUp": "Barfiks",
-    "deadlift": "Deadlift",
     "squat": "Squat",
-    "dumbbellCurl": "Dumbbell Curl",
-    "tricepsExtension": "Triceps Extension",
-    "plank": "Plank",
-    "crunches": "Crunch",
-    "legRaises": "Bacak Kaldırma"
+    "crunches": "Mekik",
+    "plank": "Plank"
   },
   "days": {
     "monday": "Pazartesi",
@@ -293,13 +287,13 @@
     "calves": "Baldır"
   },
   "pushUpTracker": {
-    "title": "AI Şınav Takibi",
+    "title": "AI Calisthenics Takibi",
     "subtitle": "Görüntü İşleme ile Otomatik Sayım",
     "cameraRequired": "Kamera İzni Gerekli",
-    "cameraRequiredDesc": "Şınavlarınızı görüntü işleme ile sayabilmek için kamera iznine ihtiyaç var.",
+    "cameraRequiredDesc": "Egzersizlerinizi görüntü işleme ile sayabilmek için kamera iznine ihtiyaç var.",
     "grantPermission": "İzin Ver",
     "calibrating": "Kamera Hazırlanıyor...",
-    "positionPrompt": "Kamera karşısına geçin ve şınav pozisyonu alın",
+    "positionPrompt": "Kamera karşısına geçin ve pozisyon alın",
     "ready": "Hazır",
     "goingDown": "Aşağı İn",
     "bottomReached": "Güzel! Şimdi İt",
@@ -319,10 +313,10 @@
     "formGoDeeper": "Biraz daha derine in! 📉",
     "formKeepStraight": "Vücudunu düz tut! 📏",
     "cameraButton": "AI Kamera ile Say",
-    "homeActionTitle": "AI Şınav Takibi",
-    "homeActionSubtitle": "Kameranı aç, yapay zeka şınavlarını otomatik saysın",
+    "homeActionTitle": "AI Calisthenics Takibi",
+    "homeActionSubtitle": "Kameranı aç; şınav, squat, mekik ve plank tekrarını otomatik saysın",
     "sessionCompletedTitle": "Tebrikler! 🎉",
-    "sessionCompletedDesc": "{{count}} şınavı başarıyla tamamladın!",
+    "sessionCompletedDesc": "{{count}} tekrar başarıyla tamamlandı!",
     "tryAgain": "Yeniden Dene",
     "backToWorkout": "Antrenmana Dön"
   }

@@ -370,7 +370,7 @@ export default function ActiveWorkoutScreen() {
                   </Typography>
                 </View>
 
-                {ex.id === 'push_up' && (
+                {['push_up', 'squat', 'crunches', 'plank'].includes(ex.id) && (
                   <TouchableOpacity
                     style={styles.aiBadge}
                     onPress={() => {
@@ -379,7 +379,8 @@ export default function ActiveWorkoutScreen() {
                       const planEx = activeWorkout.planDay.exercises.find((p) => p.exerciseId === ex.id);
                       const planSet = planEx?.sets?.[targetIdx];
                       navigation.navigate('PushUpTracker', {
-                        targetReps: planSet?.targetReps ?? exerciseSets[targetIdx]?.actualReps ?? 15,
+                        targetReps: planSet?.targetReps ?? exerciseSets[targetIdx]?.actualReps ?? (ex.id === 'crunches' ? 20 : 15),
+                        targetTimeSeconds: planSet?.targetTimeSeconds ?? exerciseSets[targetIdx]?.actualTimeSeconds ?? 45,
                         exerciseId: ex.id,
                         setIndex: targetIdx,
                       });
@@ -432,7 +433,9 @@ export default function ActiveWorkoutScreen() {
                               set.completed && styles.setDetailsTextCompleted,
                             ]}
                           >
-                            {planSet?.targetWeightKg ?? set.actualWeightKg ?? 0} kg ×{' '}
+                            {(planSet?.targetWeightKg ?? set.actualWeightKg ?? 0) > 0
+                              ? `${planSet?.targetWeightKg ?? set.actualWeightKg} kg × `
+                              : ''}
                             {planSet?.targetReps ?? set.actualReps ?? 10} {t('common.reps')}
                           </Typography>
                         ) : (
@@ -443,20 +446,21 @@ export default function ActiveWorkoutScreen() {
                               set.completed && styles.setDetailsTextCompleted,
                             ]}
                           >
-                            {planSet?.targetTimeSeconds ?? set.actualTimeSeconds ?? 60} {t('common.secs')}
+                            {planSet?.targetTimeSeconds ?? set.actualTimeSeconds ?? 45} {t('common.secs')}
                           </Typography>
                         )}
                       </View>
                     </View>
 
                     <View style={styles.setRight}>
-                      {/* AI Camera Tracker trigger for push-ups */}
-                      {ex.id === 'push_up' && !set.completed && (
+                      {/* AI Camera Tracker trigger for calisthenics */}
+                      {['push_up', 'squat', 'crunches', 'plank'].includes(ex.id) && !set.completed && (
                         <TouchableOpacity
                           style={styles.cameraTrackerBtn}
                           onPress={() => {
                             navigation.navigate('PushUpTracker', {
-                              targetReps: planSet?.targetReps ?? set.actualReps ?? 15,
+                              targetReps: planSet?.targetReps ?? set.actualReps ?? (ex.id === 'crunches' ? 20 : 15),
+                              targetTimeSeconds: planSet?.targetTimeSeconds ?? set.actualTimeSeconds ?? 45,
                               exerciseId: ex.id,
                               setIndex: setIdx,
                             });

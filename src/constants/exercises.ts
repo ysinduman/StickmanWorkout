@@ -5,7 +5,7 @@ import { Exercise } from '../types/exercise';
  * Names use i18n keys — the UI will resolve them via `t('exercises.pushUp')`.
  */
 export const EXERCISE_LIBRARY: Exercise[] = [
-  // ──── Chest ────
+  // ──── Göğüs & Kollar (Chest & Arms) ────
   {
     id: 'push_up',
     name: 'exercises.pushUp',
@@ -13,78 +13,21 @@ export const EXERCISE_LIBRARY: Exercise[] = [
     type: 'weight',
     defaultSets: 3,
     defaultReps: 15,
-    defaultWeightKg: 0,  // bodyweight
-  },
-  {
-    id: 'bench_press',
-    name: 'exercises.benchPress',
-    muscleGroup: 'chest',
-    type: 'weight',
-    defaultSets: 4,
-    defaultReps: 10,
-    defaultWeightKg: 40,
+    defaultWeightKg: 0, // bodyweight
   },
 
-  // ──── Back ────
-  {
-    id: 'pull_up',
-    name: 'exercises.pullUp',
-    muscleGroup: 'back',
-    type: 'weight',
-    defaultSets: 3,
-    defaultReps: 8,
-    defaultWeightKg: 0,  // bodyweight
-  },
-  {
-    id: 'deadlift',
-    name: 'exercises.deadlift',
-    muscleGroup: 'back',
-    type: 'weight',
-    defaultSets: 4,
-    defaultReps: 8,
-    defaultWeightKg: 60,
-  },
-
-  // ──── Legs ────
+  // ──── Bacaklar & Kalça (Legs & Glutes) ────
   {
     id: 'squat',
     name: 'exercises.squat',
     muscleGroup: 'legs',
     type: 'weight',
-    defaultSets: 4,
-    defaultReps: 10,
-    defaultWeightKg: 50,
+    defaultSets: 3,
+    defaultReps: 15,
+    defaultWeightKg: 0, // bodyweight
   },
 
-  // ──── Arms ────
-  {
-    id: 'dumbbell_curl',
-    name: 'exercises.dumbbellCurl',
-    muscleGroup: 'arms',
-    type: 'weight',
-    defaultSets: 3,
-    defaultReps: 12,
-    defaultWeightKg: 10,
-  },
-  {
-    id: 'triceps_extension',
-    name: 'exercises.tricepsExtension',
-    muscleGroup: 'arms',
-    type: 'weight',
-    defaultSets: 3,
-    defaultReps: 12,
-    defaultWeightKg: 8,
-  },
-
-  // ──── Core ────
-  {
-    id: 'plank',
-    name: 'exercises.plank',
-    muscleGroup: 'core',
-    type: 'time',
-    defaultSets: 3,
-    defaultTimeSeconds: 60,
-  },
+  // ──── Karın & Core (Abs) ────
   {
     id: 'crunches',
     name: 'exercises.crunches',
@@ -92,16 +35,15 @@ export const EXERCISE_LIBRARY: Exercise[] = [
     type: 'weight',
     defaultSets: 3,
     defaultReps: 20,
-    defaultWeightKg: 0,
+    defaultWeightKg: 0, // bodyweight
   },
   {
-    id: 'leg_raises',
-    name: 'exercises.legRaises',
+    id: 'plank',
+    name: 'exercises.plank',
     muscleGroup: 'core',
-    type: 'weight',
+    type: 'time',
     defaultSets: 3,
-    defaultReps: 15,
-    defaultWeightKg: 0,
+    defaultTimeSeconds: 45,
   },
 ];
 

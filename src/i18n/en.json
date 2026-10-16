@@ -191,15 +191,9 @@
   },
   "exercises": {
     "pushUp": "Push-up",
-    "benchPress": "Bench Press",
-    "pullUp": "Pull-up",
-    "deadlift": "Deadlift",
     "squat": "Squat",
-    "dumbbellCurl": "Dumbbell Curl",
-    "tricepsExtension": "Triceps Extension",
-    "plank": "Plank",
     "crunches": "Crunches",
-    "legRaises": "Leg Raises"
+    "plank": "Plank"
   },
   "days": {
     "monday": "Monday",
@@ -293,13 +287,13 @@
     "calves": "Calves"
   },
   "pushUpTracker": {
-    "title": "AI Push-Up Tracker",
+    "title": "AI Calisthenics Tracker",
     "subtitle": "Computer Vision Auto-Count",
     "cameraRequired": "Camera Permission Required",
-    "cameraRequiredDesc": "Camera permission is required to track your push-ups with computer vision.",
+    "cameraRequiredDesc": "Camera permission is required to track your exercises with computer vision.",
     "grantPermission": "Grant Permission",
     "calibrating": "Preparing Camera...",
-    "positionPrompt": "Position yourself in front of the camera in push-up stance",
+    "positionPrompt": "Position yourself in front of the camera and get ready",
     "ready": "Ready",
     "goingDown": "Go Down",
     "bottomReached": "Great! Push Up",
@@ -319,10 +313,10 @@
     "formGoDeeper": "Go a bit deeper! 📉",
     "formKeepStraight": "Keep your body straight! 📏",
     "cameraButton": "Count with AI Camera",
-    "homeActionTitle": "AI Push-Up Tracker",
-    "homeActionSubtitle": "Open your camera and let AI count your push-ups",
+    "homeActionTitle": "AI Calisthenics Tracker",
+    "homeActionSubtitle": "Open your camera and let AI count your push-ups, squats, crunches & planks",
     "sessionCompletedTitle": "Congratulations! 🎉",
-    "sessionCompletedDesc": "You completed {{count}} push-ups!",
+    "sessionCompletedDesc": "{{count}} reps successfully completed!",
     "tryAgain": "Try Again",
     "backToWorkout": "Back to Workout"
   }

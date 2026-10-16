@@ -1,22 +1,21 @@
 /**
- * Self-contained HTML/JS engine for real-time Computer Vision Push-Up Tracking.
- * Runs inside React Native WebView.
- *
- * Features:
- * 1. WebRTC camera feed with front/back camera support.
- * 2. MediaPipe Pose landmark detection (elbow angle, depth, body alignment).
- * 3. High-performance offline Optical Motion fallback tracker.
- * 4. State machine: UP -> DOWN (elbow <= 90°) -> UP (elbow >= 150°) -> REP COUNTED.
- * 5. Web Audio API synthesized sound effects & speech synthesis voice counter.
- * 6. Futuristic Stickman Neon HUD overlay (matches app's flame theme).
+ * Unified HTML/JS Computer Vision Engine for Calisthenics:
+ * - Push-Up (Şınav): Elbow angle (Shoulder - Elbow - Wrist)
+ * - Squat (Çömelme): Knee angle (Hip - Knee - Ankle)
+ * - Crunches (Mekik): Torso contraction angle (Shoulder - Hip - Knee)
+ * - Plank: Posture alignment (Shoulder - Hip - Ankle) + Real-time countdown
  */
 
 export function getPushUpVisionHtml(options: {
+  exerciseId?: string; // 'push_up' | 'squat' | 'crunches' | 'plank'
   targetReps?: number;
+  targetTimeSeconds?: number;
   initialSoundEnabled?: boolean;
   language?: string;
 }): string {
-  const target = options.targetReps || 15;
+  const exId = options.exerciseId || 'push_up';
+  const isTimeBased = exId === 'plank';
+  const target = isTimeBased ? (options.targetTimeSeconds || 45) : (options.targetReps || 15);
   const soundEnabled = options.initialSoundEnabled ?? true;
   const lang = options.language || 'tr';
 
@@ -25,7 +24,7 @@ export function getPushUpVisionHtml(options: {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Stickman AI Push-Up Vision Tracker</title>
+  <title>Stickman AI Calisthenics Tracker</title>
   <style>
     * {
       box-sizing: border-box;
@@ -56,7 +55,7 @@ export function getPushUpVisionHtml(options: {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transform: scaleX(-1); /* Mirrored for front camera by default */
+      transform: scaleX(-1);
       z-index: 1;
     }
     video.unmirrored {
@@ -83,7 +82,7 @@ export function getPushUpVisionHtml(options: {
       z-index: 10;
     }
     .hud-pill {
-      background: rgba(18, 18, 26, 0.78);
+      background: rgba(18, 18, 26, 0.82);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 107, 53, 0.35);
@@ -118,7 +117,7 @@ export function getPushUpVisionHtml(options: {
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background: rgba(18, 18, 26, 0.78);
+      background: rgba(18, 18, 26, 0.82);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -135,7 +134,7 @@ export function getPushUpVisionHtml(options: {
       background: rgba(255, 107, 53, 0.3);
     }
 
-    /* Big Center Counter */
+    /* Counter Display */
     .rep-display {
       position: absolute;
       top: 68px;
@@ -145,7 +144,7 @@ export function getPushUpVisionHtml(options: {
       flex-direction: column;
     }
     .rep-number {
-      font-size: 56px;
+      font-size: 54px;
       font-weight: 800;
       line-height: 1;
       background: linear-gradient(135deg, #FF6B35 0%, #FF9F1C 50%, #FFD166 100%);
@@ -163,7 +162,7 @@ export function getPushUpVisionHtml(options: {
       margin-top: 2px;
     }
 
-    /* Form Feedback Banner */
+    /* Feedback Banner */
     .feedback-banner {
       position: absolute;
       bottom: 24px;
@@ -196,7 +195,7 @@ export function getPushUpVisionHtml(options: {
       margin-top: 2px;
     }
 
-    /* Vertical Depth Bar (Right side) */
+    /* Depth Gauge */
     .depth-gauge {
       position: absolute;
       right: 16px;
@@ -223,7 +222,7 @@ export function getPushUpVisionHtml(options: {
     }
     .depth-target-line {
       position: absolute;
-      top: 30%; /* Target 70%+ depth */
+      top: 30%;
       left: 0;
       right: 0;
       height: 2px;
@@ -232,7 +231,7 @@ export function getPushUpVisionHtml(options: {
       z-index: 11;
     }
 
-    /* Loading / Prompt Splash */
+    /* Prompt Splash */
     #prompt-overlay {
       position: absolute;
       top: 0;
@@ -265,7 +264,7 @@ export function getPushUpVisionHtml(options: {
     .prompt-desc {
       font-size: 14px;
       color: #A0A0B8;
-      max-width: 280px;
+      max-width: 290px;
       line-height: 1.5;
     }
 
@@ -280,7 +279,6 @@ export function getPushUpVisionHtml(options: {
     }
   </style>
 
-  <!-- Load MediaPipe Pose from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
 </head>
@@ -289,7 +287,6 @@ export function getPushUpVisionHtml(options: {
     <video id="webcam" playsinline autoplay muted></video>
     <canvas id="overlay"></canvas>
 
-    <!-- Header HUD -->
     <div class="hud-header">
       <div class="hud-pill" id="status-pill">
         <span class="dot calibrating" id="status-dot"></span>
@@ -301,45 +298,74 @@ export function getPushUpVisionHtml(options: {
       </div>
     </div>
 
-    <!-- Rep Counter -->
     <div class="rep-display">
-      <div class="rep-number" id="rep-count">0</div>
-      <div class="rep-sublabel" id="rep-target">${lang === 'tr' ? `HEDEF: ${target}` : `TARGET: ${target}`}</div>
+      <div class="rep-number" id="rep-count">${isTimeBased ? target : '0'}</div>
+      <div class="rep-sublabel" id="rep-target">${isTimeBased ? (lang === 'tr' ? `HEDEF: ${target} SN` : `TARGET: ${target}S`) : (lang === 'tr' ? `HEDEF: ${target}` : `TARGET: ${target}`)}</div>
     </div>
 
-    <!-- Depth Gauge -->
     <div class="depth-gauge">
       <div class="depth-target-line"></div>
       <div class="depth-fill" id="depth-fill"></div>
     </div>
 
-    <!-- Bottom Feedback Banner -->
     <div class="feedback-banner">
       <div class="feedback-content">
         <div class="feedback-text" id="feedback-text">${lang === 'tr' ? 'Pozisyon Alın' : 'Get into Position'}</div>
-        <div class="feedback-state" id="feedback-state">${lang === 'tr' ? 'Kamera karşısında şınav vaziyeti alın' : 'Assume push-up position in camera'}</div>
+        <div class="feedback-state" id="feedback-state">${lang === 'tr' ? 'Kamera karşısında pozisyon alın' : 'Assume position in camera view'}</div>
       </div>
     </div>
 
-    <!-- Overlay Prompt -->
     <div id="prompt-overlay">
-      <div class="stickman-guide-icon">🏋️‍♂️</div>
-      <div class="prompt-title">${lang === 'tr' ? 'AI Şınav Takibi' : 'AI Push-Up Tracker'}</div>
-      <div class="prompt-desc">${lang === 'tr' ? 'Telefonunuzu yere yaslayın ve kamera karşısında şınav pozisyonu alın. Görüntü işleme tekrarınızı otomatik sayacaktır.' : 'Prop your phone and get in push-up stance. Computer vision will automatically count your reps.'}</div>
+      <div class="stickman-guide-icon" id="guide-icon">🏋️‍♂️</div>
+      <div class="prompt-title" id="guide-title">${lang === 'tr' ? 'AI Calisthenics Takibi' : 'AI Calisthenics Tracker'}</div>
+      <div class="prompt-desc" id="guide-desc">${lang === 'tr' ? 'Telefonunuzu sabit bir yere koyun ve kamera karşısında pozisyon alın.' : 'Prop your phone and assume position in front of the camera.'}</div>
     </div>
   </div>
 
   <script>
     (function() {
       var isTr = '${lang}' === 'tr';
-      var targetReps = ${target};
+      var exerciseId = '${exId}'; // 'push_up', 'squat', 'crunches', 'plank'
+      var isTimeExercise = ${isTimeBased ? 'true' : 'false'};
+      var targetGoal = ${target};
       var soundEnabled = ${soundEnabled};
-      var facingMode = 'user'; // 'user' or 'environment'
+      var facingMode = 'user';
       var repCount = 0;
+      var plankTimeRemaining = targetGoal;
       var currentStage = 'UP'; // 'UP', 'DOWN', 'BOTTOM'
       var lastRepTime = 0;
+      var lastPlankTick = Date.now();
       var mediaPipeReady = false;
       var cameraStarted = false;
+
+      // Exercise Specific Guidance Titles & Icons
+      var guideInfo = {
+        push_up: {
+          icon: '🏋️‍♂️',
+          title: isTr ? 'AI Şınav Takibi' : 'AI Push-Up Tracker',
+          desc: isTr ? 'Telefonu yere yaslayın ve şınav pozisyonu alın. Dirsekleriniz 90° büküldüğünde şınav otomatik sayılır.' : 'Assume push-up position. When elbows bend to 90°, reps count automatically.'
+        },
+        squat: {
+          icon: '🦵',
+          title: isTr ? 'AI Squat Takibi' : 'AI Squat Tracker',
+          desc: isTr ? 'Telefonu karşıya koyun ve ayakta durun. Çömeldiğinizde diz açınız takip edilerek tekrarınız sayılır.' : 'Stand in camera view. As you squat down, knee angles are tracked and reps are counted.'
+        },
+        crunches: {
+          icon: '🧘‍♂️',
+          title: isTr ? 'AI Mekik Takibi' : 'AI Crunch Tracker',
+          desc: isTr ? 'Yere yatın ve dizlerinizi bükün. Gövdenizi yukarı kaldırdığınızda mekik sayılır.' : 'Lie on your back with knees bent. Crunching your torso upwards counts your reps.'
+        },
+        plank: {
+          icon: '⏱️',
+          title: isTr ? 'AI Plank Takibi' : 'AI Plank Timer & Form',
+          desc: isTr ? 'Düz bir plank pozisyonu alın. Vücudunuz düz durduğu sürece sayaç ilerler.' : 'Hold a straight plank position. The timer counts down while your posture is aligned.'
+        }
+      };
+
+      var activeGuide = guideInfo[exerciseId] || guideInfo.push_up;
+      document.getElementById('guide-icon').textContent = activeGuide.icon;
+      document.getElementById('guide-title').textContent = activeGuide.title;
+      document.getElementById('guide-desc').textContent = activeGuide.desc;
 
       // Audio synthesizer
       var audioCtx = null;
@@ -424,7 +450,7 @@ export function getPushUpVisionHtml(options: {
         initCamera();
       });
 
-      // Calculate angle between three 2D points (A, B, C) where B is the vertex
+      // Calculate angle between three 2D points (A, B, C) where B is vertex
       function calculateAngle(a, b, c) {
         var radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
         var angle = Math.abs((radians * 180.0) / Math.PI);
@@ -434,87 +460,190 @@ export function getPushUpVisionHtml(options: {
         return angle;
       }
 
-      // Process push-up logic given elbow angle and hip alignment
-      function processPushUpKinematics(elbowAngle, hipAngle) {
-        // Clamp depth between 0% (straight arms ~160 deg) and 100% (bent ~85 deg)
-        var depth = Math.min(100, Math.max(0, Math.round(((160 - elbowAngle) / (160 - 85)) * 100)));
-        depthFillEl.style.height = depth + '%';
-
+      // Kinematics router according to exercise
+      function processKinematics(data) {
         var now = Date.now();
 
-        // State Machine
-        if (elbowAngle > 145) {
-          if (currentStage === 'BOTTOM') {
-            // Rep completed!
-            if (now - lastRepTime > 800) {
-              repCount++;
-              lastRepTime = now;
-              repCountEl.textContent = repCount;
+        // 1. PUSH-UP
+        if (exerciseId === 'push_up') {
+          var elbowAngle = data.elbowAngle || 180;
+          var depth = Math.min(100, Math.max(0, Math.round(((160 - elbowAngle) / (160 - 85)) * 100)));
+          depthFillEl.style.height = depth + '%';
 
-              // Audio celebration
-              playTone(587, 0.15, 'triangle');
-              setTimeout(function() { playTone(880, 0.25, 'triangle'); }, 120);
-              speak(String(repCount));
+          if (elbowAngle > 145) {
+            if (currentStage === 'BOTTOM') {
+              if (now - lastRepTime > 800) {
+                repCount++;
+                lastRepTime = now;
+                repCountEl.textContent = repCount;
+                playTone(587, 0.15, 'triangle');
+                setTimeout(function() { playTone(880, 0.25, 'triangle'); }, 120);
+                speak(String(repCount));
 
-              feedbackTextEl.textContent = isTr ? 'Harika Tekrar! 🔥' : 'Awesome Rep! 🔥';
-              feedbackStateEl.textContent = isTr ? (repCount + '. şınav sayıldı') : ('Rep ' + repCount + ' counted');
+                feedbackTextEl.textContent = isTr ? 'Harika Şınav! 🔥' : 'Awesome Push-Up! 🔥';
+                feedbackStateEl.textContent = isTr ? (repCount + '. tekrar sayıldı') : ('Rep ' + repCount + ' counted');
 
-              sendToNative({
-                type: 'REP_COUNTED',
-                count: repCount,
-                depth: depth,
-                target: targetReps,
-                isComplete: repCount >= targetReps
-              });
-
-              if (repCount >= targetReps) {
-                setTimeout(function() {
-                  playTone(1046, 0.4, 'sine');
-                }, 300);
+                sendToNative({
+                  type: 'REP_COUNTED',
+                  count: repCount,
+                  target: targetGoal,
+                  isComplete: repCount >= targetGoal
+                });
               }
             }
+            currentStage = 'UP';
+            feedbackTextEl.textContent = isTr ? 'Hazır / Yukarıda' : 'Ready / Up';
+            feedbackStateEl.textContent = isTr ? 'Aşağı inmeye başlayın' : 'Start lowering down';
+          } else if (elbowAngle < 95) {
+            if (currentStage !== 'BOTTOM') {
+              currentStage = 'BOTTOM';
+              playTone(320, 0.08, 'sine');
+              feedbackTextEl.textContent = isTr ? 'Güzel! Şimdi İt! 💪' : 'Good! Push Up! 💪';
+              feedbackStateEl.textContent = isTr ? 'Tam derinlik sağlandı' : 'Full depth reached';
+            }
           }
-          currentStage = 'UP';
-          feedbackTextEl.textContent = isTr ? 'Hazır / Yukarıda' : 'Ready / Up';
-          feedbackStateEl.textContent = isTr ? 'Aşağı inmeye başlayın' : 'Start lowering down';
-        } else if (elbowAngle < 95) {
-          if (currentStage !== 'BOTTOM') {
-            currentStage = 'BOTTOM';
-            playTone(320, 0.08, 'sine');
-            feedbackTextEl.textContent = isTr ? 'Güzel! Şimdi İt! 💪' : 'Good! Push Up! 💪';
-            feedbackStateEl.textContent = isTr ? 'Tam derinlik sağlandı' : 'Full depth reached';
+        }
+
+        // 2. SQUAT
+        else if (exerciseId === 'squat') {
+          var kneeAngle = data.kneeAngle || 180;
+          var sDepth = Math.min(100, Math.max(0, Math.round(((165 - kneeAngle) / (165 - 95)) * 100)));
+          depthFillEl.style.height = sDepth + '%';
+
+          if (kneeAngle > 155) {
+            if (currentStage === 'BOTTOM') {
+              if (now - lastRepTime > 800) {
+                repCount++;
+                lastRepTime = now;
+                repCountEl.textContent = repCount;
+                playTone(520, 0.15, 'triangle');
+                setTimeout(function() { playTone(784, 0.25, 'triangle'); }, 120);
+                speak(String(repCount));
+
+                feedbackTextEl.textContent = isTr ? 'Mükemmel Squat! 🦵' : 'Great Squat! 🦵';
+                feedbackStateEl.textContent = isTr ? (repCount + '. squat sayıldı') : ('Squat ' + repCount + ' counted');
+
+                sendToNative({
+                  type: 'REP_COUNTED',
+                  count: repCount,
+                  target: targetGoal,
+                  isComplete: repCount >= targetGoal
+                });
+              }
+            }
+            currentStage = 'UP';
+            feedbackTextEl.textContent = isTr ? 'Ayakta / Hazır' : 'Standing / Ready';
+            feedbackStateEl.textContent = isTr ? 'Çömelmeye başlayın' : 'Begin squatting down';
+          } else if (kneeAngle < 100) {
+            if (currentStage !== 'BOTTOM') {
+              currentStage = 'BOTTOM';
+              playTone(280, 0.08, 'sine');
+              feedbackTextEl.textContent = isTr ? 'Harika Derinlik! Doğrul! ⚡' : 'Great Depth! Stand Up! ⚡';
+              feedbackStateEl.textContent = isTr ? 'Dizler 90° büküldü' : 'Knees bent 90°';
+            }
           }
-        } else {
-          if (currentStage === 'UP') {
-            feedbackTextEl.textContent = isTr ? 'Daha Aşağı İn... 📉' : 'Lower Down... 📉';
-            feedbackStateEl.textContent = isTr ? 'Dirseklerinizi 90° bükün' : 'Bend elbows to 90°';
+        }
+
+        // 3. CRUNCHES (MEKİK)
+        else if (exerciseId === 'crunches') {
+          var torsoAngle = data.torsoAngle || 140;
+          var cDepth = Math.min(100, Math.max(0, Math.round(((135 - torsoAngle) / (135 - 80)) * 100)));
+          depthFillEl.style.height = cDepth + '%';
+
+          if (torsoAngle > 120) {
+            if (currentStage === 'BOTTOM') {
+              if (now - lastRepTime > 800) {
+                repCount++;
+                lastRepTime = now;
+                repCountEl.textContent = repCount;
+                playTone(550, 0.15, 'triangle');
+                setTimeout(function() { playTone(820, 0.25, 'triangle'); }, 120);
+                speak(String(repCount));
+
+                feedbackTextEl.textContent = isTr ? 'Harika Mekik! 🔥' : 'Great Crunch! 🔥';
+                feedbackStateEl.textContent = isTr ? (repCount + '. mekik sayıldı') : ('Crunch ' + repCount + ' counted');
+
+                sendToNative({
+                  type: 'REP_COUNTED',
+                  count: repCount,
+                  target: targetGoal,
+                  isComplete: repCount >= targetGoal
+                });
+              }
+            }
+            currentStage = 'UP';
+            feedbackTextEl.textContent = isTr ? 'Geriye Yat / Hazır' : 'Lie Back / Ready';
+            feedbackStateEl.textContent = isTr ? 'Gövdeni yukarı kaldır' : 'Lift torso up';
+          } else if (torsoAngle < 88) {
+            if (currentStage !== 'BOTTOM') {
+              currentStage = 'BOTTOM';
+              playTone(340, 0.08, 'sine');
+              feedbackTextEl.textContent = isTr ? 'Karını Sık! Şimdi İn! 💪' : 'Squeeze Abs! Now Lower! 💪';
+              feedbackStateEl.textContent = isTr ? 'Tam kasılma sağlandı' : 'Peak contraction reached';
+            }
+          }
+        }
+
+        // 4. PLANK
+        else if (exerciseId === 'plank') {
+          var spineAngle = data.spineAngle || 170;
+          var isGoodForm = spineAngle >= 150 && spineAngle <= 185;
+
+          if (isGoodForm) {
+            depthFillEl.style.height = '100%';
+            feedbackTextEl.textContent = isTr ? 'Harika Duruş! Devam! 🔥' : 'Perfect Posture! Keep Going! 🔥';
+            feedbackStateEl.textContent = isTr ? 'Vücudun düz bir çizgi halinde' : 'Straight body line maintained';
+
+            if (now - lastPlankTick >= 1000 && plankTimeRemaining > 0) {
+              lastPlankTick = now;
+              plankTimeRemaining--;
+              repCountEl.textContent = plankTimeRemaining + 's';
+
+              if (plankTimeRemaining % 10 === 0 && plankTimeRemaining > 0) {
+                playTone(440, 0.1, 'sine');
+              }
+
+              if (plankTimeRemaining === 0) {
+                playTone(659, 0.2, 'triangle');
+                setTimeout(function() { playTone(880, 0.4, 'triangle'); }, 150);
+                speak(isTr ? 'Süre Doldu! Harika iş!' : 'Time Up! Great job!');
+
+                sendToNative({
+                  type: 'REP_COUNTED',
+                  count: targetGoal,
+                  target: targetGoal,
+                  isComplete: true
+                });
+              }
+            }
+          } else {
+            depthFillEl.style.height = '35%';
+            feedbackTextEl.textContent = isTr ? 'Vücudunu Düz Tut! 📏' : 'Keep Body Straight! 📏';
+            feedbackStateEl.textContent = isTr ? 'Kalçanı düşürme veya çok kaldırma' : 'Do not sag or pike hips';
           }
         }
       }
 
-      // Draw stickman skeleton on overlay canvas
-      function drawSkeleton(landmarks, elbowAngle, pointElbow) {
+      // Draw Stickman skeleton on overlay
+      function drawSkeleton(landmarks, activeAngle, activePoint) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (!landmarks || landmarks.length === 0) return;
 
         var w = canvas.width;
         var h = canvas.height;
 
-        // Connections to draw
         var connections = [
-          [11, 12], // shoulders
-          [11, 13], [13, 15], // left arm
-          [12, 14], [14, 16], // right arm
-          [11, 23], [12, 24], // torso
-          [23, 24], // hips
-          [23, 25], [25, 27], // left leg
-          [24, 26], [26, 28]  // right leg
+          [11, 12],
+          [11, 13], [13, 15],
+          [12, 14], [14, 16],
+          [11, 23], [12, 24],
+          [23, 24],
+          [23, 25], [25, 27],
+          [24, 26], [26, 28]
         ];
 
-        // Draw glowing neon lines
         ctx.save();
         if (facingMode === 'user') {
-          // Mirror canvas drawing if video is mirrored
           ctx.translate(w, 0);
           ctx.scale(-1, 1);
         }
@@ -535,12 +664,11 @@ export function getPushUpVisionHtml(options: {
           }
         }
 
-        // Draw glowing joint points
         for (var j = 11; j <= 28; j++) {
           var p = landmarks[j];
           if (p && (p.visibility || 1) > 0.4) {
-            ctx.fillStyle = (j === 13 || j === 14) ? '#4ADE80' : '#FFD166';
-            ctx.shadowColor = ctx.fillStyle;
+            ctx.fillStyle = '#4ADE80';
+            ctx.shadowColor = '#4ADE80';
             ctx.shadowBlur = 12;
             ctx.beginPath();
             ctx.arc(p.x * w, p.y * h, 6, 0, 2 * Math.PI);
@@ -548,14 +676,13 @@ export function getPushUpVisionHtml(options: {
           }
         }
 
-        // Draw elbow angle readout
-        if (pointElbow && elbowAngle) {
+        if (activePoint && activeAngle) {
           ctx.fillStyle = '#FFFFFF';
           ctx.font = 'bold 16px sans-serif';
           ctx.shadowColor = '#000000';
           ctx.shadowBlur = 6;
-          var angleText = Math.round(elbowAngle) + '°';
-          ctx.fillText(angleText, pointElbow.x * w + 12, pointElbow.y * h - 10);
+          var angleText = Math.round(activeAngle) + '°';
+          ctx.fillText(angleText, activePoint.x * w + 12, activePoint.y * h - 10);
         }
 
         ctx.restore();
@@ -595,46 +722,57 @@ export function getPushUpVisionHtml(options: {
             }
 
             var lm = results.poseLandmarks;
-            // Key landmarks:
-            // 11: left_shoulder, 13: left_elbow, 15: left_wrist, 23: left_hip
-            // 12: right_shoulder, 14: right_elbow, 16: right_wrist, 24: right_hip
-            var lConf = ((lm[11].visibility || 0) + (lm[13].visibility || 0) + (lm[15].visibility || 0)) / 3;
-            var rConf = ((lm[12].visibility || 0) + (lm[14].visibility || 0) + (lm[16].visibility || 0)) / 3;
+            var lConfArm = ((lm[11].visibility || 0) + (lm[13].visibility || 0) + (lm[15].visibility || 0)) / 3;
+            var rConfArm = ((lm[12].visibility || 0) + (lm[14].visibility || 0) + (lm[16].visibility || 0)) / 3;
+            var lConfLeg = ((lm[23].visibility || 0) + (lm[25].visibility || 0) + (lm[27].visibility || 0)) / 3;
+            var rConfLeg = ((lm[24].visibility || 0) + (lm[26].visibility || 0) + (lm[28].visibility || 0)) / 3;
 
-            var elbowAngle = 180;
-            var hipAngle = 180;
-            var activeElbow = null;
+            var elbowAngle = (lConfArm >= rConfArm) ? calculateAngle(lm[11], lm[13], lm[15]) : calculateAngle(lm[12], lm[14], lm[16]);
+            var kneeAngle = (lConfLeg >= rConfLeg) ? calculateAngle(lm[23], lm[25], lm[27]) : calculateAngle(lm[24], lm[26], lm[28]);
+            var torsoAngle = (lConfArm >= rConfArm) ? calculateAngle(lm[11], lm[23], lm[25]) : calculateAngle(lm[12], lm[24], lm[26]);
+            var spineAngle = (lConfArm >= rConfArm) ? calculateAngle(lm[11], lm[23], lm[27]) : calculateAngle(lm[12], lm[24], lm[28]);
 
-            if (lConf >= rConf && lConf > 0.3) {
-              elbowAngle = calculateAngle(lm[11], lm[13], lm[15]);
-              hipAngle = calculateAngle(lm[11], lm[23], lm[27]);
-              activeElbow = lm[13];
-            } else if (rConf > 0.3) {
-              elbowAngle = calculateAngle(lm[12], lm[14], lm[16]);
-              hipAngle = calculateAngle(lm[12], lm[24], lm[28]);
-              activeElbow = lm[14];
+            var activePoint = null;
+            var activeAngle = null;
+
+            if (exerciseId === 'push_up') {
+              activePoint = lConfArm >= rConfArm ? lm[13] : lm[14];
+              activeAngle = elbowAngle;
+            } else if (exerciseId === 'squat') {
+              activePoint = lConfLeg >= rConfLeg ? lm[25] : lm[26];
+              activeAngle = kneeAngle;
+            } else if (exerciseId === 'crunches') {
+              activePoint = lConfArm >= rConfArm ? lm[23] : lm[24];
+              activeAngle = torsoAngle;
+            } else if (exerciseId === 'plank') {
+              activePoint = lConfArm >= rConfArm ? lm[23] : lm[24];
+              activeAngle = spineAngle;
             }
 
-            processPushUpKinematics(elbowAngle, hipAngle);
-            drawSkeleton(lm, elbowAngle, activeElbow);
+            processKinematics({
+              elbowAngle: elbowAngle,
+              kneeAngle: kneeAngle,
+              torsoAngle: torsoAngle,
+              spineAngle: spineAngle
+            });
+
+            drawSkeleton(lm, activeAngle, activePoint);
           });
         }
       } catch(e) {
-        console.warn('MediaPipe Pose init exception:', e);
+        console.warn('Pose init error:', e);
       }
 
-      // Secondary High-Performance Built-in Optical Motion Tracker (zero-network fallback)
+      // Optical Motion Fallback
       var prevFrame = null;
       var diffCanvas = document.createElement('canvas');
       diffCanvas.width = 120;
       diffCanvas.height = 90;
       var diffCtx = diffCanvas.getContext('2d');
-      var motionHistory = [];
       var opticalBaselineY = null;
 
       function processOpticalMotionFallback() {
-        if (mediaPipeReady) return; // MediaPipe is taking care of it
-
+        if (mediaPipeReady) return;
         if (video.readyState >= 2) {
           diffCtx.drawImage(video, 0, 0, 120, 90);
           var currentData = diffCtx.getImageData(0, 0, 120, 90);
@@ -656,9 +794,6 @@ export function getPushUpVisionHtml(options: {
 
             if (diffSum > 1000) {
               var avgY = weightedY / diffSum;
-              motionHistory.push(avgY);
-              if (motionHistory.length > 20) motionHistory.shift();
-
               if (opticalBaselineY === null) {
                 opticalBaselineY = avgY;
                 statusDot.classList.remove('calibrating');
@@ -669,12 +804,15 @@ export function getPushUpVisionHtml(options: {
                 }
               }
 
-              // Simulated elbow angle from vertical displacement
               var delta = avgY - opticalBaselineY;
               var pseudoAngle = Math.max(80, Math.min(170, 160 - (delta * 3.5)));
-              processPushUpKinematics(pseudoAngle, 170);
+              processKinematics({
+                elbowAngle: pseudoAngle,
+                kneeAngle: pseudoAngle,
+                torsoAngle: pseudoAngle,
+                spineAngle: 170
+              });
 
-              // Draw optical motion indicator
               ctx.clearRect(0, 0, canvas.width, canvas.height);
               ctx.strokeStyle = '#4ADE80';
               ctx.lineWidth = 3;
@@ -685,7 +823,6 @@ export function getPushUpVisionHtml(options: {
         }
       }
 
-      // Camera feed loop
       async function onFrame() {
         if (!cameraStarted) return;
         if (video.readyState >= 2) {
@@ -707,7 +844,6 @@ export function getPushUpVisionHtml(options: {
         requestAnimationFrame(onFrame);
       }
 
-      // Initialize Webcam Stream
       function initCamera() {
         if (window.stream) {
           window.stream.getTracks().forEach(function(track) { track.stop(); });
@@ -742,13 +878,13 @@ export function getPushUpVisionHtml(options: {
           });
       }
 
-      // Handle messages from React Native
       window.addEventListener('message', function(event) {
         try {
           var msg = JSON.parse(event.data);
           if (msg.type === 'RESET') {
             repCount = 0;
-            repCountEl.textContent = '0';
+            plankTimeRemaining = targetGoal;
+            repCountEl.textContent = isTimeExercise ? (targetGoal + 's') : '0';
             currentStage = 'UP';
           } else if (msg.type === 'FLIP_CAMERA') {
             flipBtn.click();
@@ -759,11 +895,9 @@ export function getPushUpVisionHtml(options: {
         } catch(e) {}
       });
 
-      // Kick off camera on page load
       window.addEventListener('DOMContentLoaded', function() {
         initCamera();
       });
-      // Safety trigger if DOM already loaded
       if (document.readyState === 'complete' || document.readyState === 'interactive') {
         initCamera();
       }

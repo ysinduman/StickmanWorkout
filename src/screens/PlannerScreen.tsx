@@ -25,6 +25,7 @@ import {
   PlannedSet,
 } from '../types';
 import { getRepository } from '../data/repositories';
+import { CALISTHENICS_PRESETS, CalisthenicsPreset } from '../data/calisthenicsPlans';
 
 type FormStep = 'type_select' | 'split_days' | 'full_body_rest' | 'exercise_select' | 'set_targets';
 
@@ -132,6 +133,30 @@ export default function PlannerScreen() {
     }
 
     setIsEditing(true);
+  };
+
+  // Select a preset Calisthenics program
+  const handleSelectPreset = (preset: CalisthenicsPreset) => {
+    Alert.alert(
+      preset.name,
+      `${preset.description}\n\nBu Calisthenics programını aktif planın olarak kaydetmek istiyor musun?`,
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.confirm'),
+          onPress: async () => {
+            setPlan(preset.plan);
+            try {
+              await getRepository().savePlan(preset.plan);
+            } catch (err) {
+              console.warn('Error saving preset plan:', err);
+            }
+            setIsEditing(false);
+            Alert.alert(t('common.success'), `${preset.name} aktif edildi! 💪`);
+          },
+        },
+      ]
+    );
   };
 
   // Cancel editing
@@ -841,7 +866,54 @@ export default function PlannerScreen() {
         {/* ──── STEP 1: Plan Type Select ──── */}
         {step === 'type_select' && (
           <View style={styles.stepContainer}>
-            <Typography variant="title2" align="center" style={{ marginBottom: theme.spacing.lg }}>
+            {/* 3 PRESET CALISTHENICS PROGRAMS */}
+            <View style={styles.presetSection}>
+              <Typography variant="title2" bold color={theme.colors.accent.primary} align="center">
+                🔥 3 Hazır Calisthenics Programı
+              </Typography>
+              <Typography
+                variant="caption"
+                color={theme.colors.text.secondary}
+                align="center"
+                style={styles.presetSubtitle}
+              >
+                Yapay zeka ile şınav, squat, mekik ve plank yaparak avatarını geliştir!
+              </Typography>
+
+              {CALISTHENICS_PRESETS.map((preset) => (
+                <Card key={preset.id} variant="elevated" style={styles.presetCard}>
+                  <View style={styles.presetHeader}>
+                    <View style={styles.flexOne}>
+                      <Typography variant="body" bold color={theme.colors.text.primary}>
+                        {preset.name}
+                      </Typography>
+                      <Typography variant="caption" color={theme.colors.accent.primary} style={styles.presetBadge}>
+                        {preset.badge} · {preset.focus.join(' · ')}
+                      </Typography>
+                    </View>
+                  </View>
+                  <Typography variant="caption" color={theme.colors.text.secondary} style={styles.presetDesc}>
+                    {preset.description}
+                  </Typography>
+                  <Button
+                    title="Bu Programı Uygula"
+                    variant="secondary"
+                    style={styles.presetApplyBtn}
+                    onPress={() => handleSelectPreset(preset)}
+                  />
+                </Card>
+              ))}
+            </View>
+
+            <View style={styles.presetDividerRow}>
+              <View style={styles.presetDividerLine} />
+              <Typography variant="caption" bold color={theme.colors.text.secondary} style={styles.dividerLabel}>
+                VEYA KENDİ ÖZEL PLANINI YAP
+              </Typography>
+              <View style={styles.presetDividerLine} />
+            </View>
+
+            <Typography variant="title2" align="center" style={styles.planTypeTitle}>
               {t('planner.choosePlanType')}
             </Typography>
 
@@ -1607,5 +1679,54 @@ const styles = StyleSheet.create({
   },
   flexBtn: {
     flex: 1,
+  },
+  presetSection: {
+    marginBottom: theme.spacing.xl,
+  },
+  presetSubtitle: {
+    marginTop: 4,
+    marginBottom: theme.spacing.md,
+  },
+  presetCard: {
+    marginBottom: theme.spacing.md,
+    backgroundColor: theme.colors.background.secondary,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 53, 0.25)',
+    padding: theme.spacing.md,
+  },
+  presetHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  flexOne: {
+    flex: 1,
+  },
+  presetBadge: {
+    marginTop: 2,
+    fontWeight: '700',
+  },
+  presetDesc: {
+    marginTop: 6,
+    lineHeight: 18,
+  },
+  presetApplyBtn: {
+    marginTop: theme.spacing.md,
+  },
+  presetDividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.xl,
+  },
+  presetDividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: theme.colors.border,
+  },
+  dividerLabel: {
+    marginHorizontal: 12,
+    letterSpacing: 1,
+  },
+  planTypeTitle: {
+    marginBottom: theme.spacing.lg,
   },
 });

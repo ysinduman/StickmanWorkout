@@ -408,7 +408,7 @@ export default function HomeScreen() {
         )}
       </View>
 
-      {/* AI PUSH-UP VISION TRACKER */}
+      {/* AI CALISTHENICS VISION TRACKER */}
       <Card variant="elevated" style={styles.aiVisionCard}>
         <View style={styles.aiVisionContent}>
           <View style={styles.aiVisionIconBox}>
@@ -423,12 +423,27 @@ export default function HomeScreen() {
             </Typography>
           </View>
         </View>
-        <Button
-          title={t('pushUpTracker.cameraButton')}
-          variant="secondary"
-          style={{ marginTop: theme.spacing.md }}
-          onPress={() => navigation.navigate('PushUpTracker')}
-        />
+
+        {/* Calisthenics Exercise Selectors */}
+        <View style={styles.calisthenicsQuickRow}>
+          {[
+            { id: 'push_up', name: t('exercises.pushUp'), icon: 'fire' },
+            { id: 'squat', name: t('exercises.squat'), icon: 'human-male-height' },
+            { id: 'crunches', name: t('exercises.crunches'), icon: 'yoga' },
+            { id: 'plank', name: t('exercises.plank'), icon: 'timer-outline' },
+          ].map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.calisthenicsQuickChip}
+              onPress={() => navigation.navigate('PushUpTracker', { exerciseId: item.id })}
+            >
+              <MaterialCommunityIcons name={item.icon} size={15} color={theme.colors.accent.primary} />
+              <Typography variant="caption" bold color={theme.colors.text.primary} style={styles.chipText}>
+                {item.name}
+              </Typography>
+            </TouchableOpacity>
+          ))}
+        </View>
       </Card>
 
       {/* CALENDAR */}
@@ -631,5 +646,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'rgba(255, 107, 53, 0.3)',
+  },
+  calisthenicsQuickRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: theme.spacing.md,
+  },
+  calisthenicsQuickChip: {
+    flex: 1,
+    minWidth: '45%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.background.tertiary,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 53, 0.25)',
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderRadius: theme.borderRadius.sm,
+  },
+  chipText: {
+    marginLeft: 4,
   },
 });
