@@ -370,6 +370,28 @@ export default function ActiveWorkoutScreen() {
                   </Typography>
                 </View>
 
+                {ex.id === 'push_up' && (
+                  <TouchableOpacity
+                    style={styles.aiBadge}
+                    onPress={() => {
+                      const firstIncompleteIdx = exerciseSets.findIndex((s) => !s.completed);
+                      const targetIdx = firstIncompleteIdx >= 0 ? firstIncompleteIdx : 0;
+                      const planEx = activeWorkout.planDay.exercises.find((p) => p.exerciseId === ex.id);
+                      const planSet = planEx?.sets?.[targetIdx];
+                      navigation.navigate('PushUpTracker', {
+                        targetReps: planSet?.targetReps ?? exerciseSets[targetIdx]?.actualReps ?? 15,
+                        exerciseId: ex.id,
+                        setIndex: targetIdx,
+                      });
+                    }}
+                  >
+                    <MaterialCommunityIcons name="camera" size={14} color={theme.colors.accent.primary} />
+                    <Typography variant="caption" bold color={theme.colors.accent.primary} style={{ marginLeft: 4 }}>
+                      {t('pushUpTracker.cameraButton')}
+                    </Typography>
+                  </TouchableOpacity>
+                )}
+
                 {isExFullyCompleted && (
                   <Animated.View entering={FadeInUp} style={styles.completedBadge}>
                     <MaterialCommunityIcons name="check-all" size={16} color={theme.colors.status.success} />
@@ -428,6 +450,25 @@ export default function ActiveWorkoutScreen() {
                     </View>
 
                     <View style={styles.setRight}>
+                      {/* AI Camera Tracker trigger for push-ups */}
+                      {ex.id === 'push_up' && !set.completed && (
+                        <TouchableOpacity
+                          style={styles.cameraTrackerBtn}
+                          onPress={() => {
+                            navigation.navigate('PushUpTracker', {
+                              targetReps: planSet?.targetReps ?? set.actualReps ?? 15,
+                              exerciseId: ex.id,
+                              setIndex: setIdx,
+                            });
+                          }}
+                        >
+                          <MaterialCommunityIcons name="camera" size={16} color={theme.colors.accent.primary} />
+                          <Typography variant="caption" bold color={theme.colors.accent.primary} style={{ marginLeft: 3 }}>
+                            AI
+                          </Typography>
+                        </TouchableOpacity>
+                      )}
+
                       {/* Timer trigger for static hold */}
                       {ex.type === 'time' && (
                         <TouchableOpacity
@@ -682,5 +723,26 @@ const styles = StyleSheet.create({
   },
   flexBtn: {
     flex: 1,
+  },
+  aiBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 107, 53, 0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 53, 0.4)',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: theme.borderRadius.sm,
+  },
+  cameraTrackerBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 107, 53, 0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 53, 0.4)',
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: theme.borderRadius.sm,
+    marginRight: theme.spacing.sm,
   },
 });

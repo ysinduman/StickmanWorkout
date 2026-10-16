@@ -10,6 +10,7 @@ import theme from './src/constants/theme';
 import TabNavigator from './src/navigation/TabNavigator';
 import ActiveWorkoutScreen from './src/screens/ActiveWorkoutScreen';
 import WorkoutSummaryScreen from './src/screens/WorkoutSummaryScreen';
+import PushUpTrackerScreen from './src/screens/PushUpTrackerScreen';
 import type { RootStackParamList } from './src/navigation/types';
 import AuthScreen from './src/screens/AuthScreen';
 import { useSessionStore } from './src/stores/useSessionStore';
@@ -87,6 +88,11 @@ export default function App() {
           <Stack.Screen
             name="WorkoutSummary"
             component={withTopSafeArea(WorkoutSummaryScreen)}
+            options={{ headerShown: false, presentation: 'fullScreenModal' }}
+          />
+          <Stack.Screen
+            name="PushUpTracker"
+            component={PushUpTrackerScreen}
             options={{ headerShown: false, presentation: 'fullScreenModal' }}
           />
         </Stack.Navigator>

@@ -13,6 +13,11 @@ export type RootStackParamList = {
   Tabs: undefined;
   ActiveWorkout: undefined;
   WorkoutSummary: undefined;
+  PushUpTracker: {
+    targetReps?: number;
+    exerciseId?: string;
+    setIndex?: number;
+  } | undefined;
 };
 
 export type HomeNavigationProp = CompositeNavigationProp<

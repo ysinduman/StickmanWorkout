@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { usePlanStore } from '../stores/usePlanStore';
@@ -407,6 +408,29 @@ export default function HomeScreen() {
         )}
       </View>
 
+      {/* AI PUSH-UP VISION TRACKER */}
+      <Card variant="elevated" style={styles.aiVisionCard}>
+        <View style={styles.aiVisionContent}>
+          <View style={styles.aiVisionIconBox}>
+            <MaterialCommunityIcons name="camera-iris" size={28} color={theme.colors.accent.primary} />
+          </View>
+          <View style={{ flex: 1, marginLeft: theme.spacing.md }}>
+            <Typography variant="body" bold color={theme.colors.text.primary}>
+              {t('pushUpTracker.homeActionTitle')}
+            </Typography>
+            <Typography variant="caption" color={theme.colors.text.secondary} style={{ marginTop: 2 }}>
+              {t('pushUpTracker.homeActionSubtitle')}
+            </Typography>
+          </View>
+        </View>
+        <Button
+          title={t('pushUpTracker.cameraButton')}
+          variant="secondary"
+          style={{ marginTop: theme.spacing.md }}
+          onPress={() => navigation.navigate('PushUpTracker')}
+        />
+      </Card>
+
       {/* CALENDAR */}
       <View style={styles.calendarSection}>
         <Calendar plan={plan} history={history} />
@@ -586,5 +610,26 @@ const styles = StyleSheet.create({
   },
   calendarSection: {
     marginTop: theme.spacing.lg,
+  },
+  aiVisionCard: {
+    marginBottom: theme.spacing.lg,
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.background.secondary,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 53, 0.3)',
+  },
+  aiVisionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  aiVisionIconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255, 107, 53, 0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 53, 0.3)',
   },
 });
