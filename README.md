@@ -53,6 +53,35 @@ Stickman karakteri statik resimler yerine `react-native-svg` üzerinde **tamamen
 
 ---
 
+## 🤖 Yapay Zeka (AI) Kamera Egzersiz Takibi
+
+Kamera üzerinden gerçek zamanlı bilgisayarlı görü (computer vision) ile vücut eklem açılarını analiz eder:
+* **Şınav (Push-up):** Dirsek ve gövde açı analizi ile tam iniş/kalkış sayımı.
+* **Squat:** Diz ve kalça açısı doğrulaması.
+* **Mekik (Crunches):** Gövde fleksiyon açısı algılama.
+* **Plank:** Düz omurga hattı doğrulaması ve canlı süre sayacı.
+* %100 Calisthenics antrenman modları ve hazır programlar (Başlangıç, Orta, İleri).
+
+---
+
+## 🚀 Hızlı Başlatma
+
+Projeyi tek tıkla emülatör ve Metro sunucusuyla başlatmak için kök dizindeki başlatıcıyı çalıştırabilirsiniz:
+```cmd
+Baslat_Stickman.bat
+```
+
+Veya manuel olarak:
+```bash
+# 1. Metro paketleyicisini başlatın
+npm start
+
+# 2. Android uygulamasını derleyip çalıştırın
+npm run android
+```
+
+---
+
 ## 🧪 Doğrulama ve Test
 
 ```bash
@@ -62,3 +91,4 @@ node scripts/verify-evolution.js
 # TypeScript tür kontrolü
 npx tsc --noEmit
 ```
+
