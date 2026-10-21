@@ -1,5 +1,12 @@
 # Stickman Workout
 
+[![React Native](https://img.shields.io/badge/React_Native-0.87.1-61DAFB?style=flat-square&logo=react&logoColor=black)](https://reactnative.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-Backend-3ECF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Zustand](https://img.shields.io/badge/State-Zustand-443e38?style=flat-square)](https://github.com/pmndrs/zustand)
+[![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?style=flat-square&logo=android&logoColor=white)](https://android.com/)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+
 Antrenman motivasyonu veren, seriye (streak) ve kas bazlı seviyelere göre dinamik olarak evrimleşen bir çöp adam (stickman) mobil fitness uygulaması.
 
 ---
@@ -86,9 +93,12 @@ npm run android
 
 ```bash
 # Evrim motoru testlerini çalıştır (1.155 durum testi)
-node scripts/verify-evolution.js
+npm run test:evolution
 
 # TypeScript tür kontrolü
-npx tsc --noEmit
+npm run typecheck
+
+# Kod kalitesi kontrolü (Linter)
+npm run lint
 ```
 

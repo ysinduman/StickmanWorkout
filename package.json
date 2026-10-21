@@ -5,7 +5,9 @@
   "scripts": {
     "android": "react-native run-android",
     "start": "react-native start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test:evolution": "node scripts/verify-evolution.js"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",

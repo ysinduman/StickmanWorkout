@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Typography } from '../ui';
 import { FlameEffect } from './FlameEffect';
 import theme from '../../constants/theme';
-import { WorkoutPlan, CompletedWorkout, CalendarDay } from '../../types';
+import { WorkoutPlan, CompletedWorkout } from '../../types';
 import { getDaysInMonth, getTodayDateString, parseLocalDateString } from '../../utils/dateUtils';
 import { calculateCalendarDays } from '../../utils/streakCalculator';
 

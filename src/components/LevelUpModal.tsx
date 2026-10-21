@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Modal, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import Animated, { FadeIn, FadeOut, ZoomIn, ZoomOut } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut, ZoomIn } from 'react-native-reanimated';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import { Typography, Button } from './ui';
 import { Stickman } from './Stickman/Stickman';
@@ -15,7 +15,7 @@ interface LevelUpModalProps {
   onClose: () => void;
 }
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 export const LevelUpModal: React.FC<LevelUpModalProps> = ({
   visible,

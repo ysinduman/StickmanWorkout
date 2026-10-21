@@ -7,7 +7,7 @@ import { useUserStore } from '../stores/useUserStore';
 import { EXERCISE_LIBRARY } from '../constants/exercises';
 import { Typography, Card, Button } from '../components/ui';
 import theme from '../constants/theme';
-import { CompletedExercise, CompletedSet, CompletedWorkout } from '../types';
+import { CompletedExercise } from '../types';
 import { calculateLevel } from '../constants/gamification';
 import { getTodayDateString } from '../utils/dateUtils';
 import { getRepository } from '../data/repositories';

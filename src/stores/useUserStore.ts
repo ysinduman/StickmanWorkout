@@ -62,8 +62,16 @@ export const useUserStore = create<UserState>()(
       },
 
       getProfile: (): UserProfile => {
-        const { addXP, resetStreak, incrementStreak, updateLastWorkoutDate, getProfile, ...profile } = get();
-        return profile;
+        const state = get();
+        return {
+          xp: state.xp,
+          level: state.level,
+          muscleMass: state.muscleMass,
+          currentStreak: state.currentStreak,
+          longestStreak: state.longestStreak,
+          totalWorkouts: state.totalWorkouts,
+          lastWorkoutDate: state.lastWorkoutDate,
+        };
       },
     }),
     {

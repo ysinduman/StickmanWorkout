@@ -1,4 +1,4 @@
-import { WorkoutPlan, CompletedWorkout, DayStatus, CalendarDay, DayOfWeek } from '../types';
+import { WorkoutPlan, CompletedWorkout, CalendarDay, DayOfWeek } from '../types';
 import { getDayNameOfWeek, formatDateString, getTodayDateString, wholeDaysBetween } from './dateUtils';
 
 /**
@@ -127,7 +127,6 @@ export function calculateCurrentStreak(
   // Sort history ascending to step through it
   const sortedHistory = [...history].sort((a, b) => a.date.localeCompare(b.date));
   const todayStr = getTodayDateString();
-  const lastWorkoutDate = sortedHistory[sortedHistory.length - 1].date;
 
   // If last workout was completed today or yesterday, streak is active.
   // We need to trace backwards from today/yesterday to count consecutive valid days.
@@ -139,7 +138,6 @@ export function calculateCurrentStreak(
   }
 
   let streak = 0;
-  let missedScheduledDayFound = false;
 
   // Track backwards up to 365 days
   for (let i = 0; i < 365; i++) {
