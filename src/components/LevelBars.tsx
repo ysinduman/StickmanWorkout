@@ -5,6 +5,85 @@ import { Typography } from './ui';
 import theme from '../constants/theme';
 import type { BodyPartProgress } from '../stores/useSessionStore';
 
+export interface UnifiedZoneBar {
+  id: 'torso' | 'arms' | 'abs' | 'legs';
+  nameKey: string;
+  level: number;
+  xp_into_level: number;
+  xp_for_next: number;
+  matchIds: string[];
+}
+
+export function aggregateToCoreZones(parts: BodyPartProgress[]): UnifiedZoneBar[] {
+  const groups: Record<'torso' | 'arms' | 'abs' | 'legs', BodyPartProgress[]> = {
+    torso: [],
+    arms: [],
+    abs: [],
+    legs: [],
+  };
+
+  for (const part of parts) {
+    const id = (part.body_part_id || '').toLowerCase();
+    if (['torso', 'chest', 'back', 'shoulders'].includes(id)) {
+      groups.torso.push(part);
+    } else if (['arms', 'biceps', 'triceps', 'forearms', 'leftarm', 'rightarm'].includes(id)) {
+      groups.arms.push(part);
+    } else if (['abs', 'core'].includes(id)) {
+      groups.abs.push(part);
+    } else if (['legs', 'quadriceps', 'hamstrings', 'calves', 'glutes'].includes(id)) {
+      groups.legs.push(part);
+    }
+  }
+
+  const base: UnifiedZoneBar[] = [
+    {
+      id: 'torso',
+      nameKey: 'body.torso',
+      level: 1,
+      xp_into_level: 0,
+      xp_for_next: 100,
+      matchIds: ['torso', 'chest', 'back', 'shoulders'],
+    },
+    {
+      id: 'arms',
+      nameKey: 'body.arms',
+      level: 1,
+      xp_into_level: 0,
+      xp_for_next: 100,
+      matchIds: ['arms', 'biceps', 'triceps', 'forearms', 'leftArm', 'rightArm'],
+    },
+    {
+      id: 'abs',
+      nameKey: 'body.abs',
+      level: 1,
+      xp_into_level: 0,
+      xp_for_next: 100,
+      matchIds: ['abs', 'core'],
+    },
+    {
+      id: 'legs',
+      nameKey: 'body.legs',
+      level: 1,
+      xp_into_level: 0,
+      xp_for_next: 100,
+      matchIds: ['legs', 'quadriceps', 'hamstrings', 'calves', 'glutes'],
+    },
+  ];
+
+  for (const item of base) {
+    const list = groups[item.id];
+    if (list && list.length > 0) {
+      item.level = Math.max(...list.map(p => p.level || 1));
+      const totalInto = list.reduce((sum, p) => sum + (p.xp_into_level || 0), 0);
+      const totalNext = list.reduce((sum, p) => sum + (p.xp_for_next || 100), 0);
+      item.xp_into_level = Math.round(totalInto / list.length);
+      item.xp_for_next = Math.round(totalNext / list.length);
+    }
+  }
+
+  return base;
+}
+
 export function LevelBars({
   parts,
   highlightIds = [],
@@ -13,28 +92,33 @@ export function LevelBars({
   highlightIds?: string[];
 }) {
   const { t } = useTranslation();
+  const unifiedBars = aggregateToCoreZones(parts || []);
 
   return (
     <View style={styles.list}>
-      {parts.map(part => {
-        const ratio = part.xp_for_next > 0 ? part.xp_into_level / part.xp_for_next : 0;
+      {unifiedBars.map(item => {
+        const ratio = item.xp_for_next > 0 ? item.xp_into_level / item.xp_for_next : 0;
         const width = `${Math.max(0, Math.min(1, ratio)) * 100}%`;
-        const priority = highlightIds.includes(part.body_part_id);
+        const priority = highlightIds.some(h =>
+          item.matchIds.some(m => m.toLowerCase() === h.toLowerCase()) ||
+          h.toLowerCase() === item.id
+        );
+
         return (
-          <View key={part.body_part_id} style={[styles.box, priority && styles.priorityBox]}>
+          <View key={item.id} style={[styles.box, priority && styles.priorityBox]}>
             <View style={styles.labelRow}>
               <Typography variant="body" bold>
-                {t(`body.${part.body_part_id}`)}
+                {t(item.nameKey)}
               </Typography>
               <Typography variant="caption" color={theme.colors.accent.primary}>
-                {t('profile.levelShort', { level: part.level })}
+                {t('profile.levelShort', { level: item.level })}
               </Typography>
             </View>
             <View style={styles.track}>
               <View style={[styles.fill, { width }]} />
             </View>
             <Typography variant="caption" color={theme.colors.text.secondary}>
-              {part.xp_into_level} / {part.xp_for_next} XP
+              {item.xp_into_level} / {item.xp_for_next} XP
             </Typography>
           </View>
         );

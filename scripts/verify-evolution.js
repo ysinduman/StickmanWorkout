@@ -1,8 +1,5 @@
-// Verification script for 1-100 procedural evolution across all body parts
-const parts = [
-  'chest', 'back', 'shoulders', 'biceps', 'triceps', 
-  'forearms', 'abs', 'quadriceps', 'hamstrings', 'glutes', 'calves'
-];
+// Verification script for 1-100 procedural evolution across 4 core body parts: Gövde, Kol, Karın, Bacak
+const parts = ['torso', 'arms', 'abs', 'legs'];
 
 function getEvolution(level, isPriority = false) {
   const safeLevel = Math.max(1, Math.floor(level));
@@ -30,7 +27,7 @@ function getEvolution(level, isPriority = false) {
   return { level: safeLevel, growth, vascularity, veinCount, tier, strokeColor, isPrestige };
 }
 
-console.log('Testing 11 body parts from level 1 to 100+ ...');
+console.log('Testing 4 basic body parts (Gövde, Kol, Karın, Bacak) from level 1 to 100+ ...');
 
 let errors = 0;
 for (const part of parts) {
@@ -72,7 +69,7 @@ for (const part of parts) {
 }
 
 if (errors === 0) {
-  console.log(`SUCCESS: All 11 body parts passed 1-100 level progression checks (1,155 state assertions verified)!`);
+  console.log(`SUCCESS: All 4 core body parts passed 1-100 level progression checks (420 state assertions verified)!`);
 } else {
   process.exit(1);
 }

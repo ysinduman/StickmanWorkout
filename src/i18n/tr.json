@@ -273,18 +273,27 @@
     "xpValue": "{{xp}} XP",
     "you": "Sen"
   },
-  "body": {
-    "chest": "Göğüs",
-    "back": "Sırt",
-    "shoulders": "Omuz",
-    "biceps": "Biceps",
-    "triceps": "Triceps",
-    "forearms": "Ön kol",
+  "zones": {
+    "torso": "Gövde",
+    "arms": "Kol",
     "abs": "Karın",
-    "quadriceps": "Ön bacak",
-    "hamstrings": "Arka bacak",
-    "glutes": "Kalça",
-    "calves": "Baldır"
+    "legs": "Bacak"
+  },
+  "body": {
+    "torso": "Gövde",
+    "arms": "Kol",
+    "abs": "Karın",
+    "legs": "Bacak",
+    "chest": "Gövde",
+    "back": "Gövde",
+    "shoulders": "Gövde",
+    "biceps": "Kol",
+    "triceps": "Kol",
+    "forearms": "Kol",
+    "quadriceps": "Bacak",
+    "hamstrings": "Bacak",
+    "glutes": "Bacak",
+    "calves": "Bacak"
   },
   "pushUpTracker": {
     "title": "AI Calisthenics Takibi",

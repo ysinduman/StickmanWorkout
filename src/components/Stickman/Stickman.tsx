@@ -28,25 +28,32 @@ export const Stickman: React.FC<StickmanProps> = ({
   const equipped = useCosmeticStore((state) => state.equipped);
   const bars = useZoneStore((state) => state.bars);
 
-  // Helper to resolve level for any body part
+  // Helper to resolve level mapped from the 4 core zones: torso, arms, abs, legs
   const getLevel = (id: string) => {
     if (partLevels && typeof partLevels[id] === 'number') {
       return partLevels[id];
     }
-    if (id === 'chest') {
+    // Torso (Gövde: chest, back, shoulders)
+    if (id === 'torso' || id === 'chest' || id === 'back' || id === 'shoulders') {
+      if (partLevels?.torso) return partLevels.torso;
+      if (bars.torso) return bars.torso.level || 1;
       if ((bars as any).chest) return (bars as any).chest.level || 1;
-      if (bars.leftArm) return bars.leftArm.level || 1;
-      if (bars.shoulders) return bars.shoulders.level || 1;
     }
-    if (id === 'shoulders' && bars.shoulders) return bars.shoulders.level || 1;
-    if (id === 'back' && bars.back) return bars.back.level || 1;
-    if (id === 'abs' && bars.abs) return bars.abs.level || 1;
-    if (id === 'glutes' && bars.glutes) return bars.glutes.level || 1;
-    if ((id === 'biceps' || id === 'triceps' || id === 'forearms') && bars.leftArm) {
-      return bars.leftArm.level || 1;
+    // Arms (Kol: biceps, triceps, forearms)
+    if (id === 'arms' || id === 'biceps' || id === 'triceps' || id === 'forearms') {
+      if (partLevels?.arms) return partLevels.arms;
+      if (bars.arms) return bars.arms.level || 1;
+      if ((bars as any).leftArm) return (bars as any).leftArm.level || 1;
     }
-    if ((id === 'quadriceps' || id === 'hamstrings' || id === 'calves') && bars.legs) {
-      return bars.legs.level || 1;
+    // Abs (Karın: abs, core)
+    if (id === 'abs' || id === 'core') {
+      if (partLevels?.abs) return partLevels.abs;
+      if (bars.abs) return bars.abs.level || 1;
+    }
+    // Legs (Bacak: quadriceps, hamstrings, calves)
+    if (id === 'legs' || id === 'quadriceps' || id === 'hamstrings' || id === 'calves') {
+      if (partLevels?.legs) return partLevels.legs;
+      if (bars.legs) return bars.legs.level || 1;
     }
     return Math.max(1, Math.round(muscleMass));
   };
@@ -54,18 +61,22 @@ export const Stickman: React.FC<StickmanProps> = ({
   const isPartPriority = (id: string) =>
     priorityZone ? bodyPartsForZone(priorityZone).includes(id) : false;
 
-  // Evolution data for all 11 anatomical parts
-  const bicepsEvo = getPartEvolution(getLevel('biceps'), isPartPriority('biceps'));
-  const tricepsEvo = getPartEvolution(getLevel('triceps'), isPartPriority('triceps'));
-  const forearmsEvo = getPartEvolution(getLevel('forearms'), isPartPriority('forearms'));
-  const chestEvo = getPartEvolution(getLevel('chest'), false);
-  const absEvo = getPartEvolution(getLevel('abs'), isPartPriority('abs'));
-  const shouldersEvo = getPartEvolution(getLevel('shoulders'), isPartPriority('shoulders'));
-  const backEvo = getPartEvolution(getLevel('back'), isPartPriority('back'));
-  const quadsEvo = getPartEvolution(getLevel('quadriceps'), isPartPriority('quadriceps'));
-  const hamsEvo = getPartEvolution(getLevel('hamstrings'), isPartPriority('hamstrings'));
-  const calvesEvo = getPartEvolution(getLevel('calves'), isPartPriority('calves'));
-  const glutesEvo = getPartEvolution(getLevel('glutes'), isPartPriority('glutes'));
+  // Evolution data for core visual anatomy
+  const torsoLevel = getLevel('torso');
+  const armsLevel = getLevel('arms');
+  const absLevel = getLevel('abs');
+  const legsLevel = getLevel('legs');
+
+  const bicepsEvo = getPartEvolution(armsLevel, isPartPriority('arms'));
+  const tricepsEvo = getPartEvolution(armsLevel, isPartPriority('arms'));
+  const forearmsEvo = getPartEvolution(armsLevel, isPartPriority('arms'));
+  const chestEvo = getPartEvolution(torsoLevel, isPartPriority('torso'));
+  const absEvo = getPartEvolution(absLevel, isPartPriority('abs'));
+  const shouldersEvo = getPartEvolution(torsoLevel, isPartPriority('torso'));
+  const backEvo = getPartEvolution(torsoLevel, isPartPriority('torso'));
+  const quadsEvo = getPartEvolution(legsLevel, isPartPriority('legs'));
+  const hamsEvo = getPartEvolution(legsLevel, isPartPriority('legs'));
+  const calvesEvo = getPartEvolution(legsLevel, isPartPriority('legs'));
 
   // Coordinate geometry
   const headX = 50;
@@ -131,7 +142,7 @@ export const Stickman: React.FC<StickmanProps> = ({
   const deltRadius = 3.5 + shouldersEvo.growth * 7.0; // Level 1: 3.5, Level 50: 10.5
 
   // Hips and Legs
-  const hipWidth = 8 + glutesEvo.growth * 5;
+  const hipWidth = 10;
   const leftHipX = 50 - hipWidth;
   const rightHipX = 50 + hipWidth;
 
@@ -558,14 +569,14 @@ export const Stickman: React.FC<StickmanProps> = ({
           </G>
         )}
 
-        {/* ================= HIPS & GLUTES ================= */}
+        {/* ================= HIPS / PELVIS ================= */}
         <Line
           x1={leftHipX}
           y1={hipsY}
           x2={rightHipX}
           y2={hipsY}
-          stroke={glutesEvo.strokeColor}
-          strokeWidth={4 + glutesEvo.growth * 5}
+          stroke={quadsEvo.strokeColor}
+          strokeWidth={3.5}
           strokeLinecap="round"
         />
 

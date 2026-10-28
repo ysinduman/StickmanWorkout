@@ -273,18 +273,27 @@
     "xpValue": "{{xp}} XP",
     "you": "You"
   },
-  "body": {
-    "chest": "Chest",
-    "back": "Back",
-    "shoulders": "Shoulders",
-    "biceps": "Biceps",
-    "triceps": "Triceps",
-    "forearms": "Forearms",
+  "zones": {
+    "torso": "Torso",
+    "arms": "Arms",
     "abs": "Abs",
-    "quadriceps": "Quadriceps",
-    "hamstrings": "Hamstrings",
-    "glutes": "Glutes",
-    "calves": "Calves"
+    "legs": "Legs"
+  },
+  "body": {
+    "torso": "Torso",
+    "arms": "Arms",
+    "abs": "Abs",
+    "legs": "Legs",
+    "chest": "Torso",
+    "back": "Torso",
+    "shoulders": "Torso",
+    "biceps": "Arms",
+    "triceps": "Arms",
+    "forearms": "Arms",
+    "quadriceps": "Legs",
+    "hamstrings": "Legs",
+    "glutes": "Legs",
+    "calves": "Legs"
   },
   "pushUpTracker": {
     "title": "AI Calisthenics Tracker",

@@ -16,7 +16,7 @@
   <a href="https://supabase.com/"><img src="https://img.shields.io/badge/Supabase-Backend-3ECF8E?style=flat-square&logo=supabase&logoColor=white" alt="Supabase" /></a>
   <a href="https://github.com/pmndrs/zustand"><img src="https://img.shields.io/badge/State-Zustand-443e38?style=flat-square" alt="Zustand" /></a>
   <a href="https://android.com/"><img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Platform" /></a>
-  <a href="https://github.com/ysinduman/StickmanWorkout"><img src="https://img.shields.io/badge/Tests-1155%20Passing-success?style=flat-square" alt="Tests" /></a>
+  <a href="https://github.com/ysinduman/StickmanWorkout"><img src="https://img.shields.io/badge/Tests-420%20Passing-success?style=flat-square" alt="Tests" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License" /></a>
 </p>
 
@@ -27,7 +27,7 @@
 | Özellik | Açıklama |
 | :--- | :--- |
 | 🤖 **AI Kamera Takibi (Computer Vision)** | Ön kamera üzerinden gerçek zamanlı eklem ve açı analizi (Şınav, Squat, Mekik, Plank). |
-| ⚡ **1–100 Dinamik Vektörel Kas Motoru** | `react-native-svg` ile 11 kas grubunun tamamen prosedürel, matematiksel büyüme ve damarlanma grafiği. |
+| ⚡ **4 Temel Kas Bölgesi (1–100 Vektörel Motor)** | Gereksiz karmaşıklıktan arındırılmış **Gövde**, **Kol**, **Karın** ve **Bacak** odaklı dinamik prosedürel SVG motoru. |
 | 🔥 **Seri (Streak) ve Dopamin Sistemi** | Günlük seri koruma, seri dondurma (streak freeze), kutlama konfetileri ve seviye atlama modalleri. |
 | 🏆 **3 Kademeli Prestij Sistemi** | 1-50 Hacim Büyümesi, 51-99 Vasküler Damarlanma, 100+ Altın/Elmas/Efsanevi parıltı auraları. |
 | 🔊 **Etkileşimli Ses ve Geri Bildirim** | Tekrar sayımlarında ve form doğrulamalarında dinamik Web Audio sentezleyici bip tonları. |
@@ -35,28 +35,20 @@
 
 ---
 
-## 🚀 1–100 Dinamik Kas Evrim Motoru
+## 🚀 4 Temel Kas Bölgesi ve 1–100 Evrim Motoru
 
-Stickman karakteri statik resimler yerine `react-native-svg` üzerinde **tamamen prosedürel (matematiksel)** olarak çizilir. Her kas bölgesi bağımsız olarak 1'den 100+ seviyeye kadar 3 ana evreden geçer:
+Uygulama, karmaşık ve gereksiz vücut bölgeleri yerine en temel 4 ana bölgeye odaklanır:
 
-### 1. Seviye 1 – 50: Kas Hipertrofisi ve Hacim Büyümesi
-* **Biceps (Pazu):** Cılız koldan devasa pazu yumrusuna genişler.
-* **Chest (Göğüs):** İnce omuz çizgisinden geniş, zırh plaka şeklinde pektoral kaslara dönüşür.
-* **Abs (Karın):** Düz gövdeden derin kesimli 2'li, 4'lü ve 6'lı karın tuğlalarına (shredded six-pack) evrilir.
-* **Shoulders (Omuzlar):** Eklem noktasında kafa boyutuna yaklaşan 3D gülle (cannonball) deltoidlere büyür.
-* **Back (Kanatlar - Lats):** Gövdeden iki yana açılan geniş V-Taper sırt kanatları oluşur.
-* **Bacaklar (Quads & Calves):** Dış bacak kavisi (quad sweep) ve elmas kalf kasları belirir.
-* **50. Seviye:** Maksimum kas hacmine (`growth = 1.0`) ulaşır.
+### 4 Temel Kas Bölgesi:
+1. **Gövde (Torso):** Göğüs, sırt kanatları (V-Taper) ve omuz gülleleri (cannonball deltoids).
+2. **Kol (Arms):** Pazu (biceps), triceps ve ön kol kütlesi.
+3. **Karın (Abs):** Derin kesimli six-pack tuğlaları ve core hattı.
+4. **Bacak (Legs):** Dış bacak kavisi (quad sweep) ve kalf formu.
 
-### 2. Seviye 51 – 99: Damarlanma (Vascularity) Aşaması
-* 50. seviyeden sonra kas boyutu korunurken her yeni seviyede kasların üzerine dallanan vasküler damar hatları eklenir.
-* Seviye arttıkça damarların sayısı (1'den 4'e kadar dallanma), kalınlığı ve belirginliği artar (`vascularity: 0.02 → 1.0`).
-* Biceps cephalic damarı, göğüs damarları, alt karın (Apollo kemeri) damarları ve ön bacak femoral damarları belirir.
-
-### 3. Seviye 100+: Prestij Kademesi & Renk Değişimi
-* **Seviye 100 – 199 (Altın Prestij):** Kas grubu ve damarları **Altın (`#FFD700`)** rengine bürünür ve arkasında altın aura parıltısı yanar.
-* **Seviye 200 – 299 (Elmas Mavi):** Siber platin / elmas mavi (`#00F0FF`) tier.
-* **Seviye 300+ (Kozmik Mor):** Efsanevi mor (`#BD00FF`) aura.
+### Evrim Evreleri:
+* **Seviye 1 – 50 (Hipertrofi):** Temel cılız çöp adamdan devasa kas kütlesine doğru lineer/sub-kuadratik büyüme (`growth: 0.0 → 1.0`).
+* **Seviye 51 – 99 (Damarlanma - Vascularity):** Hacim korunurken her seviyede dallanan vasküler damar hatları kalınlaşır (`vascularity: 0.02 → 1.0`).
+* **Seviye 100+ (Prestij Auraları):** 100-199 Altın (`#FFD700`), 200-299 Elmas Mavi (`#00F0FF`), 300+ Efsanevi Kozmik Mor (`#BD00FF`).
 
 ---
 

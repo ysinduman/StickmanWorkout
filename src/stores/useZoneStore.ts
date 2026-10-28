@@ -63,10 +63,28 @@ export const useZoneStore = create<ZoneState>()(
       storage: createJSONStorage(() => AsyncStorage),
       merge: (persisted, current) => {
         const saved = persisted as Partial<ZoneState> | undefined;
+        const base = emptyBars();
+        if (saved?.bars) {
+          const raw = saved.bars as Record<string, any>;
+          // Migrate legacy or custom keys
+          const armLvl = Math.max(raw.arms?.level ?? 0, raw.leftArm?.level ?? 0, raw.rightArm?.level ?? 0);
+          const armXp = Math.max(raw.arms?.xp ?? 0, raw.leftArm?.xp ?? 0, raw.rightArm?.xp ?? 0);
+          const torsoLvl = Math.max(raw.torso?.level ?? 0, raw.shoulders?.level ?? 0, raw.back?.level ?? 0, raw.chest?.level ?? 0);
+          const torsoXp = Math.max(raw.torso?.xp ?? 0, raw.shoulders?.xp ?? 0, raw.back?.xp ?? 0, raw.chest?.xp ?? 0);
+          const absLvl = Math.max(raw.abs?.level ?? 0, raw.core?.level ?? 0);
+          const absXp = Math.max(raw.abs?.xp ?? 0, raw.core?.xp ?? 0);
+          const legLvl = Math.max(raw.legs?.level ?? 0, raw.glutes?.level ?? 0);
+          const legXp = Math.max(raw.legs?.xp ?? 0, raw.glutes?.xp ?? 0);
+
+          base.arms = { level: armLvl, xp: armXp };
+          base.torso = { level: torsoLvl, xp: torsoXp };
+          base.abs = { level: absLvl, xp: absXp };
+          base.legs = { level: legLvl, xp: legXp };
+        }
         return {
           ...current,
           ...saved,
-          bars: { ...emptyBars(), ...(saved?.bars ?? {}) },
+          bars: base,
         };
       },
     },
