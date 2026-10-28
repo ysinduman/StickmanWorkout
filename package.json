@@ -45,6 +45,7 @@
     "@types/jest": "^29.5.14",
     "@types/react": "^19.2.0",
     "eslint": "^8.19.0",
+    "react-native-dotenv": "^5.0.0",
     "typescript": "^6.0.3"
   },
   "engines": {

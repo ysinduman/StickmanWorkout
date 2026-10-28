@@ -42,7 +42,10 @@ engagement_ideas.md
 *.tsbuildinfo
 
 # local env files
+.env
+.env.local
 .env*.local
+!.env.example
 
 # Yarn
 .yarn/*
