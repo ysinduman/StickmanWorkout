@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Modal, Dimensions } from 'react-native';
+import { StyleSheet, View, Modal, Dimensions, Vibration } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Animated, { FadeIn, FadeOut, ZoomIn } from 'react-native-reanimated';
 import ConfettiCannon from 'react-native-confetti-cannon';
@@ -30,6 +30,9 @@ export const LevelUpModal: React.FC<LevelUpModalProps> = ({
   useEffect(() => {
     if (visible) {
       setDisplayedMass(previousLevel);
+      try {
+        Vibration.vibrate([0, 100, 80, 200, 100, 300]);
+      } catch (_) {}
       
       // Animate muscle mass growth over time
       const delay = setTimeout(() => {
