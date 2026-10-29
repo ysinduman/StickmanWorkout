@@ -273,7 +273,7 @@ export default function SearchScreen() {
 
                   {item.current_streak > 0 && (
                     <View style={styles.meta}>
-                      <MaterialCommunityIcons name="flame" size={12} color={theme.colors.flame.warm} />
+                      <MaterialCommunityIcons name="fire" size={13} color={theme.colors.flame.warm} />
                       <Typography variant="caption" color={theme.colors.flame.warm}>
                         {t('home.streakDays', { count: item.current_streak })}
                       </Typography>

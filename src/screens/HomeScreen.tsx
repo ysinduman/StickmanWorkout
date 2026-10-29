@@ -209,7 +209,7 @@ export default function HomeScreen() {
 
               {/* Streak Badge */}
               <View style={[styles.streakBadge, highestStamp != null && streak >= 3 && styles.stampBadge]}>
-                <MaterialCommunityIcons name="flame" size={14} color={theme.colors.text.inverse} />
+                <MaterialCommunityIcons name="fire" size={14} color={theme.colors.text.inverse} />
                 <Typography variant="label" bold color={theme.colors.text.inverse} style={{ marginLeft: 2 }}>
                   {t('home.streakDays', { count: progression?.current_streak ?? streak })}
                 </Typography>

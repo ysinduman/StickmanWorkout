@@ -38,7 +38,7 @@
     "workoutToday": "Training day. Start when you're ready.",
     "workoutInProgress": "You have a workout in progress. Pick up where you left off.",
     "workoutDoneToday": "You already trained today. Nice work.",
-    "streakDays": "{{count}} day streak 🔥",
+    "streakDays": "{{count}} Day Streak",
     "keptWeek": "Kept {{count}} of the last 7 days",
     "doubleStepsKept": "Double steps kept: {{count}}",
     "flameStamp": "Flame kept {{count}} days",
@@ -191,9 +191,21 @@
   },
   "exercises": {
     "pushUp": "Push-up",
+    "push_up": "Push-up",
     "squat": "Squat",
     "crunches": "Crunches",
-    "plank": "Plank"
+    "plank": "Plank",
+    "benchPress": "Bench Press",
+    "bench_press": "Bench Press",
+    "pullUp": "Pull-up",
+    "pull_up": "Pull-up",
+    "overheadPress": "Overhead Press",
+    "overhead_press": "Overhead Press",
+    "deadlift": "Deadlift",
+    "dips": "Dips",
+    "lunges": "Lunges",
+    "bicepCurl": "Bicep Curl",
+    "bicep_curl": "Bicep Curl"
   },
   "days": {
     "monday": "Monday",

@@ -800,7 +800,8 @@ export default function PlannerScreen() {
 
                 {wd.exercises.map((ex) => {
                   const exDetails = EXERCISE_LIBRARY.find((e) => e.id === ex.exerciseId);
-                  const exTitle = exDetails ? t(exDetails.name) : ex.exerciseId;
+                  const fallbackTitle = ex.exerciseId.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                  const exTitle = exDetails ? t(exDetails.name) : t(`exercises.${ex.exerciseId}`, { defaultValue: fallbackTitle });
                   return (
                     <View key={ex.exerciseId} style={styles.summaryExerciseRow}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
@@ -828,7 +829,8 @@ export default function PlannerScreen() {
               </Typography>
               {plan.workoutDay.exercises.map((ex) => {
                 const exDetails = EXERCISE_LIBRARY.find((e) => e.id === ex.exerciseId);
-                const exTitle = exDetails ? t(exDetails.name) : ex.exerciseId;
+                const fallbackTitle = ex.exerciseId.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                const exTitle = exDetails ? t(exDetails.name) : t(`exercises.${ex.exerciseId}`, { defaultValue: fallbackTitle });
                 return (
                   <View key={ex.exerciseId} style={styles.summaryExerciseRow}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>

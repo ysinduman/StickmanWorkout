@@ -270,19 +270,19 @@ const styles = StyleSheet.create({
   badgesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent: 'space-between',
     gap: 8,
     marginBottom: theme.spacing.md,
   },
   achievementBadgeCard: {
-    flex: 1,
-    minWidth: '22%',
+    width: '48%',
     alignItems: 'center',
     backgroundColor: theme.colors.background.secondary,
     borderRadius: theme.borderRadius.md,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    paddingVertical: 10,
-    paddingHorizontal: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
   },
   achievementUnlocked: {
     borderColor: 'rgba(255, 107, 53, 0.4)',

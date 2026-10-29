@@ -38,7 +38,7 @@
     "workoutToday": "Bugün antrenman günü. Hazırsan başlayalım.",
     "workoutInProgress": "Açık bir antrenmanın var. Kaldığın yerden devam et.",
     "workoutDoneToday": "Bugünkü antrenmanı bitirdin. İyi iş.",
-    "streakDays": "{{count}} günlük seri 🔥",
+    "streakDays": "{{count}} Günlük Seri",
     "keptWeek": "Son 7 günün {{count}} günü tutuldu",
     "doubleStepsKept": "Tutulan çift adım: {{count}}",
     "flameStamp": "Alev {{count}} gün tutuldu",
@@ -191,9 +191,21 @@
   },
   "exercises": {
     "pushUp": "Şınav",
+    "push_up": "Şınav",
     "squat": "Squat",
     "crunches": "Mekik",
-    "plank": "Plank"
+    "plank": "Plank",
+    "benchPress": "Bench Press",
+    "bench_press": "Bench Press",
+    "pullUp": "Barfiks",
+    "pull_up": "Barfiks",
+    "overheadPress": "Omuz Presi",
+    "overhead_press": "Omuz Presi",
+    "deadlift": "Deadlift",
+    "dips": "Dips",
+    "lunges": "Lunge",
+    "bicepCurl": "Biceps Curl",
+    "bicep_curl": "Biceps Curl"
   },
   "days": {
     "monday": "Pazartesi",
