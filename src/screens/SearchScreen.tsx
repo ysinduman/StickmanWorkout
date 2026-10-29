@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Typography, Button, Card } from '../components/ui';
 import { LevelBars } from '../components/LevelBars';
 import { Stickman } from '../components/Stickman/Stickman';
@@ -221,43 +222,71 @@ export default function SearchScreen() {
         }
         renderItem={({ item }) => {
           const mine = myName != null && item.username === myName;
-          const top = item.rank <= 3;
+          const isRank1 = item.rank === 1;
+          const isRank2 = item.rank === 2;
+          const isRank3 = item.rank === 3;
+          const topColor = isRank1 ? '#FFD700' : isRank2 ? '#C0C0C0' : isRank3 ? '#CD7F32' : undefined;
+
           return (
             <TouchableOpacity
               onPress={() => openProfile(item.username)}
               disabled={opening || searching}
               accessibilityRole="button"
+              activeOpacity={0.75}
             >
-              <Card style={[styles.row, mine && styles.rowMine]}>
-                <View style={[styles.rank, top && styles.rankTop]}>
-                  <Typography
-                    variant="body"
-                    bold
-                    color={top ? theme.colors.text.inverse : theme.colors.accent.primary}
-                  >
-                    {item.rank}
-                  </Typography>
+              <Card style={[styles.row, mine && styles.rowMine, isRank1 && styles.rowRank1]}>
+                <View
+                  style={[
+                    styles.rank,
+                    topColor ? { backgroundColor: `${topColor}20`, borderColor: topColor } : null,
+                  ]}
+                >
+                  {isRank1 ? (
+                    <MaterialCommunityIcons name="crown" size={18} color="#FFD700" />
+                  ) : isRank2 ? (
+                    <MaterialCommunityIcons name="medal" size={18} color="#C0C0C0" />
+                  ) : isRank3 ? (
+                    <MaterialCommunityIcons name="medal-outline" size={18} color="#CD7F32" />
+                  ) : (
+                    <Typography
+                      variant="body"
+                      bold
+                      color={mine ? theme.colors.accent.primary : theme.colors.text.secondary}
+                    >
+                      {item.rank}
+                    </Typography>
+                  )}
                 </View>
                 <View style={styles.who}>
-                  <Typography variant="body" bold numberOfLines={1}>@{item.username}</Typography>
-                  {mine || item.current_streak > 0 ? (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <Typography variant="body" bold numberOfLines={1} color={mine ? theme.colors.accent.primary : theme.colors.text.primary}>
+                      @{item.username}
+                    </Typography>
+                    {mine && (
+                      <View style={styles.youBadge}>
+                        <Typography variant="label" bold color="#FFF" style={{ fontSize: 9 }}>
+                          SEN
+                        </Typography>
+                      </View>
+                    )}
+                  </View>
+
+                  {item.current_streak > 0 && (
                     <View style={styles.meta}>
-                      {mine ? (
-                        <Typography variant="caption" color={theme.colors.accent.primary}>
-                          {t('search.you')}
-                        </Typography>
-                      ) : null}
-                      {item.current_streak > 0 ? (
-                        <Typography variant="caption">
-                          {t('home.streakDays', { count: item.current_streak })}
-                        </Typography>
-                      ) : null}
+                      <MaterialCommunityIcons name="flame" size={12} color={theme.colors.flame.warm} />
+                      <Typography variant="caption" color={theme.colors.flame.warm}>
+                        {t('home.streakDays', { count: item.current_streak })}
+                      </Typography>
                     </View>
-                  ) : null}
+                  )}
                 </View>
-                <Typography variant="body" bold color={theme.colors.accent.primary}>
-                  {t('search.xpValue', { xp: formatXp(item.total_xp, i18n.language) })}
-                </Typography>
+
+                <View style={styles.xpBadgeBox}>
+                  <MaterialCommunityIcons name="lightning-bolt" size={14} color={topColor ?? theme.colors.accent.primary} />
+                  <Typography variant="body" bold color={topColor ?? theme.colors.accent.primary} style={{ marginLeft: 2 }}>
+                    {formatXp(item.total_xp, i18n.language)} XP
+                  </Typography>
+                </View>
               </Card>
             </TouchableOpacity>
           );
@@ -339,14 +368,43 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.sm,
     paddingVertical: theme.spacing.md,
     paddingHorizontal: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
+    backgroundColor: theme.colors.background.secondary,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   rowMine: {
     borderColor: theme.colors.accent.primary,
+    backgroundColor: '#16131F',
+    borderWidth: 1.5,
+  },
+  rowRank1: {
+    borderColor: '#FFD700',
+    borderWidth: 1.5,
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  youBadge: {
+    backgroundColor: theme.colors.accent.primary,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 4,
+  },
+  xpBadgeBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 107, 53, 0.1)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: theme.borderRadius.sm,
   },
   rank: {
-    width: 36,
-    height: 36,
-    borderRadius: theme.borderRadius.sm,
+    width: 38,
+    height: 38,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.colors.background.tertiary,

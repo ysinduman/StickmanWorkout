@@ -158,68 +158,97 @@ export default function HomeScreen() {
           : t('home.noWorkoutToday');
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Header bar: Language Switch */}
+    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+      {/* Header Bar: Brand Logo & Language Switch */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.langBtn} onPress={toggleLanguage}>
-          <Typography variant="label" bold color={theme.colors.accent.primary}>
+        <View style={styles.logoRow}>
+          <MaterialCommunityIcons name="lightning-bolt" size={24} color={theme.colors.accent.primary} />
+          <Typography variant="title2" bold color={theme.colors.text.primary} style={styles.logoTitle}>
+            STICKMAN
+          </Typography>
+          <View style={styles.tycoonBadge}>
+            <Typography variant="label" bold color={theme.colors.text.inverse} style={{ fontSize: 9 }}>
+              TYCOON
+            </Typography>
+          </View>
+        </View>
+
+        <TouchableOpacity style={styles.langBtn} onPress={toggleLanguage} activeOpacity={0.8}>
+          <MaterialCommunityIcons name="translate" size={14} color={theme.colors.accent.primary} />
+          <Typography variant="label" bold color={theme.colors.accent.primary} style={{ marginLeft: 4 }}>
             {language === 'en' ? 'TR' : 'EN'}
           </Typography>
         </TouchableOpacity>
       </View>
 
-      {/* Gamification Bar */}
+      {/* Gamification Bar / Tycoon Stats Card */}
       <Card style={styles.userStatsCard}>
         <View style={styles.statRow}>
           <View>
-            <Typography variant="title2" bold>
+            <Typography variant="title2" bold color={theme.colors.text.primary}>
               {progression
                 ? t('auth.totalXp', { xp: progression.total_xp })
                 : t('home.level', { level })}
             </Typography>
-            <Typography variant="caption">
+            <Typography variant="caption" color={theme.colors.text.secondary}>
               {progression
                 ? t('auth.dailyXp', { xp: progression.daily_xp, cap: progression.daily_cap })
                 : `${xp} / ${nextLevelXp} XP`}
             </Typography>
           </View>
+
           <View style={styles.streakColumn}>
-            <View style={[styles.streakBadge, highestStamp != null && streak >= 3 && styles.stampBadge]}>
-              <Typography variant="body" bold color={theme.colors.text.inverse}>
-                {t('home.streakDays', { count: progression?.current_streak ?? streak })}
-              </Typography>
+            <View style={styles.badgesRow}>
+              {/* Ember Token Pill */}
+              <View style={styles.emberPill}>
+                <MaterialCommunityIcons name="fire" size={14} color="#FF9F1C" />
+                <Typography variant="label" bold color="#FF9F1C" style={{ marginLeft: 3 }}>
+                  {embers}
+                </Typography>
+              </View>
+
+              {/* Streak Badge */}
+              <View style={[styles.streakBadge, highestStamp != null && streak >= 3 && styles.stampBadge]}>
+                <MaterialCommunityIcons name="flame" size={14} color={theme.colors.text.inverse} />
+                <Typography variant="label" bold color={theme.colors.text.inverse} style={{ marginLeft: 2 }}>
+                  {t('home.streakDays', { count: progression?.current_streak ?? streak })}
+                </Typography>
+              </View>
             </View>
+
             {progression ? null : (
-              <>
-                <Typography variant="caption" align="center" style={styles.keptWeek}>
+              <View style={styles.miniStatsRow}>
+                <Typography variant="caption" style={styles.keptWeek}>
                   {t('home.keptWeek', { count: keptDays })}
                 </Typography>
-                <Typography variant="caption" align="center" style={styles.keptWeek}>
-                  {t('home.doubleStepsKept', { count: doubleStepsKept })}
+                <Typography variant="caption" style={styles.keptWeek}>
+                  • {t('home.doubleStepsKept', { count: doubleStepsKept })}
                 </Typography>
-              </>
+              </View>
             )}
           </View>
         </View>
+
         {showUnfinishedBar && pinnedZone ? (
           <Typography variant="caption" align="center" style={styles.unfinishedBar}>
             {t('home.unfinishedBar', { zone: t(`zones.${pinnedZone}`), percent: pinnedPercent })}
           </Typography>
         ) : null}
+
         {/* Progress Bar */}
         <View style={styles.progressBarBg}>
           <View
-          style={[
-            styles.progressBarFill,
-            {
-              width: `${
-                (progression
-                  ? Math.min(1, progression.daily_xp / Math.max(1, progression.daily_cap))
-                  : progress) * 100
-              }%`,
-            },
-          ]}
-        />
+            style={[
+              styles.progressBarFill,
+              {
+                width: `${
+                  (progression
+                    ? Math.min(1, progression.daily_xp / Math.max(1, progression.daily_cap))
+                    : progress) * 100
+                }%`,
+              },
+            ]}
+          />
         </View>
       </Card>
 
@@ -234,22 +263,59 @@ export default function HomeScreen() {
         </View>
       )}
 
+      {/* Stickman Character Showcase on Podium */}
       <View style={styles.stickmanSection}>
+        {pinnedZone && (
+          <View style={styles.priorityFloatTag}>
+            <MaterialCommunityIcons name="target" size={13} color="#FFF" />
+            <Typography variant="label" bold color="#FFF" style={{ fontSize: 11, marginLeft: 4 }}>
+              {t(`zones.${pinnedZone}`).toUpperCase()} ODAKLI
+            </Typography>
+          </View>
+        )}
+
         {progression && progression.current_streak > 0 ? (
           <View style={styles.homeFlame}>
             <FlameEffect intensity={Math.min(1, 0.45 + (progression.current_streak % 100) / 140)} size={150} />
           </View>
         ) : null}
+
         <Stickman
           muscleMass={partLevels ? 8 : muscleMass}
           partLevels={partLevels}
           priorityZone={pinnedZone}
         />
+
+        {/* Podium Base */}
+        <View style={styles.podiumBase}>
+          <View style={styles.podiumRing} />
+        </View>
       </View>
 
+      {/* Speech Bubble / Trainer Dialogue */}
+      <View style={styles.speechCard}>
+        <MaterialCommunityIcons name="comment-text-outline" size={18} color={theme.colors.accent.primary} />
+        <Typography variant="caption" color={theme.colors.text.primary} style={styles.speechText}>
+          {speech}
+        </Typography>
+      </View>
+
+      {/* Tycoon Zone Stat Upgrades Card */}
       {progression && username ? (
         <Card style={styles.serverCard}>
-          <Typography variant="title2">@{username}</Typography>
+          <View style={styles.sectionHeaderRow}>
+            <View>
+              <Typography variant="title2" bold color={theme.colors.text.primary}>
+                KAS GELİŞİMİ
+              </Typography>
+              <Typography variant="caption" color={theme.colors.text.secondary}>
+                @{username} • 4 Temel Bölge Durumu
+              </Typography>
+            </View>
+            <View style={styles.tycoonIconBadge}>
+              <MaterialCommunityIcons name="arm-flex" size={20} color={theme.colors.accent.primary} />
+            </View>
+          </View>
           <LevelBars
             parts={progression.body_parts}
             highlightIds={pinnedZone ? bodyPartsForZone(pinnedZone) : []}
@@ -257,69 +323,65 @@ export default function HomeScreen() {
         </Card>
       ) : null}
 
-      <View>
-        {pinnedZone ? (
-          <>
-            <Typography variant="body" bold align="center" style={styles.pinnedLabel}>
-              {t('home.zoneBar', {
-                zone: t(`zones.${pinnedZone}`),
-                percent: zoneBars[pinnedZone]?.xp ?? 0,
-              })}
-            </Typography>
-            <View style={styles.zoneBarBg}>
-              <View
-                style={[styles.zoneBarFill, { width: `${zoneBars[pinnedZone]?.xp ?? 0}%` }]}
-              />
+      {/* Active Priority Mission Card */}
+      {pinnedZone && (
+        <Card style={styles.priorityCard}>
+          <View style={styles.priorityCardHeader}>
+            <View style={styles.priorityCardTitleRow}>
+              <MaterialCommunityIcons name="target-variant" size={20} color={theme.colors.accent.primary} />
+              <Typography variant="body" bold color={theme.colors.text.primary} style={{ marginLeft: 6 }}>
+                Aktif Gelişim Hedefi: {t(`zones.${pinnedZone}`)}
+              </Typography>
             </View>
-            <Typography variant="caption" align="center" style={styles.pinnedLabel}>
+            <Typography variant="label" bold color={theme.colors.accent.primary}>
+              %{zoneBars[pinnedZone]?.xp ?? 0}
+            </Typography>
+          </View>
+
+          <View style={styles.zoneBarBg}>
+            <View style={[styles.zoneBarFill, { width: `${zoneBars[pinnedZone]?.xp ?? 0}%` }]} />
+          </View>
+
+          <View style={styles.priorityMetaRow}>
+            <Typography variant="caption" color={theme.colors.text.secondary}>
               {t('home.zoneStep', { level: zoneBars[pinnedZone]?.level ?? 0 })}
             </Typography>
-            {showStepOnTheLine ? (
-              <Typography variant="caption" align="center" style={styles.pinnedLabel}>
-                {t('home.stepOnTheLine', { level: pinnedStep })}
-              </Typography>
-            ) : null}
-            {lastHotStart?.zone === pinnedZone ? (
-              <Typography variant="caption" align="center" style={styles.pinnedLabel}>
+            {lastHotStart?.zone === pinnedZone && (
+              <Typography variant="caption" color={theme.colors.status.warning}>
                 {t('home.hotStart', { bonus: lastHotStart.bonus })}
               </Typography>
-            ) : null}
-          </>
-        ) : (
-          MUSCLE_ZONES.filter((zone) => (zoneBars[zone]?.level ?? 0) > 0).map((zone) => (
-            <Typography key={zone} variant="caption" align="center" style={styles.pinnedLabel}>
-              {t(`zones.${zone}`)} · {t('home.zoneStep', { level: zoneBars[zone]?.level ?? 0 })}
-            </Typography>
-          ))
-        )}
-        {/* Speech Bubble */}
-        <View style={styles.speechBubble}>
-          <Typography variant="body" align="center" style={styles.speechText}>
-            {speech}
-          </Typography>
-        </View>
-      </View>
+            )}
+          </View>
+        </Card>
+      )}
 
+      {/* Zone Selector Chips */}
       <View style={styles.pinSection}>
-        <TouchableOpacity
-          onPress={cyclePin}
-          accessibilityRole="button"
-          hitSlop={{ top: 10, bottom: 10, left: 16, right: 16 }}
-        >
-          <Typography
-            variant="caption"
-            align="center"
-            bold={pinnedZone != null}
-            color={pinnedZone ? theme.colors.accent.primary : theme.colors.text.secondary}
-          >
-            {pinnedZone
-              ? t('home.pinnedZone', { zone: t(`zones.${pinnedZone}`) })
-              : t('home.pinPrompt')}
+        <View style={styles.pinHeaderRow}>
+          <Typography variant="label" bold color={theme.colors.text.secondary}>
+            {pinnedZone ? t('home.pinnedZone', { zone: t(`zones.${pinnedZone}`) }) : 'Öncelikli Bölge Seç (2X Hız):'}
           </Typography>
-        </TouchableOpacity>
+          {pinnedZone && (
+            <TouchableOpacity onPress={clearPin} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Typography variant="label" color={theme.colors.text.tertiary}>
+                Temizle
+              </Typography>
+            </TouchableOpacity>
+          )}
+        </View>
+
         <View style={styles.pinRow}>
           {MUSCLE_ZONES.map((zone) => {
             const selected = zone === pinnedZone;
+            const zoneIcon =
+              zone === 'torso'
+                ? 'shield-account'
+                : zone === 'arms'
+                ? 'arm-flex'
+                : zone === 'abs'
+                ? 'lightning-bolt'
+                : 'run-fast';
+
             return (
               <TouchableOpacity
                 key={zone}
@@ -327,11 +389,18 @@ export default function HomeScreen() {
                 onPress={() => selectZone(zone)}
                 accessibilityRole="button"
                 accessibilityState={{ selected }}
+                activeOpacity={0.7}
               >
+                <MaterialCommunityIcons
+                  name={zoneIcon}
+                  size={14}
+                  color={selected ? theme.colors.text.inverse : theme.colors.text.primary}
+                />
                 <Typography
                   variant="caption"
                   bold={selected}
                   color={selected ? theme.colors.text.inverse : theme.colors.text.primary}
+                  style={{ marginLeft: 4 }}
                 >
                   {t(`zones.${zone}`)}
                 </Typography>
@@ -341,57 +410,91 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      <View style={styles.shelfSection}>
-        <Typography variant="body" bold align="center">
-          {t('home.emberShelf')}
-        </Typography>
-        <Typography variant="caption" align="center">
-          {t('home.emberBalance', { count: embers })}
-        </Typography>
-        {EMBER_SHELF.map((item) => {
-          const owned = ownedShelf.includes(item.id);
-          const canBuy = !owned && embers >= item.price;
-          const cheapestUnsold = EMBER_SHELF.find((entry) => !ownedShelf.includes(entry.id));
-          const shortfall = cheapestUnsold ? cheapestUnsold.price - embers : 0;
-          const showClosest =
-            cheapestUnsold?.id === item.id && shortfall > 0 && shortfall <= 5;
-          return (
-            <View key={item.id} style={styles.shelfRow}>
-              <Typography variant="caption">
-                {t(`shelf.${item.id}`)} · {t('home.emberPrice', { price: item.price })}
-                {showClosest ? ` · ${t('home.emberClosest')}` : ''}
-                {item.id === 'goldBelt' && doubleStepsKept < 3 ? ` · ${t('home.beltTally')}` : ''}
-              </Typography>
-              <TouchableOpacity
-                disabled={owned}
-                accessibilityRole="button"
-                style={[styles.shelfButton, !canBuy && styles.shelfButtonDisabled]}
-                onPress={() => {
-                  if (embers < item.price) {
-                    Alert.alert(
-                      t('home.emberShortTitle'),
-                      t('home.emberShortBody', {
-                        name: t(`shelf.${item.id}`),
-                        price: item.price,
-                        count: embers,
-                      }),
-                      [{ text: t('common.ok') }],
-                    );
-                    return;
-                  }
-                  buyShelfItem(item.id);
-                }}
-              >
-                <Typography variant="caption" bold color={theme.colors.text.inverse}>
-                  {owned ? t('home.emberOwned') : t('home.emberBuy')}
-                </Typography>
-              </TouchableOpacity>
-            </View>
-          );
-        })}
-      </View>
+      {/* EMBER SHOP / PERK SHELF */}
+      <Card style={styles.shelfSection}>
+        <View style={styles.shelfHeader}>
+          <View>
+            <Typography variant="body" bold color={theme.colors.text.primary}>
+              🔥 {t('home.emberShelf')}
+            </Typography>
+            <Typography variant="caption" color={theme.colors.text.secondary}>
+              {t('home.emberBalance', { count: embers })}
+            </Typography>
+          </View>
+          <View style={styles.emberBalancePill}>
+            <MaterialCommunityIcons name="fire" size={16} color="#FF9F1C" />
+            <Typography variant="label" bold color="#FF9F1C" style={{ marginLeft: 4 }}>
+              {embers} Kor
+            </Typography>
+          </View>
+        </View>
 
-      {/* ACTIONS */}
+        <View style={styles.shelfList}>
+          {EMBER_SHELF.map((item) => {
+            const owned = ownedShelf.includes(item.id);
+            const canBuy = !owned && embers >= item.price;
+            const itemIcon =
+              item.id === 'goldBelt' ? 'shield-star' : item.id === 'headband' ? 'crown' : 'arm-flex';
+
+            return (
+              <View key={item.id} style={styles.shelfItemCard}>
+                <View style={styles.shelfItemLeft}>
+                  <View style={[styles.shelfIconBox, owned && styles.shelfIconBoxOwned]}>
+                    <MaterialCommunityIcons
+                      name={itemIcon}
+                      size={20}
+                      color={owned ? theme.colors.status.success : theme.colors.accent.primary}
+                    />
+                  </View>
+                  <View style={{ marginLeft: 10 }}>
+                    <Typography variant="body" bold color={theme.colors.text.primary}>
+                      {t(`shelf.${item.id}`)}
+                    </Typography>
+                    <Typography variant="caption" color={theme.colors.text.secondary}>
+                      {t('home.emberPrice', { price: item.price })}
+                    </Typography>
+                  </View>
+                </View>
+
+                <TouchableOpacity
+                  disabled={owned}
+                  accessibilityRole="button"
+                  style={[
+                    styles.shelfButton,
+                    owned && styles.shelfButtonOwned,
+                    !owned && !canBuy && styles.shelfButtonDisabled,
+                  ]}
+                  onPress={() => {
+                    if (embers < item.price) {
+                      Alert.alert(
+                        t('home.emberShortTitle'),
+                        t('home.emberShortBody', {
+                          name: t(`shelf.${item.id}`),
+                          price: item.price,
+                          count: embers,
+                        }),
+                        [{ text: t('common.ok') }],
+                      );
+                      return;
+                    }
+                    buyShelfItem(item.id);
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    bold
+                    color={owned ? theme.colors.status.success : theme.colors.text.inverse}
+                  >
+                    {owned ? '✓ SAHİPSİN' : t('home.emberBuy')}
+                  </Typography>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+        </View>
+      </Card>
+
+      {/* HERO WORKOUT CTA */}
       <View style={styles.actionSection}>
         {!plan ? (
           <Button
@@ -400,11 +503,16 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate('Planner')}
           />
         ) : (
-          <Button
-            title={activeWorkout ? t('home.resumeWorkout') : t('home.startWorkout')}
-            style={styles.actionBtn}
+          <TouchableOpacity
+            style={styles.heroStartBtn}
             onPress={handleStartWorkout}
-          />
+            activeOpacity={0.85}
+          >
+            <MaterialCommunityIcons name="rocket-launch" size={24} color={theme.colors.text.inverse} />
+            <Typography variant="body" bold color={theme.colors.text.inverse} style={styles.heroBtnText}>
+              {activeWorkout ? t('home.resumeWorkout') : 'ANTRENMANA BAŞLA (+150 XP)'}
+            </Typography>
+          </TouchableOpacity>
         )}
       </View>
 
@@ -415,9 +523,16 @@ export default function HomeScreen() {
             <MaterialCommunityIcons name="camera-iris" size={28} color={theme.colors.accent.primary} />
           </View>
           <View style={{ flex: 1, marginLeft: theme.spacing.md }}>
-            <Typography variant="body" bold color={theme.colors.text.primary}>
-              {t('pushUpTracker.homeActionTitle')}
-            </Typography>
+            <View style={styles.aiBadgeRow}>
+              <Typography variant="body" bold color={theme.colors.text.primary}>
+                {t('pushUpTracker.homeActionTitle')}
+              </Typography>
+              <View style={styles.aiPill}>
+                <Typography variant="label" bold color="#FFF" style={{ fontSize: 9 }}>
+                  AI VISION
+                </Typography>
+              </View>
+            </View>
             <Typography variant="caption" color={theme.colors.text.secondary} style={{ marginTop: 2 }}>
               {t('pushUpTracker.homeActionSubtitle')}
             </Typography>
@@ -436,8 +551,9 @@ export default function HomeScreen() {
               key={item.id}
               style={styles.calisthenicsQuickChip}
               onPress={() => navigation.navigate('PushUpTracker', { exerciseId: item.id })}
+              activeOpacity={0.7}
             >
-              <MaterialCommunityIcons name={item.icon} size={15} color={theme.colors.accent.primary} />
+              <MaterialCommunityIcons name={item.icon} size={16} color={theme.colors.accent.primary} />
               <Typography variant="caption" bold color={theme.colors.text.primary} style={styles.chipText}>
                 {item.name}
               </Typography>
@@ -463,57 +579,102 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: theme.spacing.md,
   },
+  logoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoTitle: {
+    letterSpacing: 1.5,
+    fontSize: 18,
+    marginLeft: 2,
+  },
+  tycoonBadge: {
+    backgroundColor: theme.colors.accent.primary,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginLeft: 6,
+  },
   langBtn: {
-    padding: theme.spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderColor: theme.colors.border,
     borderWidth: 1,
-    borderRadius: theme.borderRadius.sm,
+    borderRadius: theme.borderRadius.round,
     backgroundColor: theme.colors.background.secondary,
   },
   userStatsCard: {
-    marginBottom: theme.spacing.lg,
-  },
-  flameRiskBanner: {
-    backgroundColor: theme.colors.flame.ember,
-    borderRadius: theme.borderRadius.md,
+    marginBottom: theme.spacing.md,
+    backgroundColor: theme.colors.background.secondary,
+    borderRadius: theme.borderRadius.lg,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
     padding: theme.spacing.md,
-    marginBottom: theme.spacing.lg,
-  },
-  unfinishedBar: {
-    marginBottom: theme.spacing.sm,
-    color: theme.colors.flame.warm,
   },
   statRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   streakColumn: {
     alignItems: 'flex-end',
-    maxWidth: '55%',
   },
-  keptWeek: {
-    marginTop: theme.spacing.xs,
-    color: theme.colors.text.secondary,
+  badgesRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  emberPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 159, 28, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 159, 28, 0.4)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: theme.borderRadius.round,
   },
   streakBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: theme.colors.accent.primary,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.xs,
+    paddingHorizontal: 9,
+    paddingVertical: 3,
     borderRadius: theme.borderRadius.round,
   },
   stampBadge: {
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: theme.colors.gradient.flameEnd,
-    borderStyle: 'dashed',
+  },
+  miniStatsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  keptWeek: {
+    color: theme.colors.text.secondary,
+    fontSize: 11,
+  },
+  flameRiskBanner: {
+    backgroundColor: theme.colors.flame.ember,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+  },
+  unfinishedBar: {
+    marginBottom: theme.spacing.xs,
+    color: theme.colors.flame.warm,
   },
   progressBarBg: {
-    height: 8,
-    backgroundColor: theme.colors.background.tertiary,
+    height: 7,
+    backgroundColor: '#1E1E2E',
     borderRadius: 4,
     overflow: 'hidden',
   },
@@ -521,115 +682,255 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: theme.colors.accent.primary,
   },
-  serverCard: {
-    marginBottom: theme.spacing.md,
-    gap: 4,
-  },
-  searchInput: {
-    backgroundColor: theme.colors.background.input,
-    color: theme.colors.text.primary,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    marginTop: theme.spacing.sm,
-  },
   stickmanSection: {
     alignItems: 'center',
     justifyContent: 'flex-end',
-    height: 230,
-    marginBottom: theme.spacing.md,
+    height: 240,
+    marginBottom: theme.spacing.sm,
+    position: 'relative',
+  },
+  priorityFloatTag: {
+    position: 'absolute',
+    top: 6,
+    zIndex: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.accent.primary,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: theme.borderRadius.round,
+    shadowColor: theme.colors.accent.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 6,
+    elevation: 5,
   },
   homeFlame: {
     position: 'absolute',
-    top: 0,
+    top: 10,
   },
-  speechBubble: {
+  podiumBase: {
+    position: 'absolute',
+    bottom: -6,
+    width: 170,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  podiumRing: {
+    width: 160,
+    height: 22,
+    borderRadius: 80,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 107, 53, 0.45)',
+    backgroundColor: 'rgba(255, 107, 53, 0.08)',
+  },
+  speechCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: theme.colors.background.secondary,
     borderRadius: theme.borderRadius.md,
-    borderColor: theme.colors.border,
     borderWidth: 1,
-    padding: theme.spacing.md,
-    marginTop: theme.spacing.md,
-    width: '80%',
-    position: 'relative',
+    borderColor: 'rgba(255, 107, 53, 0.25)',
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: 10,
+    marginBottom: theme.spacing.md,
+    gap: 8,
   },
   speechText: {
-    color: theme.colors.text.primary,
+    flex: 1,
   },
-  pinnedLabel: {
-    marginTop: theme.spacing.sm,
-    color: theme.colors.accent.primary,
+  serverCard: {
+    marginBottom: theme.spacing.md,
+    backgroundColor: theme.colors.background.secondary,
+    borderRadius: theme.borderRadius.lg,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    padding: theme.spacing.md,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.sm,
+  },
+  tycoonIconBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 107, 53, 0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 53, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  priorityCard: {
+    marginBottom: theme.spacing.md,
+    backgroundColor: '#16131F',
+    borderRadius: theme.borderRadius.md,
+    borderWidth: 1.5,
+    borderColor: theme.colors.accent.primary,
+    padding: theme.spacing.md,
+  },
+  priorityCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  priorityCardTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   zoneBarBg: {
-    width: '70%',
     height: 8,
-    marginTop: theme.spacing.sm,
-    backgroundColor: theme.colors.background.tertiary,
+    marginVertical: 10,
+    backgroundColor: '#201C2B',
     borderRadius: 4,
     overflow: 'hidden',
   },
   zoneBarFill: {
     height: '100%',
-    backgroundColor: theme.colors.accent.secondary,
+    backgroundColor: theme.colors.accent.primary,
+  },
+  priorityMetaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   pinSection: {
     marginBottom: theme.spacing.md,
   },
+  pinHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+    paddingHorizontal: 4,
+  },
   pinRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    marginTop: theme.spacing.sm,
+    justifyContent: 'space-between',
+    gap: 6,
   },
   pinChip: {
+    flex: 1,
+    minWidth: '22%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 1,
     borderColor: theme.colors.border,
     backgroundColor: theme.colors.background.secondary,
-    borderRadius: theme.borderRadius.round,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.xs,
-    margin: theme.spacing.xs,
+    borderRadius: theme.borderRadius.md,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
   },
   pinChipSelected: {
     backgroundColor: theme.colors.accent.primary,
     borderColor: theme.colors.accent.primary,
+    shadowColor: theme.colors.accent.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+    elevation: 3,
   },
   shelfSection: {
     backgroundColor: theme.colors.background.secondary,
-    borderRadius: theme.borderRadius.md,
+    borderRadius: theme.borderRadius.lg,
     borderWidth: 1,
     borderColor: theme.colors.border,
     padding: theme.spacing.md,
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
   },
-  shelfRow: {
+  shelfHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.md,
+  },
+  emberBalancePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 159, 28, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 159, 28, 0.35)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: theme.borderRadius.round,
+  },
+  shelfList: {
+    gap: 10,
+  },
+  shelfItemCard: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: theme.spacing.sm,
+    backgroundColor: theme.colors.background.tertiary,
+    borderRadius: theme.borderRadius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    padding: 10,
+  },
+  shelfItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  shelfIconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 107, 53, 0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  shelfIconBoxOwned: {
+    backgroundColor: 'rgba(74, 222, 128, 0.12)',
   },
   shelfButton: {
     backgroundColor: theme.colors.accent.primary,
     borderRadius: theme.borderRadius.round,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.xs,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+  },
+  shelfButtonOwned: {
+    backgroundColor: 'rgba(74, 222, 128, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(74, 222, 128, 0.4)',
   },
   shelfButtonDisabled: {
-    backgroundColor: theme.colors.background.tertiary,
+    backgroundColor: '#252538',
   },
   actionSection: {
-    marginVertical: theme.spacing.lg,
+    marginVertical: theme.spacing.md,
   },
   actionBtn: {
     width: '100%',
   },
-  calendarSection: {
-    marginTop: theme.spacing.lg,
+  heroStartBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.accent.primary,
+    borderRadius: theme.borderRadius.lg,
+    paddingVertical: 16,
+    shadowColor: theme.colors.accent.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  heroBtnText: {
+    fontSize: 16,
+    fontWeight: '800',
+    marginLeft: 8,
+    letterSpacing: 0.5,
   },
   aiVisionCard: {
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
     padding: theme.spacing.md,
     backgroundColor: theme.colors.background.secondary,
+    borderRadius: theme.borderRadius.lg,
     borderWidth: 1,
     borderColor: 'rgba(255, 107, 53, 0.3)',
   },
@@ -637,10 +938,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  aiBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  aiPill: {
+    backgroundColor: theme.colors.accent.primary,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 4,
+  },
   aiVisionIconBox: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: 'rgba(255, 107, 53, 0.12)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -667,6 +979,9 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.sm,
   },
   chipText: {
-    marginLeft: 4,
+    marginLeft: 6,
+  },
+  calendarSection: {
+    marginTop: theme.spacing.sm,
   },
 });

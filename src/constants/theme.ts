@@ -32,6 +32,18 @@ export const colors = {
     error: '#F87171',        // Red — missed / streak broken
     info: '#60A5FA',         // Blue — informational
   },
+  tier: {
+    bronze: '#CD7F32',
+    silver: '#C0C0C0',
+    gold: '#FFD700',
+    diamond: '#00E5FF',
+    mythic: '#FF007F',
+  },
+  glow: {
+    orange: 'rgba(255, 107, 53, 0.35)',
+    gold: 'rgba(255, 215, 0, 0.35)',
+    blue: 'rgba(0, 229, 255, 0.35)',
+  },
   gradient: {
     flameStart: '#FF6B35',
     flameMiddle: '#FF9F1C',

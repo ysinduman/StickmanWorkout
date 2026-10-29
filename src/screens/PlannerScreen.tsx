@@ -10,8 +10,10 @@ import {
   Platform,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { usePlanStore } from '../stores/usePlanStore';
+import { useWorkoutStore } from '../stores/useWorkoutStore';
 import { usePriorityStore } from '../stores/usePriorityStore';
 import { muscleGroupForZone } from '../constants/zones';
 import { EXERCISE_LIBRARY } from '../constants/exercises';
@@ -31,7 +33,9 @@ type FormStep = 'type_select' | 'split_days' | 'full_body_rest' | 'exercise_sele
 
 export default function PlannerScreen() {
   const { t } = useTranslation();
+  const navigation = useNavigation<any>();
   const { storedPlan, setPlan, updatePlan, deletePlan, levelUpPlan } = usePlanStore();
+  const { startWorkout, activeWorkout } = useWorkoutStore();
   const pinnedZone = usePriorityStore((state) => state.pinnedZone);
   const priorityGroup = pinnedZone ? muscleGroupForZone(pinnedZone) : null;
 
@@ -707,36 +711,60 @@ export default function PlannerScreen() {
   if (storedPlan && !isEditing) {
     const plan = storedPlan.plan;
 
+    const handleStartFromPlanner = () => {
+      if (activeWorkout) {
+        navigation.navigate('ActiveWorkout');
+        return;
+      }
+      const firstDay = plan.type === 'split' ? plan.workoutDays[0] : plan.workoutDay;
+      if (firstDay) {
+        startWorkout(firstDay);
+        navigation.navigate('ActiveWorkout');
+      }
+    };
+
     return (
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+        {/* Active Plan Card */}
         <Card variant="elevated" style={styles.planCard}>
           <View style={styles.headerRow}>
             <View>
-              <Typography variant="title2" bold>
-                {plan.type === 'split' ? t('planner.split') : t('planner.fullBody')}
-              </Typography>
-              <Typography variant="caption" color={theme.colors.text.secondary}>
-                {t('planner.title')}
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Typography variant="title2" bold color={theme.colors.text.primary}>
+                  {plan.type === 'split' ? t('planner.split') : t('planner.fullBody')}
+                </Typography>
+                <View style={styles.activePlanTag}>
+                  <Typography variant="label" bold color={theme.colors.status.success} style={{ fontSize: 9 }}>
+                    AKTİF
+                  </Typography>
+                </View>
+              </View>
+              <Typography variant="caption" color={theme.colors.text.secondary} style={{ marginTop: 2 }}>
+                {t('planner.title')} • Hedef Güç Antrenmanı
               </Typography>
             </View>
+
             <View style={styles.planIconBadge}>
               <MaterialCommunityIcons
                 name={plan.type === 'split' ? 'chart-gantt' : 'weight-lifter'}
-                size={26}
+                size={24}
                 color={theme.colors.accent.primary}
               />
             </View>
           </View>
 
           {pinnedZone ? (
-            <Typography variant="caption" color={theme.colors.accent.primary} style={{ marginTop: theme.spacing.sm }}>
-              {t('home.pinnedZone', { zone: t(`zones.${pinnedZone}`) })}
-            </Typography>
+            <View style={styles.planZonePill}>
+              <MaterialCommunityIcons name="target" size={14} color={theme.colors.accent.primary} />
+              <Typography variant="caption" bold color={theme.colors.accent.primary} style={{ marginLeft: 4 }}>
+                {t('home.pinnedZone', { zone: t(`zones.${pinnedZone}`) })}
+              </Typography>
+            </View>
           ) : null}
 
           <Typography variant="bodyMuted" style={{ marginTop: theme.spacing.sm }}>
             {plan.type === 'split'
-              ? 'Program: ' +
+              ? 'Günler: ' +
                 Object.entries((plan as any).schedule)
                   .filter(([_, v]) => v !== null)
                   .map(([k, _]) => t(`days.${k}`))
@@ -772,11 +800,15 @@ export default function PlannerScreen() {
 
                 {wd.exercises.map((ex) => {
                   const exDetails = EXERCISE_LIBRARY.find((e) => e.id === ex.exerciseId);
+                  const exTitle = exDetails ? t(exDetails.name) : ex.exerciseId;
                   return (
                     <View key={ex.exerciseId} style={styles.summaryExerciseRow}>
-                      <Typography variant="caption" bold style={styles.exerciseSummaryItem}>
-                        • {exDetails ? t(exDetails.name) : ex.exerciseId}
-                      </Typography>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                        <MaterialCommunityIcons name="check-circle-outline" size={14} color={theme.colors.accent.primary} />
+                        <Typography variant="caption" bold style={[styles.exerciseSummaryItem, { marginLeft: 6 }]}>
+                          {exTitle}
+                        </Typography>
+                      </View>
                       <Typography variant="caption" color={theme.colors.text.secondary}>
                         {(ex.sets ?? []).length} {t('common.sets')} (
                         {(ex.sets ?? [])
@@ -796,11 +828,15 @@ export default function PlannerScreen() {
               </Typography>
               {plan.workoutDay.exercises.map((ex) => {
                 const exDetails = EXERCISE_LIBRARY.find((e) => e.id === ex.exerciseId);
+                const exTitle = exDetails ? t(exDetails.name) : ex.exerciseId;
                 return (
                   <View key={ex.exerciseId} style={styles.summaryExerciseRow}>
-                    <Typography variant="caption" bold style={styles.exerciseSummaryItem}>
-                      • {exDetails ? t(exDetails.name) : ex.exerciseId}
-                    </Typography>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                      <MaterialCommunityIcons name="check-circle-outline" size={14} color={theme.colors.accent.primary} />
+                      <Typography variant="caption" bold style={[styles.exerciseSummaryItem, { marginLeft: 6 }]}>
+                        {exTitle}
+                      </Typography>
+                    </View>
                     <Typography variant="caption" color={theme.colors.text.secondary}>
                       {(ex.sets ?? []).length} {t('common.sets')} (
                       {(ex.sets ?? [])
@@ -814,26 +850,109 @@ export default function PlannerScreen() {
             </View>
           )}
 
-          {/* Action Buttons */}
-          <Button
-            title={t('planner.editPlan')}
-            variant="primary"
-            style={{ marginTop: theme.spacing.xl }}
-            onPress={handleStartEdit}
-          />
-          <Button
-            title={t('home.levelUpPlan')}
-            variant="outline"
-            style={{ marginTop: theme.spacing.md }}
-            onPress={handleLevelUp}
-          />
-          <Button
-            title={t('planner.deletePlan')}
-            variant="secondary"
-            style={{ marginTop: theme.spacing.md, borderColor: theme.colors.status.error }}
-            onPress={handleDelete}
-          />
+          {/* Start Workout Primary CTA Button */}
+          <TouchableOpacity
+            style={styles.heroPlannerStartBtn}
+            onPress={handleStartFromPlanner}
+            activeOpacity={0.85}
+          >
+            <MaterialCommunityIcons name="rocket-launch" size={20} color={theme.colors.text.inverse} />
+            <Typography variant="body" bold color={theme.colors.text.inverse} style={{ marginLeft: 8 }}>
+              {activeWorkout ? t('home.resumeWorkout') : 'ANTRENMANI BAŞLAT'}
+            </Typography>
+          </TouchableOpacity>
+
+          {/* Action Buttons in Compact Row */}
+          <View style={styles.planActionsRow}>
+            <TouchableOpacity
+              style={styles.planActionPill}
+              onPress={handleStartEdit}
+              activeOpacity={0.7}
+            >
+              <MaterialCommunityIcons name="pencil-outline" size={16} color={theme.colors.text.primary} />
+              <Typography variant="caption" bold color={theme.colors.text.primary} style={{ marginLeft: 4 }}>
+                {t('planner.editPlan')}
+              </Typography>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.planActionPill, styles.planActionLevelUp]}
+              onPress={handleLevelUp}
+              activeOpacity={0.7}
+            >
+              <MaterialCommunityIcons name="arm-flex" size={16} color={theme.colors.accent.primary} />
+              <Typography variant="caption" bold color={theme.colors.accent.primary} style={{ marginLeft: 4 }}>
+                {t('home.levelUpPlan')}
+              </Typography>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.planActionPill, styles.planActionDelete]}
+              onPress={handleDelete}
+              activeOpacity={0.7}
+            >
+              <MaterialCommunityIcons name="trash-can-outline" size={16} color={theme.colors.status.error} />
+              <Typography variant="caption" bold color={theme.colors.status.error} style={{ marginLeft: 4 }}>
+                {t('planner.deletePlan')}
+              </Typography>
+            </TouchableOpacity>
+          </View>
         </Card>
+
+        {/* Ready Calisthenics & Tycoon Presets Section */}
+        <View style={styles.presetsSection}>
+          <View style={styles.presetsHeaderRow}>
+            <MaterialCommunityIcons name="lightning-bolt" size={20} color={theme.colors.accent.primary} />
+            <Typography variant="title2" bold color={theme.colors.text.primary} style={{ marginLeft: 6 }}>
+              HAZIR PROGRAMLAR
+            </Typography>
+          </View>
+          <Typography variant="caption" color={theme.colors.text.secondary} style={{ marginBottom: theme.spacing.md }}>
+            İstediğin programı seçip tek dokunuşla aktif planın yapabilirsin.
+          </Typography>
+
+          {CALISTHENICS_PRESETS.map((preset) => (
+            <Card key={preset.id} style={styles.presetCard}>
+              <View style={styles.presetTopRow}>
+                <View style={{ flex: 1 }}>
+                  <Typography variant="body" bold color={theme.colors.text.primary}>
+                    {preset.name}
+                  </Typography>
+                  <Typography variant="caption" color={theme.colors.text.secondary} style={{ marginTop: 2 }}>
+                    {preset.description}
+                  </Typography>
+                </View>
+                <View style={styles.presetBadge}>
+                  <Typography variant="label" bold color={theme.colors.accent.primary} style={{ fontSize: 10 }}>
+                    {preset.badge}
+                  </Typography>
+                </View>
+              </View>
+
+              <View style={styles.presetBottomRow}>
+                <View style={styles.presetFocusRow}>
+                  {preset.focus.map((f) => (
+                    <View key={f} style={styles.focusChip}>
+                      <Typography variant="label" color={theme.colors.text.secondary} style={{ fontSize: 10 }}>
+                        {f}
+                      </Typography>
+                    </View>
+                  ))}
+                </View>
+
+                <TouchableOpacity
+                  style={styles.presetApplyBtn}
+                  onPress={() => handleSelectPreset(preset)}
+                  activeOpacity={0.7}
+                >
+                  <Typography variant="caption" bold color={theme.colors.text.inverse}>
+                    Programı Yükle
+                  </Typography>
+                </TouchableOpacity>
+              </View>
+            </Card>
+          ))}
+        </View>
       </ScrollView>
     );
   }
@@ -1728,5 +1847,94 @@ const styles = StyleSheet.create({
   },
   planTypeTitle: {
     marginBottom: theme.spacing.lg,
+  },
+  activePlanTag: {
+    backgroundColor: 'rgba(74, 222, 128, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(74, 222, 128, 0.4)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  planZonePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 107, 53, 0.12)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing.sm,
+  },
+  heroPlannerStartBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.accent.primary,
+    borderRadius: theme.borderRadius.md,
+    paddingVertical: 14,
+    marginTop: theme.spacing.lg,
+    shadowColor: theme.colors.accent.primary,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  planActionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 8,
+    marginTop: theme.spacing.md,
+  },
+  planActionPill: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.background.tertiary,
+    borderRadius: theme.borderRadius.sm,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    paddingVertical: 8,
+  },
+  planActionLevelUp: {
+    borderColor: 'rgba(255, 107, 53, 0.4)',
+    backgroundColor: 'rgba(255, 107, 53, 0.08)',
+  },
+  planActionDelete: {
+    borderColor: 'rgba(248, 113, 113, 0.4)',
+    backgroundColor: 'rgba(248, 113, 113, 0.08)',
+  },
+  presetsSection: {
+    marginTop: theme.spacing.xl,
+    paddingBottom: theme.spacing.xxl,
+  },
+  presetsHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  presetTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  presetBottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: theme.spacing.md,
+  },
+  presetFocusRow: {
+    flexDirection: 'row',
+    gap: 4,
+    flexWrap: 'wrap',
+    flex: 1,
+  },
+  focusChip: {
+    backgroundColor: theme.colors.background.tertiary,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
   },
 });
