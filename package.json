@@ -7,7 +7,8 @@
     "start": "react-native start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test:evolution": "node scripts/verify-evolution.js"
+    "test:evolution": "node scripts/verify-evolution.js",
+    "build:android": "cd android && gradlew bundleRelease"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",

@@ -1,23 +1,32 @@
-# Stickman Workout
+# Stickman Tycoon Workout
 
 <p align="center">
-  <img src="assets/icon.png" alt="Stickman Workout Icon" width="128" height="128" />
+  <img src="assets/icon.png" alt="Stickman Tycoon Workout Icon" width="128" height="128" />
 </p>
 
 <p align="center">
-  <b>Antrenman motivasyonu veren, seriye (streak) ve kas bazlı seviyelere göre dinamik olarak evrimleşen çöp adam (stickman) mobil fitness uygulaması.</b>
+  <b>Antrenman motivasyonu veren, Roblox Tycoon bağlayıcılığında seviye ve prestij kademeleriyle evrimleşen çöp adam (stickman) mobil fitness uygulaması.</b>
 </p>
 
 <p align="center">
   <a href="https://reactnative.dev/"><img src="https://img.shields.io/badge/React_Native-0.87.1-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React Native" /></a>
   <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+  <a href="https://github.com/ysinduman/StickmanWorkout"><img src="https://img.shields.io/badge/Google_Play-Ready_API_36-34A853?style=flat-square&logo=google-play&logoColor=white" alt="Play Store" /></a>
   <a href="https://github.com/ysinduman/StickmanWorkout"><img src="https://img.shields.io/badge/AI_Tracking-Computer_Vision-FF6F00?style=flat-square&logo=opencv&logoColor=white" alt="AI Tracking" /></a>
-  <a href="https://github.com/ysinduman/StickmanWorkout"><img src="https://img.shields.io/badge/Fitness-100%25_Calisthenics-brightgreen?style=flat-square" alt="Calisthenics" /></a>
-  <a href="https://supabase.com/"><img src="https://img.shields.io/badge/Supabase-Backend-3ECF8E?style=flat-square&logo=supabase&logoColor=white" alt="Supabase" /></a>
-  <a href="https://github.com/pmndrs/zustand"><img src="https://img.shields.io/badge/State-Zustand-443e38?style=flat-square" alt="Zustand" /></a>
-  <a href="https://android.com/"><img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Platform" /></a>
+  <a href="https://github.com/ysinduman/StickmanWorkout"><img src="https://img.shields.io/badge/Tycoon_Zones-4_Core_Parts-brightgreen?style=flat-square" alt="Core Parts" /></a>
+  <a href="https://supabase.com/"><img src="https://img.shields.io/badge/Supabase-Backend_RLS-3ECF8E?style=flat-square&logo=supabase&logoColor=white" alt="Supabase" /></a>
   <a href="https://github.com/ysinduman/StickmanWorkout"><img src="https://img.shields.io/badge/Tests-420%20Passing-success?style=flat-square" alt="Tests" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License" /></a>
+</p>
+
+---
+
+## 📱 Uygulama Ekran Görüntüleri
+
+<p align="center">
+  <img src="screenshots/01_home.png" width="22%" alt="Ana Sayfa" />
+  <img src="screenshots/02_search.png" width="22%" alt="Liderlik Tablosu" />
+  <img src="screenshots/03_planner.png" width="22%" alt="Planlayıcı" />
+  <img src="screenshots/04_profile.png" width="22%" alt="Profil" />
 </p>
 
 ---
@@ -26,12 +35,12 @@
 
 | Özellik | Açıklama |
 | :--- | :--- |
-| 🤖 **AI Kamera Takibi (Computer Vision)** | Ön kamera üzerinden gerçek zamanlı eklem ve açı analizi (Şınav, Squat, Mekik, Plank). |
-| ⚡ **4 Temel Kas Bölgesi (1–100 Vektörel Motor)** | Gereksiz karmaşıklıktan arındırılmış **Gövde**, **Kol**, **Karın** ve **Bacak** odaklı dinamik prosedürel SVG motoru. |
-| 🔥 **Seri (Streak) ve Dopamin Sistemi** | Günlük seri koruma, seri dondurma (streak freeze), kutlama konfetileri ve seviye atlama modalleri. |
-| 🏆 **3 Kademeli Prestij Sistemi** | 1-50 Hacim Büyümesi, 51-99 Vasküler Damarlanma, 100+ Altın/Elmas/Efsanevi parıltı auraları. |
-| 🔊 **Etkileşimli Ses ve Geri Bildirim** | Tekrar sayımlarında ve form doğrulamalarında dinamik Web Audio sentezleyici bip tonları. |
-| 🌍 **Çift Dil Desteği** | `i18next` altyapısı ile eksiksiz Türkçe ve İngilizce lokalizasyon. |
+| 🏰 **Roblox Tycoon Bağlayıcılığı** | Işıklı podyum, dinamik alev aurası, seviye kademe etiketleri (Bronz, Gümüş, Altın, Titan, Efsane) ve 2X Odak çarpanları. |
+| 🤖 **AI Kamera Takibi (Computer Vision)** | Ön kamera üzerinden tamamen cihazda yerel çalışan gerçek zamanlı eklem analizi (Şınav, Squat, Mekik, Plank). |
+| ⚡ **4 Temel Kas Bölgesi (1–100 Vektörel Motor)** | Yalnızca 4 temel bölge: **Gövde**, **Kol**, **Karın** ve **Bacak** odaklı dinamik prosedürel SVG motoru. |
+| 📳 **Haptik Dokunsal Geri Bildirim** | Tamamlanan her sette fiziksel tıklama titreşimi, seviye atlamalarında arcade çoklu rumble efekti. |
+| 🛡️ **Play Store & Gizlilik Uyumlu** | Kamera görüntüleri asla sunucuya aktarılmaz; açılır Gizlilik & Güvenlik Politikası ve ProGuard kuralları entegredir. |
+| 🏆 **Top 100 Liderlik & Vitrin Rozetleri** | Altın taçlı liderlik sıralaması, 2x2 vitrin rozetleri ve dinamik prestij unvanları (Gladyatör, Şampiyon, Titan). |
 
 ---
 
