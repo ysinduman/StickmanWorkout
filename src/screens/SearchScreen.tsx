@@ -309,11 +309,11 @@ export default function SearchScreen() {
           onChangeText={setQuery}
           autoCapitalize="none"
           autoCorrect={false}
-          placeholder={t('auth.search')}
+          placeholder={t('search.placeholder')}
           placeholderTextColor={theme.colors.text.tertiary}
           style={styles.input}
         />
-        <Button title={t('auth.search')} loading={searching} onPress={search} />
+        <Button title={t('search.btn')} loading={searching} onPress={search} />
         {message ? <Typography variant="caption">{message}</Typography> : null}
         {results.length > 0 ? (
           <ScrollView style={styles.results} nestedScrollEnabled keyboardShouldPersistTaps="handled">

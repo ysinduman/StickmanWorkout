@@ -273,7 +273,9 @@
     "empty": "No levels yet."
   },
   "search": {
-    "title": "Find people",
+    "title": "Search Profile",
+    "placeholder": "Enter username...",
+    "btn": "Find Profile",
     "hint": "Type the start of a username. Tap a result to open their profile.",
     "empty": "No one found.",
     "notFound": "That profile is not public.",

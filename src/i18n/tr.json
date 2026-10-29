@@ -273,7 +273,9 @@
     "empty": "Henüz seviye yok."
   },
   "search": {
-    "title": "Profil ara",
+    "title": "Profil Ara",
+    "placeholder": "Kullanıcı adı girin...",
+    "btn": "Profili Bul",
     "hint": "Kullanıcı adının başını yaz. Sonuca dokununca profili açılır.",
     "empty": "Kimse bulunamadı.",
     "notFound": "Bu profil açık değil.",
