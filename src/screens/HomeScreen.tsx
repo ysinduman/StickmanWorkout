@@ -489,13 +489,24 @@ export default function HomeScreen() {
                     } catch (_) {}
                   }}
                 >
-                  <Typography
-                    variant="caption"
-                    bold
-                    color={owned ? theme.colors.status.success : theme.colors.text.inverse}
-                  >
-                    {owned ? '✓ SAHİPSİN' : t('home.emberBuy')}
-                  </Typography>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                    {!owned && !canBuy && (
+                      <MaterialCommunityIcons name="lock-outline" size={13} color={theme.colors.text.tertiary} />
+                    )}
+                    <Typography
+                      variant="caption"
+                      bold
+                      color={
+                        owned
+                          ? theme.colors.status.success
+                          : canBuy
+                          ? theme.colors.text.inverse
+                          : theme.colors.text.secondary
+                      }
+                    >
+                      {owned ? '✓ SAHİPSİN' : canBuy ? t('home.emberBuy') : `${item.price} Kor`}
+                    </Typography>
+                  </View>
                 </TouchableOpacity>
               </View>
             );
