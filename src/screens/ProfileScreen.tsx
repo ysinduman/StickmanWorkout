@@ -5,7 +5,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { Typography, Button, Card } from '../components/ui';
 import { Stickman } from '../components/Stickman/Stickman';
 import { FlameEffect } from '../components/Calendar/FlameEffect';
-import { LevelBars } from '../components/LevelBars';
+import { LevelBars, aggregateToCoreZones } from '../components/LevelBars';
 import theme from '../constants/theme';
 import { useSessionStore } from '../stores/useSessionStore';
 import { usePriorityStore } from '../stores/usePriorityStore';
@@ -28,6 +28,8 @@ export default function ProfileScreen() {
   const partLevels = progression
     ? Object.fromEntries(progression.body_parts.map(part => [part.body_part_id, part.level]))
     : undefined;
+  const coreBars = progression ? aggregateToCoreZones(progression.body_parts) : [];
+  const coreLevels = Object.fromEntries(coreBars.map(b => [b.id, b.level]));
 
   const totalXp = progression?.total_xp ?? 0;
   const prestige = getPrestigeRank(totalXp);
@@ -51,7 +53,10 @@ export default function ProfileScreen() {
         />
         {/* Podium Base */}
         <View style={styles.podiumBase}>
-          <View style={styles.podiumRing} />
+          <View style={styles.podiumGlow} />
+          <View style={styles.podiumRing}>
+            <View style={styles.podiumInnerGlow} />
+          </View>
         </View>
       </View>
 
@@ -139,8 +144,8 @@ export default function ProfileScreen() {
       <View style={styles.badgesContainer}>
         {[
           { id: 'first_workout', title: 'İlk Adım', desc: 'İlk antrenmanını tamamla', icon: 'shoe-sneaker', unlocked: totalXp > 0 },
-          { id: 'arm_power', title: 'Çelik Kol', desc: 'Kol seviyesini 4 yap', icon: 'arm-flex', unlocked: (partLevels?.arms ?? 0) >= 4 },
-          { id: 'torso_titan', title: 'Zırh Gövde', desc: 'Gövde seviyesini 4 yap', icon: 'shield-account', unlocked: (partLevels?.torso ?? 0) >= 4 },
+          { id: 'arm_power', title: 'Çelik Kol', desc: 'Kol seviyesini 4 yap', icon: 'arm-flex', unlocked: (coreLevels.arms ?? 0) >= 4 },
+          { id: 'torso_titan', title: 'Zırh Gövde', desc: 'Gövde seviyesini 4 yap', icon: 'shield-account', unlocked: (coreLevels.torso ?? 0) >= 4 },
           { id: 'fire_streak', title: 'Seri Ustası', desc: '2 günden fazla seri yap', icon: 'fire', unlocked: (progression?.longest_streak ?? 0) >= 2 },
         ].map((badge) => (
           <View key={badge.id} style={[styles.achievementBadgeCard, badge.unlocked && styles.achievementUnlocked]}>
@@ -251,19 +256,41 @@ const styles = StyleSheet.create({
   },
   podiumBase: {
     position: 'absolute',
-    bottom: -6,
-    width: 170,
-    height: 28,
+    bottom: 14,
+    width: 180,
+    height: 32,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  podiumGlow: {
+    position: 'absolute',
+    width: 190,
+    height: 32,
+    borderRadius: 95,
+    backgroundColor: 'rgba(255, 107, 53, 0.12)',
   },
   podiumRing: {
     width: 160,
     height: 22,
     borderRadius: 80,
     borderWidth: 2,
-    borderColor: 'rgba(255, 107, 53, 0.45)',
-    backgroundColor: 'rgba(255, 107, 53, 0.08)',
+    borderColor: 'rgba(255, 107, 53, 0.65)',
+    backgroundColor: 'rgba(255, 107, 53, 0.18)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#FF6B35',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  podiumInnerGlow: {
+    width: 110,
+    height: 10,
+    borderRadius: 55,
+    backgroundColor: 'rgba(255, 130, 40, 0.35)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 200, 100, 0.55)',
   },
   userHeaderSection: {
     alignItems: 'center',
