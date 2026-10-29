@@ -931,7 +931,7 @@ export default function PlannerScreen() {
                     {preset.description}
                   </Typography>
                 </View>
-                <View style={styles.presetBadge}>
+                <View style={styles.presetPillBadge}>
                   <Typography variant="label" bold color={theme.colors.accent.primary} style={{ fontSize: 10 }}>
                     {preset.badge}
                   </Typography>
@@ -950,7 +950,7 @@ export default function PlannerScreen() {
                 </View>
 
                 <TouchableOpacity
-                  style={styles.presetApplyBtn}
+                  style={styles.presetSelectBtn}
                   onPress={() => handleSelectPreset(preset)}
                   activeOpacity={0.7}
                 >
@@ -1945,5 +1945,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
+  },
+  presetPillBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: theme.borderRadius.round,
+    backgroundColor: 'rgba(255, 107, 53, 0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 53, 0.3)',
+  },
+  presetSelectBtn: {
+    backgroundColor: theme.colors.accent.primary,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: theme.borderRadius.md,
+    shadowColor: theme.colors.accent.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.35,
+    shadowRadius: 4,
+    elevation: 3,
   },
 });
