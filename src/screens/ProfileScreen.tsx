@@ -9,14 +9,7 @@ import { LevelBars, aggregateToCoreZones } from '../components/LevelBars';
 import theme from '../constants/theme';
 import { useSessionStore } from '../stores/useSessionStore';
 import { usePriorityStore } from '../stores/usePriorityStore';
-
-function getPrestigeRank(totalXp: number): { title: string; color: string; icon: string } {
-  if (totalXp >= 10000) return { title: 'MİTİK TANRI', color: '#FF007F', icon: 'crown' };
-  if (totalXp >= 6000) return { title: 'ELMAS TİTAN', color: '#00E5FF', icon: 'diamond-stone' };
-  if (totalXp >= 3500) return { title: 'ALTIN ŞAMPİYON', color: '#FFD700', icon: 'shield-crown' };
-  if (totalXp >= 1500) return { title: 'GÜMÜŞ GLADYATÖR', color: '#C0C0C0', icon: 'sword-cross' };
-  return { title: 'BRONZ ÇIRAK', color: '#CD7F32', icon: 'shield-account' };
-}
+import { getPrestigeRank } from '../constants/gamification';
 
 export default function ProfileScreen() {
   const { t } = useTranslation();

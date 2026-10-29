@@ -76,3 +76,19 @@ export function calculateWorkoutXP(
 
 /** Default percentage increase when "Level Up Plan" is pressed */
 export const LEVEL_UP_WEIGHT_PERCENTAGE = 5; // 5% increase
+
+// ──── Prestige Ranks (Tycoon Progression) ────
+
+export interface PrestigeRank {
+  title: string;
+  color: string;
+  icon: string;
+}
+
+export function getPrestigeRank(totalXp: number): PrestigeRank {
+  if (totalXp >= 10000) return { title: 'MİTİK TANRI', color: '#FF007F', icon: 'crown' };
+  if (totalXp >= 6000) return { title: 'ELMAS TİTAN', color: '#00E5FF', icon: 'diamond-stone' };
+  if (totalXp >= 3500) return { title: 'ALTIN ŞAMPİYON', color: '#FFD700', icon: 'shield-crown' };
+  if (totalXp >= 1500) return { title: 'GÜMÜŞ GLADYATÖR', color: '#C0C0C0', icon: 'sword-cross' };
+  return { title: 'BRONZ ÇIRAK', color: '#CD7F32', icon: 'shield-account' };
+}

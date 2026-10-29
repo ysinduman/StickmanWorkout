@@ -18,6 +18,7 @@ import { Stickman } from '../components/Stickman/Stickman';
 import theme from '../constants/theme';
 import { supabase } from '../lib/supabase';
 import { useSessionStore, type BodyPartProgress } from '../stores/useSessionStore';
+import { getPrestigeRank } from '../constants/gamification';
 
 interface SearchHit {
   username: string;
@@ -162,6 +163,7 @@ export default function SearchScreen() {
     const partLevels = Object.fromEntries(
       profile.progression.body_parts.map(part => [part.body_part_id, part.level]),
     );
+    const prestige = getPrestigeRank(profile.progression.total_xp);
     return (
       <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
         <Button
@@ -182,7 +184,13 @@ export default function SearchScreen() {
           </View>
         </View>
         <Typography variant="title1" align="center">@{profile.username}</Typography>
-        {profile.bio ? <Typography variant="bodyMuted" align="center">{profile.bio}</Typography> : null}
+        <View style={[styles.prestigePill, { borderColor: prestige.color }]}>
+          <MaterialCommunityIcons name={prestige.icon} size={14} color={prestige.color} />
+          <Typography variant="label" bold color={prestige.color} style={{ marginLeft: 4 }}>
+            {prestige.title}
+          </Typography>
+        </View>
+        {profile.bio ? <Typography variant="bodyMuted" align="center" style={{ marginBottom: 6 }}>{profile.bio}</Typography> : null}
         <Card style={styles.stats}>
           <View style={styles.stat}>
             <Typography variant="title2" bold color={theme.colors.accent.primary}>
@@ -501,5 +509,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 130, 40, 0.35)',
     borderWidth: 1,
     borderColor: 'rgba(255, 200, 100, 0.55)',
+  },
+  prestigePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: theme.borderRadius.round,
+    marginTop: 6,
+    marginBottom: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
   },
 });

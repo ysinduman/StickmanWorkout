@@ -32,8 +32,8 @@ export default function TabNavigator() {
           borderTopWidth: 1,
           borderTopColor: theme.colors.border,
           paddingTop: 6,
-          paddingBottom: 8,
-          height: 62,
+          paddingBottom: 10,
+          height: 66,
         },
         tabBarLabelStyle: {
           fontSize: 11,
