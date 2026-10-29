@@ -8,6 +8,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:evolution": "node scripts/verify-evolution.js",
+    "test:playstore": "node scripts/verify-playstore.js",
     "build:android": "cd android && gradlew bundleRelease"
   },
   "dependencies": {
