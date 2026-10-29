@@ -21,9 +21,10 @@ export const Calendar: React.FC<CalendarProps> = ({ plan, history }) => {
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth() + 1; // 1-indexed
 
-  const monthName = today.toLocaleString(i18n.language.startsWith('tr') ? 'tr-TR' : 'en-US', {
+  const rawMonth = today.toLocaleString(i18n.language.startsWith('tr') ? 'tr-TR' : 'en-US', {
     month: 'long',
   });
+  const monthName = rawMonth.charAt(0).toUpperCase() + rawMonth.slice(1);
 
   // Calculate days in the current month
   const calendarDaysList = useMemo(() => {
