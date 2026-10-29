@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
 import theme from '../constants/theme';
+import { Vibration } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
 import SearchScreen from '../screens/SearchScreen';
 import PlannerScreen from '../screens/PlannerScreen';
@@ -16,6 +17,13 @@ export default function TabNavigator() {
 
   return (
     <Tab.Navigator
+      screenListeners={{
+        tabPress: () => {
+          try {
+            Vibration.vibrate(15);
+          } catch (_) {}
+        },
+      }}
       screenOptions={{
         tabBarActiveTintColor: theme.colors.accent.primary,
         tabBarInactiveTintColor: theme.colors.tab.inactive,
@@ -23,7 +31,13 @@ export default function TabNavigator() {
           backgroundColor: theme.colors.tab.background,
           borderTopWidth: 1,
           borderTopColor: theme.colors.border,
-          paddingTop: 8,
+          paddingTop: 6,
+          paddingBottom: 8,
+          height: 62,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
         },
         headerStyle: {
           backgroundColor: theme.colors.background.primary,
