@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Vibration,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
@@ -150,6 +151,9 @@ export default function PlannerScreen() {
           text: t('common.confirm'),
           onPress: async () => {
             setPlan(preset.plan);
+            try {
+              Vibration.vibrate([0, 50, 40, 90]);
+            } catch (_) {}
             try {
               await getRepository().savePlan(preset.plan);
             } catch (err) {
@@ -712,6 +716,9 @@ export default function PlannerScreen() {
     const plan = storedPlan.plan;
 
     const handleStartFromPlanner = () => {
+      try {
+        Vibration.vibrate(35);
+      } catch (_) {}
       if (activeWorkout) {
         navigation.navigate('ActiveWorkout');
         return;

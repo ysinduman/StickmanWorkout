@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Vibration,
   View,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -142,6 +143,9 @@ export default function SearchScreen() {
   };
 
   const openProfile = async (username: string) => {
+    try {
+      Vibration.vibrate(25);
+    } catch (_) {}
     setOpening(true);
     setMessage(null);
     const { data, error } = await supabase.rpc('get_public_profile', { lookup: username });
@@ -170,6 +174,9 @@ export default function SearchScreen() {
         />
         <View style={styles.hero}>
           <Stickman muscleMass={8} partLevels={partLevels} width={150} height={180} />
+          <View style={styles.podiumBase}>
+            <View style={styles.podiumRing} />
+          </View>
         </View>
         <Typography variant="title1" align="center">@{profile.username}</Typography>
         {profile.bio ? <Typography variant="bodyMuted" align="center">{profile.bio}</Typography> : null}
@@ -458,5 +465,21 @@ const styles = StyleSheet.create({
   },
   stat: {
     alignItems: 'center',
+  },
+  podiumBase: {
+    position: 'absolute',
+    bottom: -6,
+    width: 150,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  podiumRing: {
+    width: 140,
+    height: 18,
+    borderRadius: 70,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 107, 53, 0.45)',
+    backgroundColor: 'rgba(255, 107, 53, 0.08)',
   },
 });
