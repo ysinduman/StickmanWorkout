@@ -1,5 +1,5 @@
-import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Typography, Button, Card } from '../components/ui';
@@ -31,6 +31,7 @@ export default function ProfileScreen() {
 
   const totalXp = progression?.total_xp ?? 0;
   const prestige = getPrestigeRank(totalXp);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
 
   return (
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
@@ -174,6 +175,51 @@ export default function ProfileScreen() {
         <Typography variant="bodyMuted">{t('profile.empty')}</Typography>
       )}
 
+      {/* Play Store & Privacy Policy Compliance Card */}
+      <Card style={styles.complianceCard}>
+        <TouchableOpacity
+          onPress={() => setPrivacyOpen(!privacyOpen)}
+          activeOpacity={0.8}
+          style={styles.complianceHeader}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+            <MaterialCommunityIcons name="shield-check" size={22} color={theme.colors.accent.primary} />
+            <View style={{ marginLeft: 10 }}>
+              <Typography variant="body" bold>
+                Gizlilik & Güvenlik Politikası
+              </Typography>
+              <Typography variant="caption" color={theme.colors.text.secondary}>
+                Play Store Standartları • v1.0.0
+              </Typography>
+            </View>
+          </View>
+          <MaterialCommunityIcons
+            name={privacyOpen ? 'chevron-up' : 'chevron-down'}
+            size={22}
+            color={theme.colors.text.secondary}
+          />
+        </TouchableOpacity>
+
+        {privacyOpen && (
+          <View style={styles.complianceBody}>
+            <View style={styles.complianceRow}>
+              <MaterialCommunityIcons name="camera-outline" size={16} color={theme.colors.status.success} style={{ marginTop: 2 }} />
+              <Typography variant="caption" color={theme.colors.text.secondary} style={{ marginLeft: 8, flex: 1 }}>
+                <Typography variant="caption" bold color={theme.colors.text.primary}>Yerel AI Kamera: </Typography>
+                AI hareket sayacı kamera görüntülerini tamamen cihazınızda yerel olarak işler. Hiçbir görüntü kaydedilmez veya harici sunuculara aktarılmaz.
+              </Typography>
+            </View>
+            <View style={[styles.complianceRow, { marginTop: 10 }]}>
+              <MaterialCommunityIcons name="database-check" size={16} color={theme.colors.accent.primary} style={{ marginTop: 2 }} />
+              <Typography variant="caption" color={theme.colors.text.secondary} style={{ marginLeft: 8, flex: 1 }}>
+                <Typography variant="caption" bold color={theme.colors.text.primary}>Veri Güvenliği: </Typography>
+                Profil ve antrenman verileriniz PostgreSQL Row Level Security (RLS) politikalarıyla korunur.
+              </Typography>
+            </View>
+          </View>
+        )}
+      </Card>
+
       {/* Sign Out Action Button */}
       <Button
         title={t('auth.signOut')}
@@ -302,5 +348,28 @@ const styles = StyleSheet.create({
   signOut: {
     marginTop: theme.spacing.xl,
     borderColor: 'rgba(248, 113, 113, 0.5)',
+  },
+  complianceCard: {
+    marginTop: theme.spacing.xl,
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.background.secondary,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 53, 0.25)',
+    borderRadius: theme.borderRadius.md,
+  },
+  complianceHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  complianceBody: {
+    marginTop: theme.spacing.md,
+    paddingTop: theme.spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border,
+  },
+  complianceRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
   },
 });

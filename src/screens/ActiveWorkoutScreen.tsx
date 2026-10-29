@@ -130,6 +130,9 @@ export default function ActiveWorkoutScreen() {
     };
 
     updateExerciseProgress(exerciseId, nextSets);
+    try {
+      Vibration.vibrate(isNowCompleted ? 45 : 15);
+    } catch (_) {}
   };
 
   const handleStartExerciseTimer = (exerciseId: string, timeSeconds: number) => {
