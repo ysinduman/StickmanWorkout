@@ -103,10 +103,13 @@ export default function HistoryScreen() {
                 const completedSets = exCompleted.sets.filter((s) => s.completed);
                 if (completedSets.length === 0) return null;
 
+                const fallbackTitle = exCompleted.exerciseId.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                const exTitle = ex ? t(ex.name) : t(`exercises.${exCompleted.exerciseId}`, { defaultValue: fallbackTitle });
+
                 return (
                   <View key={exCompleted.exerciseId} style={styles.exerciseItem}>
                     <Typography variant="body" style={styles.exerciseName}>
-                      {ex ? t(ex.name) : exCompleted.exerciseId}
+                      {exTitle}
                     </Typography>
                     <View style={styles.setsList}>
                       {completedSets.map((set, idx) => (

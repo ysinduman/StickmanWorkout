@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { StyleSheet, View, ScrollView, Alert } from 'react-native';
+import { StyleSheet, View, ScrollView, Alert, Vibration } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { useWorkoutStore } from '../stores/useWorkoutStore';
@@ -158,6 +158,9 @@ export default function WorkoutSummaryScreen() {
     }
 
     // 4. Check for Level Up
+    try {
+      Vibration.vibrate([0, 80, 50, 120]);
+    } catch (_) {}
     const newLevel = calculateLevel(userStore.xp + xpEarned);
     if (newLevel > previousLevel) {
       setLevelUpData({ prev: previousLevel, new: newLevel });
@@ -192,16 +195,18 @@ export default function WorkoutSummaryScreen() {
       {/* RENDER AND ADJUST SETS */}
       {exercises.map((exProgress) => {
         const ex = EXERCISE_LIBRARY.find((e) => e.id === exProgress.exerciseId);
-        if (!ex) return null;
+        const fallbackTitle = exProgress.exerciseId.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        const exTitle = ex ? t(ex.name) : t(`exercises.${exProgress.exerciseId}`, { defaultValue: fallbackTitle });
+        const exType = ex?.type ?? 'weight';
 
         // Only show if the user actually completed at least one set of this exercise
         const completedSets = exProgress.sets.filter((s) => s.completed);
         if (completedSets.length === 0) return null;
 
         return (
-          <Card key={ex.id} style={styles.exCard}>
+          <Card key={exProgress.exerciseId} style={styles.exCard}>
             <Typography variant="body" bold color={theme.colors.accent.primary}>
-              {t(ex.name)}
+              {exTitle}
             </Typography>
 
             {exProgress.sets.map((set, setIdx) => {
@@ -214,34 +219,34 @@ export default function WorkoutSummaryScreen() {
                   </Typography>
 
                   <View style={styles.controlsRow}>
-                    {ex.type === 'weight' ? (
+                    {exType === 'weight' ? (
                       <>
                         {/* Weight adjustment */}
                         <View style={styles.controlGroup}>
-                          <Button title="-" style={styles.miniBtn} onPress={() => handleAdjustWeight(ex.id, setIdx, -2.5)} />
+                          <Button title="-" style={styles.miniBtn} onPress={() => handleAdjustWeight(exProgress.exerciseId, setIdx, -2.5)} />
                           <Typography variant="body" style={styles.controlVal}>
                             {set.actualWeightKg}kg
                           </Typography>
-                          <Button title="+" style={styles.miniBtn} onPress={() => handleAdjustWeight(ex.id, setIdx, 2.5)} />
+                          <Button title="+" style={styles.miniBtn} onPress={() => handleAdjustWeight(exProgress.exerciseId, setIdx, 2.5)} />
                         </View>
 
                         {/* Reps adjustment */}
                         <View style={[styles.controlGroup, { marginLeft: theme.spacing.md }]}>
-                          <Button title="-" style={styles.miniBtn} onPress={() => handleAdjustReps(ex.id, setIdx, -1)} />
+                          <Button title="-" style={styles.miniBtn} onPress={() => handleAdjustReps(exProgress.exerciseId, setIdx, -1)} />
                           <Typography variant="body" style={styles.controlVal}>
                             {set.actualReps}
                           </Typography>
-                          <Button title="+" style={styles.miniBtn} onPress={() => handleAdjustReps(ex.id, setIdx, 1)} />
+                          <Button title="+" style={styles.miniBtn} onPress={() => handleAdjustReps(exProgress.exerciseId, setIdx, 1)} />
                         </View>
                       </>
                     ) : (
                       /* Time adjustment */
                       <View style={styles.controlGroup}>
-                        <Button title="-" style={styles.miniBtn} onPress={() => handleAdjustTime(ex.id, setIdx, -5)} />
+                        <Button title="-" style={styles.miniBtn} onPress={() => handleAdjustTime(exProgress.exerciseId, setIdx, -5)} />
                         <Typography variant="body" style={styles.controlVal}>
                           {set.actualTimeSeconds}s
                         </Typography>
-                        <Button title="+" style={styles.miniBtn} onPress={() => handleAdjustTime(ex.id, setIdx, 5)} />
+                        <Button title="+" style={styles.miniBtn} onPress={() => handleAdjustTime(exProgress.exerciseId, setIdx, 5)} />
                       </View>
                     )}
                   </View>
