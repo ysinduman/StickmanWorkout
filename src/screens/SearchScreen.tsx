@@ -175,7 +175,10 @@ export default function SearchScreen() {
         <View style={styles.hero}>
           <Stickman muscleMass={8} partLevels={partLevels} width={150} height={180} />
           <View style={styles.podiumBase}>
-            <View style={styles.podiumRing} />
+            <View style={styles.podiumGlow} />
+            <View style={styles.podiumRing}>
+              <View style={styles.podiumInnerGlow} />
+            </View>
           </View>
         </View>
         <Typography variant="title1" align="center">@{profile.username}</Typography>
@@ -468,18 +471,35 @@ const styles = StyleSheet.create({
   },
   podiumBase: {
     position: 'absolute',
-    bottom: -6,
-    width: 150,
-    height: 24,
+    bottom: 14,
+    width: 170,
+    height: 30,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  podiumGlow: {
+    position: 'absolute',
+    width: 180,
+    height: 30,
+    borderRadius: 90,
+    backgroundColor: 'rgba(255, 107, 53, 0.12)',
+  },
   podiumRing: {
-    width: 140,
-    height: 18,
-    borderRadius: 70,
+    width: 150,
+    height: 20,
+    borderRadius: 75,
     borderWidth: 2,
-    borderColor: 'rgba(255, 107, 53, 0.45)',
-    backgroundColor: 'rgba(255, 107, 53, 0.08)',
+    borderColor: 'rgba(255, 107, 53, 0.65)',
+    backgroundColor: 'rgba(255, 107, 53, 0.18)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  podiumInnerGlow: {
+    width: 105,
+    height: 10,
+    borderRadius: 50,
+    backgroundColor: 'rgba(255, 130, 40, 0.35)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 200, 100, 0.55)',
   },
 });

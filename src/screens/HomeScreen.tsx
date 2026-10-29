@@ -291,7 +291,10 @@ export default function HomeScreen() {
 
         {/* Podium Base */}
         <View style={styles.podiumBase}>
-          <View style={styles.podiumRing} />
+          <View style={styles.podiumGlow} />
+          <View style={styles.podiumRing}>
+            <View style={styles.podiumInnerGlow} />
+          </View>
         </View>
       </View>
 
@@ -717,19 +720,41 @@ const styles = StyleSheet.create({
   },
   podiumBase: {
     position: 'absolute',
-    bottom: -6,
-    width: 170,
-    height: 28,
+    bottom: 18,
+    width: 200,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  podiumGlow: {
+    position: 'absolute',
+    width: 210,
+    height: 36,
+    borderRadius: 105,
+    backgroundColor: 'rgba(255, 107, 53, 0.12)',
+  },
   podiumRing: {
-    width: 160,
-    height: 22,
-    borderRadius: 80,
+    width: 175,
+    height: 24,
+    borderRadius: 88,
     borderWidth: 2,
-    borderColor: 'rgba(255, 107, 53, 0.45)',
-    backgroundColor: 'rgba(255, 107, 53, 0.08)',
+    borderColor: 'rgba(255, 107, 53, 0.65)',
+    backgroundColor: 'rgba(255, 107, 53, 0.18)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#FF6B35',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  podiumInnerGlow: {
+    width: 125,
+    height: 12,
+    borderRadius: 60,
+    backgroundColor: 'rgba(255, 130, 40, 0.35)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 200, 100, 0.55)',
   },
   speechCard: {
     flexDirection: 'row',

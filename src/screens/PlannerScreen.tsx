@@ -16,7 +16,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { usePlanStore } from '../stores/usePlanStore';
 import { useWorkoutStore } from '../stores/useWorkoutStore';
 import { usePriorityStore } from '../stores/usePriorityStore';
-import { muscleGroupForZone } from '../constants/zones';
+import { muscleGroupForZone, zoneForMuscleGroup } from '../constants/zones';
 import { EXERCISE_LIBRARY } from '../constants/exercises';
 import { Typography, Card, Button } from '../components/ui';
 import theme from '../constants/theme';
@@ -790,15 +790,15 @@ export default function PlannerScreen() {
                   </Typography>
                   <Typography variant="caption" color={theme.colors.text.secondary}>
                     (
-                    {wd.muscleGroups.map((group, index) => (
+                    {Array.from(new Set(wd.muscleGroups.map((g) => zoneForMuscleGroup(g)))).map((zone, index) => (
                       <Typography
-                        key={group}
+                        key={zone}
                         variant="caption"
-                        color={group === priorityGroup ? theme.colors.accent.primary : theme.colors.text.secondary}
-                        bold={group === priorityGroup}
+                        color={zone === pinnedZone ? theme.colors.accent.primary : theme.colors.text.secondary}
+                        bold={zone === pinnedZone}
                       >
                         {index > 0 ? ', ' : ''}
-                        {t(`muscleGroups.${group}`)}
+                        {t(`zones.${zone}`)}
                       </Typography>
                     ))}
                     )

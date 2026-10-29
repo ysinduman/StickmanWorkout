@@ -27,6 +27,7 @@ import { Stickman } from '../components/Stickman/Stickman';
 import theme from '../constants/theme';
 import { useSessionStore } from '../stores/useSessionStore';
 import { usePriorityStore } from '../stores/usePriorityStore';
+import { zoneForMuscleGroup } from '../constants/zones';
 
 export default function ActiveWorkoutScreen() {
   const { t } = useTranslation();
@@ -183,7 +184,7 @@ export default function ActiveWorkoutScreen() {
             {activeWorkout.planDay.name}
           </Typography>
           <Typography variant="caption" color={theme.colors.text.secondary} style={{ textTransform: 'capitalize' }}>
-            {activeWorkout.planDay.muscleGroups.map((g) => t(`muscleGroups.${g}`)).join(', ')}
+            {Array.from(new Set(activeWorkout.planDay.muscleGroups.map((g) => t(`zones.${zoneForMuscleGroup(g)}`)))).join(', ')}
           </Typography>
         </View>
 

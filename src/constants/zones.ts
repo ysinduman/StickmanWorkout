@@ -59,3 +59,31 @@ export function bodyPartsForZone(zone: MuscleZone | string): string[] {
       return [];
   }
 }
+
+/** Map any specific or legacy muscle group to one of the 4 canonical zones: torso, arms, abs, legs */
+export function zoneForMuscleGroup(group: MuscleGroup | string): MuscleZone {
+  switch (group) {
+    case 'torso':
+    case 'chest':
+    case 'back':
+    case 'shoulders':
+      return 'torso';
+    case 'arms':
+    case 'biceps':
+    case 'triceps':
+    case 'forearms':
+    case 'leftArm':
+    case 'rightArm':
+      return 'arms';
+    case 'abs':
+    case 'core':
+      return 'abs';
+    case 'legs':
+    case 'glutes':
+    case 'quadriceps':
+    case 'hamstrings':
+    case 'calves':
+    default:
+      return 'legs';
+  }
+}

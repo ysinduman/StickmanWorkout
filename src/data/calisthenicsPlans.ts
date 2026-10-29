@@ -17,7 +17,7 @@ export const CALISTHENICS_PRESETS: CalisthenicsPreset[] = [
     description: 'Pazartesi, Çarşamba ve Cuma günleri tüm vücut dengeli gelişim (Şınav, Squat, Mekik, Plank).',
     badge: '3 Gün / Hafta',
     daysPerWeek: 3,
-    focus: ['Göğüs', 'Bacak', 'Karın'],
+    focus: ['Gövde', 'Bacak', 'Karın'],
     plan: {
       type: 'split',
       schedule: {
@@ -78,7 +78,7 @@ export const CALISTHENICS_PRESETS: CalisthenicsPreset[] = [
     description: 'Üst vücut & göğüs ve alt vücut & bacak ayrımı ile yoğun kas gelişimi.',
     badge: '4 Gün / Hafta',
     daysPerWeek: 4,
-    focus: ['Göğüs', 'Bacak', 'Karın'],
+    focus: ['Gövde', 'Bacak', 'Karın'],
     plan: {
       type: 'split',
       schedule: {
@@ -162,7 +162,7 @@ export const CALISTHENICS_PRESETS: CalisthenicsPreset[] = [
     description: 'Hızlı XP kasmak, seriyi korumak ve avatarı güçlendirmek için yüksek tekrarlı Calisthenics.',
     badge: '5 Gün / XP Boost',
     daysPerWeek: 5,
-    focus: ['Göğüs', 'Karın'],
+    focus: ['Gövde', 'Karın'],
     plan: {
       type: 'split',
       schedule: {
