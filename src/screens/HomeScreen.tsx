@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, View, ScrollView, TouchableOpacity, Vibration } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
@@ -140,6 +140,9 @@ export default function HomeScreen() {
   };
 
   const selectZone = (zone: MuscleZone) => {
+    try {
+      Vibration.vibrate(25);
+    } catch (_) {}
     if (zone === pinnedZone) {
       clearPin();
       return;
@@ -478,6 +481,9 @@ export default function HomeScreen() {
                       return;
                     }
                     buyShelfItem(item.id);
+                    try {
+                      Vibration.vibrate([0, 60, 40, 100]);
+                    } catch (_) {}
                   }}
                 >
                   <Typography
