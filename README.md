@@ -23,10 +23,14 @@
 ## 📱 Uygulama Ekran Görüntüleri
 
 <p align="center">
-  <img src="screenshots/01_home.png" width="22%" alt="Ana Sayfa" />
-  <img src="screenshots/02_search.png" width="22%" alt="Liderlik Tablosu" />
-  <img src="screenshots/03_planner.png" width="22%" alt="Planlayıcı" />
-  <img src="screenshots/04_profile.png" width="22%" alt="Profil" />
+  <img src="screenshots/01_home.png" width="30%" alt="Ana Sayfa" />
+  <img src="screenshots/02_search.png" width="30%" alt="Liderlik Tablosu" />
+  <img src="screenshots/02_search_modal.png" width="30%" alt="Kullanıcı Profili" />
+</p>
+<p align="center">
+  <img src="screenshots/03_planner.png" width="30%" alt="Planlayıcı" />
+  <img src="screenshots/04_profile.png" width="30%" alt="Profil & Seviyeler" />
+  <img src="screenshots/05_active_workout.png" width="30%" alt="Aktif Antrenman" />
 </p>
 
 ---
@@ -35,7 +39,7 @@
 
 | Özellik | Açıklama |
 | :--- | :--- |
-| 🏰 **Roblox Tycoon Bağlayıcılığı** | Işıklı podyum, dinamik alev aurası, seviye kademe etiketleri (Bronz, Gümüş, Altın, Titan, Efsane) ve 2X Odak çarpanları. |
+| 🏰 **Roblox Tycoon Bağlayıcılığı** | Işıklı podyum, dinamik alev aurası, seviye kademe etiketleri (Bronz, Gümüş, Altın, Titan, Efsane), Kor dükkanı kilitleri ve 2X Odak çarpanları. |
 | 🤖 **AI Kamera Takibi (Computer Vision)** | Ön kamera üzerinden tamamen cihazda yerel çalışan gerçek zamanlı eklem analizi (Şınav, Squat, Mekik, Plank). |
 | ⚡ **4 Temel Kas Bölgesi (1–100 Vektörel Motor)** | Yalnızca 4 temel bölge: **Gövde**, **Kol**, **Karın** ve **Bacak** odaklı dinamik prosedürel SVG motoru. |
 | 📳 **Haptik Dokunsal Geri Bildirim** | Tamamlanan her sette fiziksel tıklama titreşimi, seviye atlamalarında arcade çoklu rumble efekti. |
@@ -96,13 +100,14 @@ StickmanWorkout/
 ├── src/
 │   ├── components/
 │   │   ├── Stickman/       # Dinamik SVG çöp adam ve 1-100 kas evrim motoru
-│   │   ├── Calendar/       # Antrenman geçmişi takvimi
-│   │   └── LevelUpModal/   # Seviye atlama kutlama modalleri
-│   ├── screens/            # Home, ActiveWorkout, Profile, WorkoutSummary
-│   ├── stores/             # Zustand state store'ları (user, workout, streak)
+│   │   ├── Calendar/       # Antrenman geçmişi takvimi ve alev efektleri
+│   │   └── LevelBars.tsx   # 4 temel bölge seviye çubukları
+│   ├── screens/            # Home, Search, Planner, Profile, ActiveWorkout
+│   ├── stores/             # Zustand state store'ları (session, workout, priority, ember)
 │   └── utils/              # AI kamera motoru, streak ve ses yardımcıları
 ├── scripts/
-│   ├── verify-evolution.js # 11 kas grubu için 1.155 durum doğrulama betiği
+│   ├── verify-evolution.js # 4 temel bölge için 420 durum doğrulama betiği
+│   ├── verify-playstore.js # 20 maddelik Play Store pre-flight denetim betiği
 │   └── generate-icons.ps1  # Android ikon oluşturucu
 ├── gelistirici_detaylari/
 │   └── stickman_evolution_preview.html # Canlı SVG evrim motoru önizleme paneli
@@ -132,8 +137,11 @@ npm run android
 ## 🧪 Doğrulama ve Test
 
 ```bash
-# Evrim motoru testlerini çalıştır (1.155 durum testi)
+# Evrim motoru testlerini çalıştır (420 durum testi)
 npm run test:evolution
+
+# Google Play Store release uyumluluk denetimi (20 kontrol)
+npm run test:playstore
 
 # TypeScript tür kontrolü
 npm run typecheck
