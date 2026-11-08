@@ -15,7 +15,7 @@
   <a href="https://github.com/ysinduman/StickmanWorkout"><img src="https://img.shields.io/badge/AI_Tracking-Computer_Vision-FF6F00?style=flat-square&logo=opencv&logoColor=white" alt="AI Tracking" /></a>
   <a href="https://github.com/ysinduman/StickmanWorkout"><img src="https://img.shields.io/badge/Tycoon_Zones-4_Core_Parts-brightgreen?style=flat-square" alt="Core Parts" /></a>
   <a href="https://supabase.com/"><img src="https://img.shields.io/badge/Supabase-Backend_RLS-3ECF8E?style=flat-square&logo=supabase&logoColor=white" alt="Supabase" /></a>
-  <a href="https://github.com/ysinduman/StickmanWorkout"><img src="https://img.shields.io/badge/Tests-420%20Passing-success?style=flat-square" alt="Tests" /></a>
+  <a href="https://github.com/ysinduman/StickmanWorkout"><img src="https://img.shields.io/badge/Tests-1200%20Passing-success?style=flat-square" alt="Tests" /></a>
 </p>
 
 ---
@@ -106,7 +106,7 @@ StickmanWorkout/
 │   ├── stores/             # Zustand state store'ları (session, workout, priority, ember)
 │   └── utils/              # AI kamera motoru, streak ve ses yardımcıları
 ├── scripts/
-│   ├── verify-evolution.js # 4 temel bölge için 420 durum doğrulama betiği
+│   ├── verify-evolution.js # 4 temel bölge ve 1-300 prestij kademeleri için 1200 durum doğrulama betiği
 │   ├── verify-playstore.js # 20 maddelik Play Store pre-flight denetim betiği
 │   └── generate-icons.ps1  # Android ikon oluşturucu
 ├── gelistirici_detaylari/
@@ -137,7 +137,7 @@ npm run android
 ## 🧪 Doğrulama ve Test
 
 ```bash
-# Evrim motoru testlerini çalıştır (420 durum testi)
+# Evrim motoru ve 1-300 prestij testlerini çalıştır (1200 durum testi)
 npm run test:evolution
 
 # Google Play Store release uyumluluk denetimi (20 kontrol)

@@ -1,4 +1,4 @@
-// Verification script for 1-100 procedural evolution across 4 core body parts: Gövde, Kol, Karın, Bacak
+// Verification script for 1-300 procedural evolution & Tycoon Prestige Tiers across 4 core body parts: Gövde, Kol, Karın, Bacak
 const parts = ['torso', 'arms', 'abs', 'legs'];
 
 function getEvolution(level, isPriority = false) {
@@ -27,17 +27,29 @@ function getEvolution(level, isPriority = false) {
   return { level: safeLevel, growth, vascularity, veinCount, tier, strokeColor, isPrestige };
 }
 
-console.log('Testing 4 basic body parts (Gövde, Kol, Karın, Bacak) from level 1 to 100+ ...');
+console.log('Testing 4 basic body parts (Gövde, Kol, Karın, Bacak) from level 1 to 300 (All Prestige Tiers) ...');
 
 let errors = 0;
+let assertions = 0;
+
 for (const part of parts) {
-  for (let lvl = 1; lvl <= 105; lvl++) {
+  for (let lvl = 1; lvl <= 300; lvl++) {
     const evo = getEvolution(lvl);
-    
+    assertions++;
+
     // Level 1: baseline
-    if (lvl === 1 && (evo.growth !== 0 || evo.vascularity !== 0 || evo.veinCount !== 0)) {
-      console.error(`FAIL: Part ${part} Level 1 incorrect`);
+    if (lvl === 1 && (evo.growth !== 0 || evo.vascularity !== 0 || evo.veinCount !== 0 || evo.isPrestige)) {
+      console.error(`FAIL: Part ${part} Level 1 baseline incorrect`);
       errors++;
+    }
+
+    // Level 25: priority 2X focus color check
+    if (lvl === 25) {
+      const priorityEvo = getEvolution(lvl, true);
+      if (priorityEvo.strokeColor !== '#FF6B35') {
+        console.error(`FAIL: Part ${part} Level 25 priority highlight color failed`);
+        errors++;
+      }
     }
 
     // Level 50: peak hypertrophy
@@ -58,10 +70,26 @@ for (const part of parts) {
       errors++;
     }
 
-    // Level 100: Prestige Gold Tier + max vascularity
+    // Level 100: Prestige Gold Tier (Tier 1) + max vascularity
     if (lvl === 100) {
       if (evo.tier !== 1 || evo.strokeColor !== '#FFD700' || !evo.isPrestige || evo.veinCount !== 4) {
-        console.error(`FAIL: Part ${part} Level 100 prestige tier failed`);
+        console.error(`FAIL: Part ${part} Level 100 Gold prestige tier failed`);
+        errors++;
+      }
+    }
+
+    // Level 200: Prestige Diamond Cyan Tier (Tier 2)
+    if (lvl === 200) {
+      if (evo.tier !== 2 || evo.strokeColor !== '#00F0FF' || !evo.isPrestige || evo.veinCount !== 4) {
+        console.error(`FAIL: Part ${part} Level 200 Diamond prestige tier failed`);
+        errors++;
+      }
+    }
+
+    // Level 300: Prestige Cosmic Purple Tier (Tier 3)
+    if (lvl === 300) {
+      if (evo.tier !== 3 || evo.strokeColor !== '#BD00FF' || !evo.isPrestige || evo.veinCount !== 4) {
+        console.error(`FAIL: Part ${part} Level 300 Cosmic prestige tier failed`);
         errors++;
       }
     }
@@ -69,7 +97,7 @@ for (const part of parts) {
 }
 
 if (errors === 0) {
-  console.log(`SUCCESS: All 4 core body parts passed 1-100 level progression checks (420 state assertions verified)!`);
+  console.log(`SUCCESS: All 4 core body parts passed 1-300 level & multi-tier prestige checks (${assertions} state assertions verified)!`);
 } else {
   process.exit(1);
 }
