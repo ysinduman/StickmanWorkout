@@ -153,15 +153,6 @@
     "headband": "Saç bandı",
     "goldBelt": "Altın kemer"
   },
-  "zones": {
-    "leftArm": "Sol Kol",
-    "rightArm": "Sağ Kol",
-    "shoulders": "Omuz",
-    "back": "Sırt",
-    "abs": "Karın",
-    "glutes": "Kalça",
-    "legs": "Bacak"
-  },
   "cosmetic": {
     "chalk_dust": "Tebeşir tozu",
     "wrist_wrap": "Bilek bandı",
@@ -270,7 +261,9 @@
   "profile": {
     "levels": "Seviyeler",
     "levelShort": "Sv {{level}}",
-    "empty": "Henüz seviye yok."
+    "empty": "Henüz seviye yok.",
+    "privacyTitle": "Gizlilik ve Veri Güvenliği Politikası",
+    "deleteAccount": "Verileri Sıfırla / Hesabı Sil"
   },
   "search": {
     "title": "Profil Ara",

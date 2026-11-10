@@ -107,7 +107,7 @@ StickmanWorkout/
 │   └── utils/              # AI kamera motoru, streak ve ses yardımcıları
 ├── scripts/
 │   ├── verify-evolution.js # 4 temel bölge ve 1-300 prestij kademeleri için 1200 durum doğrulama betiği
-│   ├── verify-playstore.js # 20 maddelik Play Store pre-flight denetim betiği
+│   ├── verify-playstore.js # 25 maddelik Play Store & Veri Güvenliği denetim betiği
 │   └── generate-icons.ps1  # Android ikon oluşturucu
 ├── gelistirici_detaylari/
 │   └── stickman_evolution_preview.html # Canlı SVG evrim motoru önizleme paneli
@@ -140,7 +140,7 @@ npm run android
 # Evrim motoru ve 1-300 prestij testlerini çalıştır (1200 durum testi)
 npm run test:evolution
 
-# Google Play Store release uyumluluk denetimi (20 kontrol)
+# Google Play Store release & Veri Güvenliği uyumluluk denetimi (25 kontrol)
 npm run test:playstore
 
 # TypeScript tür kontrolü

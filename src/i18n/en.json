@@ -153,15 +153,6 @@
     "headband": "Headband",
     "goldBelt": "Gold belt"
   },
-  "zones": {
-    "leftArm": "Left Arm",
-    "rightArm": "Right Arm",
-    "shoulders": "Shoulders",
-    "back": "Back",
-    "abs": "Abs",
-    "glutes": "Glutes",
-    "legs": "Legs"
-  },
   "cosmetic": {
     "chalk_dust": "Chalk dust",
     "wrist_wrap": "Wrist wrap",
@@ -270,7 +261,9 @@
   "profile": {
     "levels": "Levels",
     "levelShort": "Lv {{level}}",
-    "empty": "No levels yet."
+    "empty": "No levels yet.",
+    "privacyTitle": "Privacy & Data Safety Policy",
+    "deleteAccount": "Reset Data / Delete Account"
   },
   "search": {
     "title": "Search Profile",

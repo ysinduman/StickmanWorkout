@@ -59,7 +59,7 @@ if (fs.existsSync(proguardPath)) {
   check('ProGuard file exists', false, 'proguard-rules.pro not found');
 }
 
-// 4. App Name & Localizations
+// 4. App Name, Localizations & Data Safety Keys
 const stringsPath = path.join(rootDir, 'android/app/src/main/res/values/strings.xml');
 if (fs.existsSync(stringsPath)) {
   const strings = fs.readFileSync(stringsPath, 'utf8');
@@ -73,11 +73,25 @@ if (fs.existsSync(trJsonPath) && fs.existsSync(enJsonPath)) {
   const en = JSON.parse(fs.readFileSync(enJsonPath, 'utf8'));
   check('i18n: TR appName is Stickman Tycoon Workout', tr.common?.appName === 'Stickman Tycoon Workout');
   check('i18n: EN appName is Stickman Tycoon Workout', en.common?.appName === 'Stickman Tycoon Workout');
+  check('Data Safety: Privacy Policy localization present (TR & EN)', Boolean(tr.profile?.privacyTitle && en.profile?.privacyTitle));
+  check('Data Safety: Account Deletion flow localized (TR & EN)', Boolean(tr.profile?.deleteAccount && en.profile?.deleteAccount));
 }
 
-// 5. Store Screenshots
+// 5. High-Res App Icon & 6 Store Screenshots
+const iconPath = path.join(rootDir, 'assets/icon.png');
+const iconExists = fs.existsSync(iconPath);
+const iconSize = iconExists ? fs.statSync(iconPath).size : 0;
+check('Store Asset: High-res assets/icon.png present (> 10KB)', iconExists && iconSize > 10000, `Size: ${iconSize} bytes`);
+
 const screenshotsDir = path.join(rootDir, 'screenshots');
-const requiredScreens = ['01_home.png', '02_search.png', '03_planner.png', '04_profile.png'];
+const requiredScreens = [
+  '01_home.png',
+  '02_search.png',
+  '02_search_modal.png',
+  '03_planner.png',
+  '04_profile.png',
+  '05_active_workout.png',
+];
 for (const screen of requiredScreens) {
   const sPath = path.join(screenshotsDir, screen);
   const exists = fs.existsSync(sPath);
@@ -86,7 +100,6 @@ for (const screen of requiredScreens) {
 }
 
 // 6. Security: No committed .env
-const envPath = path.join(rootDir, '.env');
 const gitignorePath = path.join(rootDir, '.gitignore');
 const gitignore = fs.existsSync(gitignorePath) ? fs.readFileSync(gitignorePath, 'utf8') : '';
 check('Security: .env ignored in .gitignore', gitignore.includes('.env'));
